@@ -2,7 +2,7 @@
 <Defs>
 
   <ThingDef Name="MusicalInstrumentBase" Abstract="true">
-    <label>musicalinstrument</label>
+    <label>musicalinstrumentbase</label>
     <thingClass>ThingWithComps</thingClass>
     <category>Item</category>
     <useHitPoints>true</useHitPoints>
@@ -21,9 +21,6 @@
     <tickerType>Never</tickerType>
     <alwaysHaulable>true</alwaysHaulable>
     <comps>
-      <li>
-        <compClass>CompEquippable</compClass>
-      </li>
       <li Class="CompProperties_Forbiddable"/>
       <li>
         <compClass>CompQuality</compClass>
@@ -41,16 +38,6 @@
       <li>MusicalInstruments</li>
     </thingCategories>
     <pathCost>10</pathCost>
-    <recipeMaker>
-      <workSpeedStat>SculptingSpeed</workSpeedStat>
-      <workSkill>Artistic</workSkill>
-      <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
-      <effectWorking>Sculpt</effectWorking>
-      <soundWorking>Recipe_Sculpt</soundWorking>
-      <recipeUsers>
-        <li>TableSculpting</li>
-      </recipeUsers>      
-    </recipeMaker>
   </ThingDef>
 
   <ThingDef ParentName="MusicalInstrumentBase">
@@ -63,7 +50,7 @@
     <techLevel>Neolithic</techLevel>
     <statBases>
       <WorkToMake>9000</WorkToMake>
-      <Mass>0.4</Mass>
+      <Mass>3</Mass>
     </statBases>
     <costList>
       <WoodLog>15</WoodLog>
@@ -71,7 +58,18 @@
     <stuffCategories>
       <li>Leathery</li>
     </stuffCategories>
-    <costStuffCount>30</costStuffCount>
+    <costStuffCount>30</costStuffCount>  
+    <recipeMaker>
+      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSkill>Artistic</workSkill>
+      <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
+      <effectWorking>Sculpt</effectWorking>
+      <soundWorking>Recipe_Sculpt</soundWorking>
+      <recipeUsers>
+        <li>TableSculpting</li>
+      </recipeUsers>
+      <researchPrerequisite>PrimitiveInstruments</researchPrerequisite>
+    </recipeMaker>    
   </ThingDef>
   
   <ThingDef ParentName="MusicalInstrumentBase">
@@ -84,7 +82,7 @@
     <techLevel>Neolithic</techLevel>
     <statBases>
       <WorkToMake>15000</WorkToMake>
-      <Mass>0.2</Mass>
+      <Mass>0.5</Mass>
     </statBases>
     <stuffCategories>
       <li>Metallic</li>
@@ -92,6 +90,17 @@
       <li>Stony</li>
     </stuffCategories>
     <costStuffCount>5</costStuffCount>
+    <recipeMaker>
+      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSkill>Artistic</workSkill>
+      <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
+      <effectWorking>Sculpt</effectWorking>
+      <soundWorking>Recipe_Sculpt</soundWorking>
+      <recipeUsers>
+        <li>TableSculpting</li>
+      </recipeUsers>
+      <researchPrerequisite>PrimitiveInstruments</researchPrerequisite>
+    </recipeMaker>
   </ThingDef>
   
   <ThingDef ParentName="MusicalInstrumentBase">
@@ -104,13 +113,24 @@
     <techLevel>Industrial</techLevel>
     <statBases>
       <WorkToMake>15000</WorkToMake>
-      <Mass>0.8</Mass>
+      <Mass>6</Mass>
     </statBases>
     <stuffCategories>
       <li>Metallic</li>
       <li>Woody</li>
     </stuffCategories>
     <costStuffCount>100</costStuffCount>
+    <recipeMaker>
+      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSkill>Artistic</workSkill>
+      <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
+      <effectWorking>Sculpt</effectWorking>
+      <soundWorking>Recipe_Sculpt</soundWorking>
+      <recipeUsers>
+        <li>TableSculpting</li>
+      </recipeUsers>
+      <researchPrerequisite>StringedInstruments</researchPrerequisite>
+    </recipeMaker>
   </ThingDef>
   
   <ThingDef ParentName="MusicalInstrumentBase">
@@ -123,13 +143,24 @@
     <techLevel>Industrial</techLevel>
     <statBases>
       <WorkToMake>30000</WorkToMake>
-      <Mass>0.4</Mass>
+      <Mass>3</Mass>
     </statBases>
     <stuffCategories>
       <li>Metallic</li>
       <li>Woody</li>
     </stuffCategories>
     <costStuffCount>50</costStuffCount>
+    <recipeMaker>
+      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSkill>Artistic</workSkill>
+      <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
+      <effectWorking>Sculpt</effectWorking>
+      <soundWorking>Recipe_Sculpt</soundWorking>
+      <recipeUsers>
+        <li>TableSculpting</li>
+      </recipeUsers>
+      <researchPrerequisite>StringedInstruments</researchPrerequisite>
+    </recipeMaker>
   </ThingDef>
 
 

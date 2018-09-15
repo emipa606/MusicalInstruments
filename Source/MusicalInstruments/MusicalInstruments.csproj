@@ -47,10 +47,12 @@
   <ItemGroup>
     <Compile Include="JobDriver_MusicPlay.cs" />
     <Compile Include="JoyGiver_MusicPlay.cs" />
+    <Compile Include="JoyKindDefOf_Music.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\MusicalInstruments.dll C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Assemblies</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

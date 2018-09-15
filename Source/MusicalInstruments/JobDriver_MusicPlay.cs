@@ -89,12 +89,14 @@ namespace MusicalInstruments
             //    yield return Toils_Haul.StartCarryThing(TargetIndex.C, false, false, false);
             //}
 
+            Pawn musician = this.pawn;
+
             this.FailOnDestroyedNullOrForbidden(TargetIndex.C);
 
 
             Thing instrument = this.TargetC.Thing;
 
-            if (instrument.ParentHolder != this.pawn.inventory)
+            if (instrument.ParentHolder != musician.inventory)
             {
                 // go to where instrument is
                 yield return Toils_Goto.GotoThing(TargetIndex.C, PathEndMode.OnCell).FailOnSomeonePhysicallyInteracting(TargetIndex.C);
@@ -103,7 +105,7 @@ namespace MusicalInstruments
             }
             else
             {
-                yield return Toils_Misc.TakeItemFromInventoryToCarrier(this.pawn, TargetIndex.C);
+                yield return Toils_Misc.TakeItemFromInventoryToCarrier(musician, TargetIndex.C);
 
             }
 
@@ -116,22 +118,29 @@ namespace MusicalInstruments
             play.tickAction = delegate
             {
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(this.pawn, JoyTickFullJoyAction.GoToNextToil, 0.3f, null);
+                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 0.2f, null);
                 
 
-                if(this.ticksLeftThisToil % 1000 == 500)
+                if(this.ticksLeftThisToil % 250 == 249)
                 {
-                    Verse.Log.Message(String.Format("ticks left = {0}", this.ticksLeftThisToil));
-                    ThrowMusicNotes(this.pawn.DrawPos, this.Map);
-                    //MoteMaker.ThrowText(this.pawn.DrawPos, this.Map, "TEST");
+                    ThrowMusicNotes(musician.DrawPos, this.Map);
+                    float musicQuality = GetMusicQuality(musician, instrument);
+                    musician.skills.Learn(SkillDefOf.Artistic, 5.0f);
+
+
                     List<Pawn> audience = new List<Pawn>();
 
                     foreach(Pawn audiencePawn in Map.mapPawns.FreeColonistsAndPrisoners)
                     {
-                        if (audiencePawn.Position.DistanceTo(pawn.Position) < 8) audience.Add(audiencePawn);
+                        if (audiencePawn.Position.DistanceTo(pawn.Position) < 8 && audiencePawn != musician)
+                        {
+                            audiencePawn.needs.joy.GainJoy(musicQuality * 5.0f, JoyKindDefOf_Music.Music);
+                            audience.Add(audiencePawn);
+                        }
                     }
 
-                    Verse.Log.Message(String.Format("musician: {0}, audience: {1}", pawn.Name.ToString(), String.Join(", ", audience.Select(p => p.Name.ToString()).ToArray())));
+
+                    Verse.Log.Message(String.Format("musician: {0}, quality: {1}, audience: {2}", musician.Name.ToString(), musicQuality, String.Join(", ", audience.Select(p => p.Name.ToString()).ToArray())));
                 }
 
          
@@ -140,9 +149,10 @@ namespace MusicalInstruments
             play.handlingFacing = true;
             play.defaultCompleteMode = ToilCompleteMode.Delay;
             play.defaultDuration = this.job.def.joyDuration;
+
             play.AddFinishAction(delegate
             {
-                JoyUtility.TryGainRecRoomThought(this.pawn);
+                JoyUtility.TryGainRecRoomThought(this.pawn);                
             });
             play.socialMode = RandomSocialMode.Quiet;
             yield return play;
@@ -191,6 +201,17 @@ namespace MusicalInstruments
             moteThrown.SetVelocity((float)Rand.Range(-10, 10), Rand.Range(0.4f, 0.6f));
             GenSpawn.Spawn(moteThrown, loc.ToIntVec3(), map, WipeMode.Vanish);
 
+        }
+
+        protected float GetMusicQuality(Pawn musician, Thing instrument)
+        {
+            int artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
+            bool isInspired = musician.Inspired ? musician.Inspiration.def == InspirationDefOf.Inspired_Creativity : false;
+            QualityCategory instrumentQuality = QualityCategory.Normal;
+            instrument.TryGetQuality(out instrumentQuality);
+            float instrumentCondition = (float)instrument.HitPoints / instrument.MaxHitPoints;
+
+            return (artSkill / 10.0f) * (isInspired ? 2.0f : 1.0f) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
         }
     }
 }
