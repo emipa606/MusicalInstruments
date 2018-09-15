@@ -1,0 +1,14 @@
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\MusicalInstruments.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\MusicalInstruments.pdb
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\Assembly-CSharp.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\UnityEngine.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\TextMeshPro-1.0.55.56.0b11.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\NAudio.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\NVorbis.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\bin\Debug\UnityEngine.UI.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\obj\Debug\MusicalInstruments.csproj.CoreCompileInputs.cache
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\obj\Debug\MusicalInstruments.csproj.CopyComplete
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\obj\Debug\MusicalInstruments.dll
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\obj\Debug\MusicalInstruments.pdb
+C:\Users\ashth\Desktop\RimWorld2009Win\Mods\MusicalInstruments\Source\MusicalInstruments\obj\Debug\MusicalInstruments.csprojAssemblyReference.cache

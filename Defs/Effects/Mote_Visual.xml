@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <ThingDef ParentName="MoteBase">
+    <defName>Mote_MusicNotes</defName>
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <altitudeLayer>MetaOverlays</altitudeLayer>
+    <mote>
+      <realTime>true</realTime>
+      <solidTime>1.5</solidTime>
+    </mote>
+    <graphicData>
+      <texPath>Things/Mote/MusicNotes</texPath>
+    </graphicData>
+  </ThingDef>
+  
+</Defs>
