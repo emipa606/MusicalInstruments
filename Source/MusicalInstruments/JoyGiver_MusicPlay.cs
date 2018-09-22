@@ -83,27 +83,14 @@ namespace MusicalInstruments
                                     // find a place to sit or stand, or return null if there aren't any
 
                                     Job job;
-                                    //Thing chair;
-
-                                    //if (compGatherSpot.parent.def.surfaceType == SurfaceType.Eat) {
-
-                                    //    Thing chairByTable;
-                                    //    if (!JoyGiver_MusicPlay.TryFindChairBesideTable(compGatherSpot.parent, pawn, out chairByTable)) {
-                                    //        return null;
-                                    //    }
-                                    //    job = new Job(this.def.jobDef, compGatherSpot.parent, chairByTable);
-                                    //} else if (JoyGiver_MusicPlay.TryFindChairNear(compGatherSpot.parent.Position, pawn, out chair)) {
-
-                                    //    job = new Job(this.def.jobDef, compGatherSpot.parent, chair);
-                                    //} else {
+                                
                                     IntVec3 standingSpot;
                                     if (!JoyGiver_MusicPlay.TryFindSitSpotOnGroundNear(compGatherSpot.parent.Position, pawn, out standingSpot))
                                     {
                                         return null;
                                     }
                                     job = new Job(this.def.jobDef, compGatherSpot.parent, standingSpot);
-                                    //}
-
+                    
                                     Thing instrument;
 
                                     if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
@@ -111,20 +98,10 @@ namespace MusicalInstruments
                                     {
 
                                         job.targetC = instrument;
-                                        //job.count = Mathf.Min(drug.stackCount, drug.def.ingestible.maxNumToIngestAtOnce);
                                     }
                                     else return null;
 
-                                    // also try to find some drugs to take
-
-                                    //Thing drug;
-
-                                    //if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && 
-                                    //    JoyGiver_MusicPlay.TryFindIngestibleToNurse(compGatherSpot.parent.Position, pawn, out drug)) {
-
-                                    //    job.targetC = drug;
-                                    //    job.count = Mathf.Min(drug.stackCount, drug.def.ingestible.maxNumToIngestAtOnce);
-                                    //}
+      
 
                                     job.count = 1;
 
@@ -162,76 +139,6 @@ namespace MusicalInstruments
         }
 
         
-        private static bool TryFindIngestibleToNurse(IntVec3 center, Pawn ingester, out Thing ingestible)
-        {
-            if (ingester.IsTeetotaler())
-            {
-                ingestible = null;
-                return false;
-            }
-            if (ingester.drugs == null)
-            {
-                ingestible = null;
-                return false;
-            }
-            JoyGiver_MusicPlay.nurseableDrugs.Clear();
-            DrugPolicy currentPolicy = ingester.drugs.CurrentPolicy;
-            for (int i = 0; i < currentPolicy.Count; i++)
-            {
-                if (currentPolicy[i].allowedForJoy && currentPolicy[i].drug.ingestible.nurseable)
-                {
-                    JoyGiver_MusicPlay.nurseableDrugs.Add(currentPolicy[i].drug);
-                }
-            }
-            JoyGiver_MusicPlay.nurseableDrugs.Shuffle<ThingDef>();
-            for (int j = 0; j < JoyGiver_MusicPlay.nurseableDrugs.Count; j++)
-            {
-                List<Thing> list = ingester.Map.listerThings.ThingsOfDef(JoyGiver_MusicPlay.nurseableDrugs[j]);
-                if (list.Count > 0)
-                {
-                    Predicate<Thing> validator = (Thing t) => ingester.CanReserve(t, 1, -1, null, false) && !t.IsForbidden(ingester);
-                    ingestible = GenClosest.ClosestThing_Global_Reachable(center, ingester.Map, list, PathEndMode.OnCell, TraverseParms.For(ingester, Danger.Deadly, TraverseMode.ByPawn, false), 40f, validator, null);
-                    if (ingestible != null)
-                    {
-                        return true;
-                    }
-                }
-            }
-            ingestible = null;
-            return false;
-        }
-
-        private static bool TryFindChairBesideTable(Thing table, Pawn sitter, out Thing chair)
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                IntVec3 c = table.RandomAdjacentCellCardinal();
-                Building edifice = c.GetEdifice(table.Map);
-                if (edifice != null && edifice.def.building.isSittable && sitter.CanReserve(edifice, 1, -1, null, false))
-                {
-                    chair = edifice;
-                    return true;
-                }
-            }
-            chair = null;
-            return false;
-        }
-
-        private static bool TryFindChairNear(IntVec3 center, Pawn sitter, out Thing chair)
-        {
-            for (int i = 0; i < JoyGiver_MusicPlay.RadialPatternMiddleOutward.Count; i++)
-            {
-                IntVec3 c = center + JoyGiver_MusicPlay.RadialPatternMiddleOutward[i];
-                Building edifice = c.GetEdifice(sitter.Map);
-                if (edifice != null && edifice.def.building.isSittable && sitter.CanReserve(edifice, 1, -1, null, false) && !edifice.IsForbidden(sitter) && GenSight.LineOfSight(center, edifice.Position, sitter.Map, true, null, 0, 0))
-                {
-                    chair = edifice;
-                    return true;
-                }
-            }
-            chair = null;
-            return false;
-        }
 
         private static bool TryFindSitSpotOnGroundNear(IntVec3 center, Pawn sitter, out IntVec3 result)
         {

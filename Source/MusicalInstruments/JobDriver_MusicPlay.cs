@@ -50,18 +50,6 @@ namespace MusicalInstruments
             // try to reserve an instrument to play
             if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed)) return false;
 
-
-            //if (this.HasDrink)
-            //{
-            //    // also try to reserve drink, if target is set by the JoyGiver
-            //    pawn = this.pawn;
-            //    target = this.job.GetTarget(OptionalIngestibleInd);
-            //    job = this.job;
-            //    if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed))
-            //    {
-            //        return false;
-            //    }
-            //}
             return true;
         }
 
@@ -73,21 +61,6 @@ namespace MusicalInstruments
         protected override IEnumerable<Toil> MakeNewToils()
         {
             this.EndOnDespawnedOrNull(TargetIndex.A, JobCondition.Incompletable);
-            //if (this.HasChair) {
-            //    // if the pawn is standing instead of sitting on a chair, TargetIndex.B has no end/fail condition 
-            //    // doesn't seem to matter
-            //    this.EndOnDespawnedOrNull(TargetIndex.B, JobCondition.Incompletable);
-            //}
-
-            //if (this.HasDrink)
-            //{
-            //    this.FailOnDestroyedNullOrForbidden(TargetIndex.C);
-
-            //    // go to where drugs are
-            //    yield return Toils_Goto.GotoThing(TargetIndex.C, PathEndMode.OnCell).FailOnSomeonePhysicallyInteracting(TargetIndex.C);
-            //    // pick up drugs
-            //    yield return Toils_Haul.StartCarryThing(TargetIndex.C, false, false, false);
-            //}
 
             Pawn musician = this.pawn;
 
@@ -134,7 +107,7 @@ namespace MusicalInstruments
                     {
                         if (audiencePawn.Position.DistanceTo(pawn.Position) < 8 && audiencePawn != musician)
                         {
-                            audiencePawn.needs.joy.GainJoy(musicQuality * 5.0f, JoyKindDefOf_Music.Music);
+                            audiencePawn.needs.joy.GainJoy(musicQuality * 2.5f, JoyKindDefOf_Music.Music);
                             audience.Add(audiencePawn);
                         }
                     }
@@ -159,36 +132,13 @@ namespace MusicalInstruments
 
             yield return Toils_General.PutCarriedThingInInventory();
 
-            // custom toil.
-            //Toil chew = new Toil();
-            //chew.tickAction = delegate
-            //{
-            //    this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-            //    this.pawn.GainComfortFromCellIfPossible();
-            //    JoyUtility.JoyTickCheckEnd(this.pawn, JoyTickFullJoyAction.GoToNextToil, 1f, null);
-            //};
-            //chew.handlingFacing = true;
-            //chew.defaultCompleteMode = ToilCompleteMode.Delay;
-            //chew.defaultDuration = this.job.def.joyDuration;
-            //chew.AddFinishAction(delegate
-            //{
-            //    JoyUtility.TryGainRecRoomThought(this.pawn);
-            //});
-            //chew.socialMode = RandomSocialMode.SuperActive;
-            //// this is called even if TargetIndex.C is empty - again, doesn't seem to matter
-            ////Toils_Ingest.AddIngestionEffects(chew, this.pawn, TargetIndex.C, TargetIndex.None);
-            //yield return chew;
-
-            // think this is just a clean-up: code in this function mostly only applies to food-type ingestibles
-            //if (this.HasDrink) {
-            //    yield return Toils_Ingest.FinalizeIngest(this.pawn, TargetIndex.C);
-            //}
         }
 
         public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool behind, ref bool flip)
         {
             IntVec3 closestGatherSpotParentCell = this.ClosestGatherSpotParentCell;
-            return JobDriver_Ingest.ModifyCarriedThingDrawPosWorker(ref drawPos, ref behind, ref flip, closestGatherSpotParentCell, this.pawn);
+            //return JobDriver_Ingest.ModifyCarriedThingDrawPosWorker(ref drawPos, ref behind, ref flip, closestGatherSpotParentCell, this.pawn);
+            return false;
         }
 
         protected void ThrowMusicNotes(Vector3 loc, Map map)
@@ -210,8 +160,12 @@ namespace MusicalInstruments
             QualityCategory instrumentQuality = QualityCategory.Normal;
             instrument.TryGetQuality(out instrumentQuality);
             float instrumentCondition = (float)instrument.HitPoints / instrument.MaxHitPoints;
+            CompMusicalInstrument instrumentComp = instrument.TryGetComp<CompMusicalInstrument>();
+            float easiness = instrumentComp.Props.easiness;
+            float expressiveness = instrumentComp.Props.expressiveness;
 
-            return (artSkill / 10.0f) * (isInspired ? 2.0f : 1.0f) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
+
+            return (easiness + (expressiveness * (artSkill / 10.0f) * (isInspired ? 2.0f : 1.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
         }
     }
 }

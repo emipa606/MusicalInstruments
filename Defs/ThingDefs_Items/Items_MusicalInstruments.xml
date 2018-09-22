@@ -69,7 +69,14 @@
         <li>TableSculpting</li>
       </recipeUsers>
       <researchPrerequisite>PrimitiveInstruments</researchPrerequisite>
-    </recipeMaker>    
+    </recipeMaker>
+    <comps>
+      <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
+        <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
+        <easiness>0.5</easiness>
+        <expressiveness>0.2</expressiveness>
+      </li>
+    </comps>
   </ThingDef>
   
   <ThingDef ParentName="MusicalInstrumentBase">
@@ -100,7 +107,25 @@
         <li>TableSculpting</li>
       </recipeUsers>
       <researchPrerequisite>PrimitiveInstruments</researchPrerequisite>
+      <defaultIngredientFilter>
+        <categories>
+          <li>Root</li>
+        </categories>
+        <disallowedThingDefs>
+          <li>Gold</li>
+          <li>Silver</li>
+          <li>Plasteel</li>
+          <li>Uranium</li>
+        </disallowedThingDefs>
+      </defaultIngredientFilter>
     </recipeMaker>
+    <comps>
+      <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
+        <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
+        <easiness>0.3</easiness>
+        <expressiveness>0.5</expressiveness>
+      </li>
+    </comps>
   </ThingDef>
   
   <ThingDef ParentName="MusicalInstrumentBase">
@@ -110,7 +135,7 @@
     <graphicData>
       <texPath>Things/Items/Guitar</texPath>
     </graphicData>
-    <techLevel>Industrial</techLevel>
+    <techLevel>Medieval</techLevel>
     <statBases>
       <WorkToMake>15000</WorkToMake>
       <Mass>6</Mass>
@@ -130,7 +155,26 @@
         <li>TableSculpting</li>
       </recipeUsers>
       <researchPrerequisite>StringedInstruments</researchPrerequisite>
+      <defaultIngredientFilter>
+        <categories>
+          <li>Root</li>
+        </categories>
+        <disallowedThingDefs>
+          <li>Gold</li>
+          <li>Silver</li>
+          <li>Plasteel</li>
+          <li>Jade</li>
+          <li>Uranium</li>
+        </disallowedThingDefs>
+      </defaultIngredientFilter>
     </recipeMaker>
+    <comps>
+      <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
+        <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
+        <easiness>0.5</easiness>
+        <expressiveness>0.5</expressiveness>
+      </li>
+    </comps>
   </ThingDef>
   
   <ThingDef ParentName="MusicalInstrumentBase">
@@ -140,7 +184,7 @@
     <graphicData>
       <texPath>Things/Items/Violin</texPath>
     </graphicData>
-    <techLevel>Industrial</techLevel>
+    <techLevel>Medieval</techLevel>
     <statBases>
       <WorkToMake>30000</WorkToMake>
       <Mass>3</Mass>
@@ -160,7 +204,26 @@
         <li>TableSculpting</li>
       </recipeUsers>
       <researchPrerequisite>StringedInstruments</researchPrerequisite>
+      <defaultIngredientFilter>
+        <categories>
+          <li>Root</li>
+        </categories>
+        <disallowedThingDefs>
+          <li>Gold</li>
+          <li>Silver</li>
+          <li>Plasteel</li>
+          <li>Jade</li>
+          <li>Uranium</li>
+        </disallowedThingDefs>
+      </defaultIngredientFilter>
     </recipeMaker>
+    <comps>
+      <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
+        <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
+        <easiness>0.1</easiness>
+        <expressiveness>1.0</expressiveness>
+      </li>
+    </comps>
   </ThingDef>
 
 

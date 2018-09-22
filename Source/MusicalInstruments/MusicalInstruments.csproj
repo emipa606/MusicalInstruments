@@ -45,6 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompMusicalInstrument.cs" />
+    <Compile Include="CompProperties_MusicalInstrument.cs" />
     <Compile Include="JobDriver_MusicPlay.cs" />
     <Compile Include="JoyGiver_MusicPlay.cs" />
     <Compile Include="JoyKindDefOf_Music.cs" />

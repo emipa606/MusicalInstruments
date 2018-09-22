@@ -3,6 +3,6 @@
   <JoyKindDef>
     <defName>Music</defName>
     <label>music appreciation</label>
-    <needsThing>false</needsThing>
+    <needsThing>true</needsThing>
   </JoyKindDef>  
 </Defs>
