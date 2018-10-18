@@ -7,4 +7,11 @@
     <joyDuration>4000</joyDuration>
     <joyKind>Music</joyKind>
   </JobDef>
+  <JobDef>
+    <defName>MusicListen</defName>
+    <driverClass>MusicalInstruments.JobDriver_MusicListen</driverClass>
+    <reportString>listening to music.</reportString>
+    <joyDuration>1000</joyDuration>
+    <joyKind>Music</joyKind>
+  </JobDef>  
 </Defs>

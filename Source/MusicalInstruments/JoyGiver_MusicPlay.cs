@@ -131,7 +131,7 @@ namespace MusicalInstruments
 
                 List<Thing> list = musician.Map.listerThings.ThingsOfDef(instrumentDef);
                 Predicate<Thing> validator = (Thing t) => musician.CanReserve(t, 1, -1, null, false) && !t.IsForbidden(musician);
-                instrument = GenClosest.ClosestThing_Global_Reachable(center, musician.Map, list, PathEndMode.OnCell, TraverseParms.For(musician, Danger.Deadly, TraverseMode.ByPawn, false), 40f, validator, null);
+                instrument = GenClosest.ClosestThing_Global_Reachable(center, musician.Map, list, PathEndMode.OnCell, TraverseParms.For(musician, Danger.Deadly, TraverseMode.ByPawn, false), validator: validator);
                 if (instrument != null) return true;
             }
 

@@ -7,6 +7,7 @@
     <category>Item</category>
     <useHitPoints>true</useHitPoints>
     <selectable>true</selectable>
+    <rotatable>true</rotatable>
     <statBases>
       <MaxHitPoints>50</MaxHitPoints>
       <Flammability>0.7</Flammability>
@@ -16,6 +17,7 @@
     <graphicData>
       <onGroundRandomRotateAngle>35</onGroundRandomRotateAngle>
       <graphicClass>Graphic_Single</graphicClass>
+      <allowFlip>true</allowFlip>
     </graphicData>
     <altitudeLayer>Item</altitudeLayer>
     <tickerType>Never</tickerType>

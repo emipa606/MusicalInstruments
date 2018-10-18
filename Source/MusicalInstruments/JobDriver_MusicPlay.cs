@@ -14,6 +14,19 @@ namespace MusicalInstruments
 {
     public class JobDriver_MusicPlay : JobDriver
     {
+
+        [TweakValue("MusicalInstruments.XOffset", -0.5f, 0.5f)]
+        private static float InstrumentXOffset = .0f;
+
+        [TweakValue("MusicalInstruments.ZOffset", -0.5f, 0.5f)]
+        private static float InstrumentZOffset = .0f;
+
+        [TweakValue("MusicalInstruments.Behind", 0f, 100f)]
+        private static bool Behind = false;
+
+        [TweakValue("MusicalInstruments.Flip", 0f, 100f)]
+        private static bool Flip = false;
+
         private const TargetIndex GatherSpotParentInd = TargetIndex.A;
 
         private const TargetIndex StandingSpotInd = TargetIndex.B;
@@ -62,12 +75,15 @@ namespace MusicalInstruments
         {
             this.EndOnDespawnedOrNull(TargetIndex.A, JobCondition.Incompletable);
 
+            //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
+
             Pawn musician = this.pawn;
 
             this.FailOnDestroyedNullOrForbidden(TargetIndex.C);
 
-
             Thing instrument = this.TargetC.Thing;
+
+            Thing venue = this.TargetA.Thing;
 
             if (instrument.ParentHolder != musician.inventory)
             {
@@ -88,32 +104,29 @@ namespace MusicalInstruments
 
             // custom toil.
             Toil play = new Toil();
+
+            play.activeSkill = delegate
+            {
+                return SkillDefOf.Artistic;
+            };
+
+            play.initAction = delegate
+            {
+                PerformanceTracker.StartPlaying(musician, venue);
+            };
+
+
+
             play.tickAction = delegate
             {
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 0.2f, null);
-                
+                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 0.25f * PerformanceTracker.GetPerformanceQuality(venue), null);
+                musician.skills.Learn(SkillDefOf.Artistic, 0.1f);
 
-                if(this.ticksLeftThisToil % 250 == 249)
+
+                if (this.ticksLeftThisToil % 250 == 249)
                 {
                     ThrowMusicNotes(musician.DrawPos, this.Map);
-                    float musicQuality = GetMusicQuality(musician, instrument);
-                    musician.skills.Learn(SkillDefOf.Artistic, 5.0f);
-
-
-                    List<Pawn> audience = new List<Pawn>();
-
-                    foreach(Pawn audiencePawn in Map.mapPawns.FreeColonistsAndPrisoners)
-                    {
-                        if (audiencePawn.Position.DistanceTo(pawn.Position) < 8 && audiencePawn != musician)
-                        {
-                            audiencePawn.needs.joy.GainJoy(musicQuality * 2.5f, JoyKindDefOf_Music.Music);
-                            audience.Add(audiencePawn);
-                        }
-                    }
-
-
-                    Verse.Log.Message(String.Format("musician: {0}, quality: {1}, audience: {2}", musician.Name.ToString(), musicQuality, String.Join(", ", audience.Select(p => p.Name.ToString()).ToArray())));
                 }
 
          
@@ -125,9 +138,11 @@ namespace MusicalInstruments
 
             play.AddFinishAction(delegate
             {
-                JoyUtility.TryGainRecRoomThought(this.pawn);                
+                PerformanceTracker.StopPlaying(musician, venue);
             });
+
             play.socialMode = RandomSocialMode.Quiet;
+
             yield return play;
 
             yield return Toils_General.PutCarriedThingInInventory();
@@ -137,9 +152,46 @@ namespace MusicalInstruments
         public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool behind, ref bool flip)
         {
             IntVec3 closestGatherSpotParentCell = this.ClosestGatherSpotParentCell;
-            //return JobDriver_Ingest.ModifyCarriedThingDrawPosWorker(ref drawPos, ref behind, ref flip, closestGatherSpotParentCell, this.pawn);
-            return false;
+
+            behind = Behind;
+            flip = Flip;
+
+            drawPos += new Vector3(InstrumentXOffset, .0f, InstrumentZOffset);
+            return true;
+
+            //return ModifyCarriedThingDrawPosWorker(ref drawPos, ref behind, ref flip, closestGatherSpotParentCell, this.pawn);
+            //return false;
         }
+
+        //public static bool ModifyCarriedThingDrawPosWorker(ref Vector3 drawPos, ref bool behind, ref bool flip, IntVec3 placeCell, Pawn pawn)
+        //{
+        //    if (pawn.pather.Moving)
+        //    {
+        //        return false;
+        //    }
+        //    Thing carriedThing = pawn.carryTracker.CarriedThing;
+        //    if (carriedThing == null || !carriedThing.IngestibleNow)
+        //    {
+        //        return false;
+        //    }
+        //    if (placeCell.IsValid && placeCell.AdjacentToCardinal(pawn.Position) && placeCell.HasEatSurface(pawn.Map) && carriedThing.def.ingestible.ingestHoldUsesTable)
+        //    {
+        //        drawPos = new Vector3((float)placeCell.x + 0.5f, drawPos.y, (float)placeCell.z + 0.5f);
+        //        return true;
+        //    }
+        //    if (carriedThing.def.ingestible.ingestHoldOffsetStanding != null)
+        //    {
+        //        HoldOffset holdOffset = carriedThing.def.ingestible.ingestHoldOffsetStanding.Pick(pawn.Rotation);
+        //        if (holdOffset != null)
+        //        {
+        //            drawPos += holdOffset.offset;
+        //            behind = holdOffset.behind;
+        //            flip = holdOffset.flip;
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
         protected void ThrowMusicNotes(Vector3 loc, Map map)
         {
@@ -153,19 +205,5 @@ namespace MusicalInstruments
 
         }
 
-        protected float GetMusicQuality(Pawn musician, Thing instrument)
-        {
-            int artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
-            bool isInspired = musician.Inspired ? musician.Inspiration.def == InspirationDefOf.Inspired_Creativity : false;
-            QualityCategory instrumentQuality = QualityCategory.Normal;
-            instrument.TryGetQuality(out instrumentQuality);
-            float instrumentCondition = (float)instrument.HitPoints / instrument.MaxHitPoints;
-            CompMusicalInstrument instrumentComp = instrument.TryGetComp<CompMusicalInstrument>();
-            float easiness = instrumentComp.Props.easiness;
-            float expressiveness = instrumentComp.Props.expressiveness;
-
-
-            return (easiness + (expressiveness * (artSkill / 10.0f) * (isInspired ? 2.0f : 1.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
-        }
     }
 }

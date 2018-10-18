@@ -14,6 +14,23 @@
     </thingDefs>
     <requiredCapacities>
       <li>Manipulation</li>
+      <li>Hearing</li>
     </requiredCapacities>    
   </JoyGiverDef>
+  <JoyGiverDef>
+    <defName>MusicListen</defName>
+    <giverClass>MusicalInstruments.JoyGiver_MusicListen</giverClass>
+    <baseChance>6</baseChance>
+    <jobDef>MusicListen</jobDef>
+    <joyKind>Music</joyKind>
+    <thingDefs>
+      <li>FrameDrum</li>
+      <li>Ocarina</li>
+      <li>Guitar</li>
+      <li>Violin</li>
+    </thingDefs>
+    <requiredCapacities>
+      <li>Hearing</li>
+    </requiredCapacities>    
+  </JoyGiverDef>  
 </Defs>

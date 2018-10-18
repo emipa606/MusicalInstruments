@@ -328,3 +328,8 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+*.suo
+*.pdb
+*.pdb
+*.cache
+Source/MusicalInstruments/.vs/MusicalInstruments/v15/.suo
