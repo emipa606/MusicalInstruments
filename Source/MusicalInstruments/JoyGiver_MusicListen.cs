@@ -36,27 +36,57 @@ namespace MusicalInstruments
             return this.TryGiveJobInt(pawn, (CompGatherSpot x) => PartyUtility.InPartyArea(x.parent.Position, partySpot, pawn.Map));
         }
 
+        public override Job TryGiveJobWhileInBed(Pawn pawn)
+        {
+            Room room = pawn.GetRoom();
+
+            // get gather spots in pawn's current room
+            List<CompGatherSpot> localGatherSpots = pawn.Map.gatherSpotLister.activeSpots.Where(x => room.Cells.Contains(x.parent.Position)).ToList();
+
+            // if no gathering spots then give up
+            if (localGatherSpots.Count == 0)
+            {
+                return null;
+            }
+
+            workingSpots = localGatherSpots;
+
+            // pick a random one
+            CompGatherSpot compGatherSpot;
+            while (workingSpots.TryRandomElement(out compGatherSpot))
+            {
+                workingSpots.Remove(compGatherSpot);
+
+                // is a performance currently in progress
+                if (PerformanceTracker.HasPerformance(compGatherSpot.parent))
+                {
+                    Job job = new Job(def.jobDef, compGatherSpot.parent, pawn.CurrentBed());
+                }
+            }
+
+            return null;
+        }
 
         private Job TryGiveJobInt(Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator)
         {
-            // if no gathering sports then give up
+            // if no gathering spots then give up
             if (pawn.Map.gatherSpotLister.activeSpots.Count == 0)
             {
                 return null;
             }
             // load all social areas on map into list
-            JoyGiver_MusicListen.workingSpots.Clear();
+            workingSpots.Clear();
             for (int i = 0; i < pawn.Map.gatherSpotLister.activeSpots.Count; i++)
             {
-                JoyGiver_MusicListen.workingSpots.Add(pawn.Map.gatherSpotLister.activeSpots[i]);
+                workingSpots.Add(pawn.Map.gatherSpotLister.activeSpots[i]);
             }
 
             // pick a random one
             CompGatherSpot compGatherSpot;
-            while (JoyGiver_MusicListen.workingSpots.TryRandomElement(out compGatherSpot))
+            while (workingSpots.TryRandomElement(out compGatherSpot))
             {
                 // remove from list
-                JoyGiver_MusicListen.workingSpots.Remove(compGatherSpot);
+                workingSpots.Remove(compGatherSpot);
                 // check zones etc
                 if (!compGatherSpot.parent.IsForbidden(pawn))
                 {
@@ -84,12 +114,12 @@ namespace MusicalInstruments
                                         Job job;
 
                                         IntVec3 standingSpot;
-                                        if (JoyGiver_MusicListen.TryFindChairNear(compGatherSpot.parent.Position, pawn, out Thing chair))
+                                        if (TryFindChairNear(compGatherSpot.parent.Position, pawn, out Thing chair))
                                         {
                                             job = new Job(this.def.jobDef, compGatherSpot.parent, chair);
                                             return job;
                                         }                                        
-                                        else if (JoyGiver_MusicListen.TryFindSitSpotOnGroundNear(compGatherSpot.parent.Position, pawn, out standingSpot))
+                                        else if (TryFindSitSpotOnGroundNear(compGatherSpot.parent.Position, pawn, out standingSpot))
                                         {
                                             job = new Job(this.def.jobDef, compGatherSpot.parent, standingSpot);
                                             return job;

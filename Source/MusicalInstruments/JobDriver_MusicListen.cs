@@ -16,11 +16,11 @@ namespace MusicalInstruments
     {
         private const TargetIndex GatherSpotParentInd = TargetIndex.A;
 
-        private const TargetIndex ChairOrSpotInd = TargetIndex.B;
+        private const TargetIndex ChairOrSpotOrBedInd = TargetIndex.B;
 
         private Thing GatherSpotParent => job.GetTarget(TargetIndex.A).Thing;
 
-        private bool HasChair => job.GetTarget(TargetIndex.B).HasThing;
+        private bool HasChairOrBed => job.GetTarget(TargetIndex.B).HasThing;
 
 
         private IntVec3 ClosestGatherSpotParentCell => GatherSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
@@ -41,22 +41,24 @@ namespace MusicalInstruments
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.EndOnDespawnedOrNull(TargetIndex.A);
+            this.EndOnDespawnedOrNull(GatherSpotParentInd);
 
             //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
 
-            if (HasChair)
+            Thing chairOrBed = null;
+
+            if (HasChairOrBed)
             {
-                this.EndOnDespawnedOrNull(TargetIndex.B);
+                this.EndOnDespawnedOrNull(ChairOrSpotOrBedInd);
+                chairOrBed = this.TargetB.Thing;
             }
 
             Pawn listener = this.pawn;
-
-            Thing instrument = this.TargetC.Thing;
-
+            
             Thing venue = this.TargetA.Thing;
 
-            yield return Toils_Goto.GotoCell(TargetIndex.B, PathEndMode.OnCell);
+            if(!(chairOrBed is Building_Bed))
+                yield return Toils_Goto.GotoCell(ChairOrSpotOrBedInd, PathEndMode.OnCell);
 
             // custom toil.
             Toil listen = new Toil();
@@ -70,6 +72,14 @@ namespace MusicalInstruments
             listen.handlingFacing = true;
             listen.defaultCompleteMode = ToilCompleteMode.Delay;
             listen.defaultDuration = this.job.def.joyDuration;
+
+            listen.AddEndCondition(delegate 
+            {
+                if (PerformanceTracker.HasPerformance(venue))
+                    return JobCondition.Ongoing;
+                else
+                    return JobCondition.Incompletable;
+            });
 
             listen.AddFinishAction(delegate
             {

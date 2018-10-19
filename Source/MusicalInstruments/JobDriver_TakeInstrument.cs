@@ -47,9 +47,23 @@ namespace MusicalInstruments
 
             yield return gotoThing;
 
+            Toil dropInstruments = new Toil();
+
+            dropInstruments.initAction = delegate
+            {
+                List<Thing> instruments = pawn.inventory.innerContainer.Where(x => JoyGiver_MusicPlay.IsInstrument(x)).ToList();
+                Thing result;
+
+                foreach (Thing instrument in instruments)
+                {
+                    pawn.inventory.innerContainer.TryDrop(instrument, pawn.Position, pawn.Map, ThingPlaceMode.Near, out result);
+                }
+            };
+
+            yield return dropInstruments;
+
             yield return Toils_Haul.TakeToInventory(InstrumentInd, 1);
         }
-
 
     }
 }
