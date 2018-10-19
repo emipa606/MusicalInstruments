@@ -33,7 +33,7 @@
         <minQualityForArtistic>Excellent</minQualityForArtistic>
       </li>
       <li Class="CompProperties_Usable">
-        <useJob>TakeInventory</useJob>
+        <useJob>TakeInstrument</useJob>
         <useLabel>Take to inventory</useLabel>
       </li>
     </comps>

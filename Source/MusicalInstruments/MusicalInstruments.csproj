@@ -51,6 +51,7 @@
     <Compile Include="CompProperties_MusicalInstrument.cs" />
     <Compile Include="JobDriver_MusicListen.cs" />
     <Compile Include="JobDriver_MusicPlay.cs" />
+    <Compile Include="JobDriver_TakeInstrument.cs" />
     <Compile Include="JoyGiver_MusicListen.cs" />
     <Compile Include="JoyGiver_MusicPlay.cs" />
     <Compile Include="JoyKindDefOf_Music.cs" />
