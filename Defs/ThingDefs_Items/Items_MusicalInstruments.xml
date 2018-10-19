@@ -32,6 +32,10 @@
         <descriptionMaker>ArtDescription_MusicalInstrument</descriptionMaker>
         <minQualityForArtistic>Excellent</minQualityForArtistic>
       </li>
+      <li Class="CompProperties_Usable">
+        <useJob>TakeInventory</useJob>
+        <useLabel>Take to inventory</useLabel>
+      </li>
     </comps>
     <inspectorTabs>
       <li>ITab_Art</li>

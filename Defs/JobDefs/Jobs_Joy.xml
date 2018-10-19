@@ -6,12 +6,14 @@
     <reportString>playing music.</reportString>
     <joyDuration>4000</joyDuration>
     <joyKind>Music</joyKind>
+    <joySkill>Artistic</joySkill>
+    <joyXpPerTick>0.004</joyXpPerTick>
   </JobDef>
   <JobDef>
     <defName>MusicListen</defName>
     <driverClass>MusicalInstruments.JobDriver_MusicListen</driverClass>
     <reportString>listening to music.</reportString>
-    <joyDuration>1000</joyDuration>
+    <joyDuration>2000</joyDuration>
     <joyKind>Music</joyKind>
   </JobDef>  
 </Defs>

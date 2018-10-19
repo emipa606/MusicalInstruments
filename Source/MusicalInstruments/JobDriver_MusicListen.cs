@@ -64,7 +64,7 @@ namespace MusicalInstruments
             listen.tickAction = delegate
             {
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, 0.5f * PerformanceTracker.GetPerformanceQuality(venue), null);
+                JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, PerformanceTracker.GetPerformanceQuality(venue), null);
             };
 
             listen.handlingFacing = true;

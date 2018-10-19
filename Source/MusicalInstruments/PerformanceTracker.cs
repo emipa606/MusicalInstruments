@@ -28,7 +28,8 @@ namespace MusicalInstruments
                     quality += PerformanceTracker.GetMusicQuality(musician, musician.carryTracker.CarriedThing);
                 }
 
-                float f = (float)Musicians.Count - ((float)Musicians.Count - 1) * .2f;
+                float f = (float)Musicians.Count;
+                f -= (f - 1) * .2f;
 
                 Quality = quality / f;
             }
@@ -41,34 +42,34 @@ namespace MusicalInstruments
     public static class PerformanceTracker
     {
 
-        private static Dictionary<int, Performance> performances = new Dictionary<int, Performance>();
+        private static Dictionary<int, Performance> Performances = new Dictionary<int, Performance>();
 
         public static void StartPlaying(Pawn musician, Thing venue)
         {
             int hash = venue.GetHashCode();
 
-            if (!performances.ContainsKey(hash))
-                performances[hash] = new Performance() { Musicians = new List<Pawn>(), Quality = 0f };
+            if (!Performances.ContainsKey(hash))
+                Performances[hash] = new Performance() { Musicians = new List<Pawn>(), Quality = 0f };
 
-            performances[hash].Musicians.Add(musician);
-            performances[hash].CalculateQuality();
+            Performances[hash].Musicians.Add(musician);
+            Performances[hash].CalculateQuality();
         }
 
         public static void StopPlaying(Pawn musician, Thing venue)
         {
             int hash = venue.GetHashCode();
 
-            performances[hash].Musicians.Remove(musician);
-            performances[hash].CalculateQuality();
+            Performances[hash].Musicians.Remove(musician);
+            Performances[hash].CalculateQuality();
         }
 
         public static bool HasPerformance(Thing venue)
         {
             int hash = venue.GetHashCode();
 
-            if (!performances.ContainsKey(hash))
+            if (!Performances.ContainsKey(hash))
                 return false;
-            return performances[hash].Musicians.Any();
+            return Performances[hash].Musicians.Any();
         }
 
         public static float GetPerformanceQuality(Thing venue)
@@ -76,7 +77,7 @@ namespace MusicalInstruments
             
             int hash = venue.GetHashCode();
 
-            if (!performances.ContainsKey(hash))
+            if (!Performances.ContainsKey(hash))
             {
                 //Verse.Log.Message(String.Format("Gather spot #{0} has no performance.", hash));
                 return 0f;
@@ -84,7 +85,7 @@ namespace MusicalInstruments
             else
             {
                 //Verse.Log.Message(String.Format("Performance quality of gather spot #{0} = {1}.", hash, performances[hash].Quality));
-                return performances[hash].Quality;
+                return Performances[hash].Quality;
             }
 
 
@@ -101,7 +102,7 @@ namespace MusicalInstruments
             float easiness = instrumentComp.Props.easiness;
             float expressiveness = instrumentComp.Props.expressiveness;
 
-            return (easiness + (expressiveness * (artSkill / 10.0f) * (isInspired ? 2.0f : 1.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
+            return (easiness + (expressiveness * (artSkill / 8.0f) * (isInspired ? 2.0f : 1.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
         }
     }
 }

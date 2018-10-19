@@ -15,17 +15,17 @@ namespace MusicalInstruments
     public class JobDriver_MusicPlay : JobDriver
     {
 
-        [TweakValue("MusicalInstruments.XOffset", -0.5f, 0.5f)]
-        private static float InstrumentXOffset = .0f;
+        //[TweakValue("MusicalInstruments.XOffset", -0.5f, 0.5f)]
+        //private static float InstrumentXOffset = .0f;
 
-        [TweakValue("MusicalInstruments.ZOffset", -0.5f, 0.5f)]
-        private static float InstrumentZOffset = .0f;
+        //[TweakValue("MusicalInstruments.ZOffset", -0.5f, 0.5f)]
+        //private static float InstrumentZOffset = .0f;
 
-        [TweakValue("MusicalInstruments.Behind", 0f, 100f)]
-        private static bool Behind = false;
+        //[TweakValue("MusicalInstruments.Behind", 0f, 100f)]
+        //private static bool Behind = false;
 
-        [TweakValue("MusicalInstruments.Flip", 0f, 100f)]
-        private static bool Flip = false;
+        //[TweakValue("MusicalInstruments.Flip", 0f, 100f)]
+        //private static bool Flip = false;
 
         private const TargetIndex GatherSpotParentInd = TargetIndex.A;
 
@@ -73,13 +73,13 @@ namespace MusicalInstruments
         // it also interacts with the JoyUtility static class so the pawns get joy
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.EndOnDespawnedOrNull(TargetIndex.A, JobCondition.Incompletable);
+            this.EndOnDespawnedOrNull(GatherSpotParentInd, JobCondition.Incompletable);
 
             //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
 
             Pawn musician = this.pawn;
 
-            this.FailOnDestroyedNullOrForbidden(TargetIndex.C);
+            this.FailOnDestroyedNullOrForbidden(InstrumentInd);
 
             Thing instrument = this.TargetC.Thing;
 
@@ -88,27 +88,21 @@ namespace MusicalInstruments
             if (instrument.ParentHolder != musician.inventory)
             {
                 // go to where instrument is
-                yield return Toils_Goto.GotoThing(TargetIndex.C, PathEndMode.OnCell).FailOnSomeonePhysicallyInteracting(TargetIndex.C);
+                yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.OnCell).FailOnSomeonePhysicallyInteracting(InstrumentInd);
                 // pick up instrument
-                yield return Toils_Haul.StartCarryThing(TargetIndex.C);
+                yield return Toils_Haul.StartCarryThing(InstrumentInd);
             }
             else
             {
-                yield return Toils_Misc.TakeItemFromInventoryToCarrier(musician, TargetIndex.C);
+                yield return Toils_Misc.TakeItemFromInventoryToCarrier(musician, InstrumentInd);
 
             }
-
             
             // go to the sitting / standing spot
-            yield return Toils_Goto.GotoCell(TargetIndex.B, PathEndMode.OnCell);
+            yield return Toils_Goto.GotoCell(StandingSpotInd, PathEndMode.OnCell);
 
             // custom toil.
             Toil play = new Toil();
-
-            play.activeSkill = delegate
-            {
-                return SkillDefOf.Artistic;
-            };
 
             play.initAction = delegate
             {
@@ -120,9 +114,7 @@ namespace MusicalInstruments
             play.tickAction = delegate
             {
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 0.25f * PerformanceTracker.GetPerformanceQuality(venue), null);
-                musician.skills.Learn(SkillDefOf.Artistic, 0.1f);
-
+                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 0.5f * PerformanceTracker.GetPerformanceQuality(venue), null);
 
                 if (this.ticksLeftThisToil % 250 == 249)
                 {
@@ -153,10 +145,10 @@ namespace MusicalInstruments
         {
             IntVec3 closestGatherSpotParentCell = this.ClosestGatherSpotParentCell;
 
-            behind = Behind;
-            flip = Flip;
+            behind = (pawn.Rotation == Rot4.North);
+            flip = (pawn.Rotation == Rot4.East);
 
-            drawPos += new Vector3(InstrumentXOffset, .0f, InstrumentZOffset);
+            //drawPos += new Vector3(InstrumentXOffset, .0f, InstrumentZOffset);
             return true;
 
             //return ModifyCarriedThingDrawPosWorker(ref drawPos, ref behind, ref flip, closestGatherSpotParentCell, this.pawn);

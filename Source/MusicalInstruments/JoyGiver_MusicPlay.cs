@@ -115,12 +115,18 @@ namespace MusicalInstruments
             return null;
         }
 
+        public static bool IsInstrument(Thing thing)
+        {
+            return allInstruments.Contains(thing.def);
+
+        }
+
         private static bool TryFindInstrumentToPlay(IntVec3 center, Pawn musician, out Thing instrument)
         {
             instrument = null;
 
             foreach(Thing inventoryThing in musician.inventory.innerContainer) {
-                if (allInstruments.Contains(inventoryThing.def)) {
+                if (IsInstrument(inventoryThing)) {
                     instrument = inventoryThing;
                     return true;
                 }
