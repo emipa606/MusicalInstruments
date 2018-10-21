@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
   <ThingDef Name="MusicalInstrumentBase" Abstract="true">
@@ -15,13 +15,15 @@
       <Beauty>0</Beauty>
     </statBases>
     <graphicData>
-      <onGroundRandomRotateAngle>35</onGroundRandomRotateAngle>
       <graphicClass>Graphic_Single</graphicClass>
       <allowFlip>true</allowFlip>
+      <drawRotated>true</drawRotated>
+      <flipExtraRotation>90</flipExtraRotation>
     </graphicData>
     <altitudeLayer>Item</altitudeLayer>
     <tickerType>Never</tickerType>
     <alwaysHaulable>true</alwaysHaulable>
+    <smeltable>true</smeltable>
     <comps>
       <li Class="CompProperties_Forbiddable"/>
       <li>
@@ -81,6 +83,8 @@
         <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
         <easiness>0.5</easiness>
         <expressiveness>0.2</expressiveness>
+        <xOffset>0.1</xOffset>
+        <zOffset>-0.2</zOffset>
       </li>
     </comps>
   </ThingDef>
@@ -130,6 +134,8 @@
         <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
         <easiness>0.3</easiness>
         <expressiveness>0.5</expressiveness>
+        <xOffset>0.4</xOffset>
+        <zOffset>0.1</zOffset>
       </li>
     </comps>
   </ThingDef>
@@ -179,6 +185,8 @@
         <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
         <easiness>0.5</easiness>
         <expressiveness>0.5</expressiveness>
+        <xOffset>0.2</xOffset>
+        <zOffset>-0.2</zOffset>
       </li>
     </comps>
   </ThingDef>
@@ -228,6 +236,8 @@
         <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
         <easiness>0.1</easiness>
         <expressiveness>1.0</expressiveness>
+        <xOffset>0.4</xOffset>
+        <zOffset>0</zOffset>
       </li>
     </comps>
   </ThingDef>

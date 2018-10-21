@@ -6,8 +6,9 @@
     <drawGUIOverlay>true</drawGUIOverlay>
     <altitudeLayer>MetaOverlays</altitudeLayer>
     <mote>
-      <realTime>true</realTime>
-      <solidTime>1.5</solidTime>
+      <fadeInTime>0.08</fadeInTime>
+      <solidTime>1.4</solidTime>
+      <fadeOutTime>1.5</fadeOutTime>
     </mote>
     <graphicData>
       <texPath>Things/Mote/MusicNotes</texPath>

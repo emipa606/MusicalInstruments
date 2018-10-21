@@ -12,6 +12,10 @@ namespace MusicalInstruments
 
         public float expressiveness = 0f;
 
+        public float xOffset = 0f;
+
+        public float zOffset = 0f;
+
         public CompProperties_MusicalInstrument()
         {
             this.compClass = typeof(CompMusicalInstrument);

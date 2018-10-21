@@ -116,7 +116,7 @@ namespace MusicalInstruments
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
                 JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 0.5f * PerformanceTracker.GetPerformanceQuality(venue), null);
 
-                if (this.ticksLeftThisToil % 250 == 249)
+                if (this.ticksLeftThisToil % 100 == 99)
                 {
                     ThrowMusicNotes(musician.DrawPos, this.Map);
                 }
@@ -143,47 +143,42 @@ namespace MusicalInstruments
 
         public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool behind, ref bool flip)
         {
-            IntVec3 closestGatherSpotParentCell = this.ClosestGatherSpotParentCell;
+            Thing instrument = this.TargetC.Thing;
+            CompProperties_MusicalInstrument props = (CompProperties_MusicalInstrument)(instrument.TryGetComp<CompMusicalInstrument>().props);
 
-            behind = (pawn.Rotation == Rot4.North);
-            flip = (pawn.Rotation == Rot4.East);
+            Rot4 rotation = pawn.Rotation;
+                       
+            if (rotation == Rot4.North)
+            {
+                behind = true;
 
-            //drawPos += new Vector3(InstrumentXOffset, .0f, InstrumentZOffset);
-            return true;
+                if(!pawn.pather.Moving)
+                    drawPos += new Vector3(0f, 0f, props.zOffset);
+                return true;
+            }
+            else if (rotation == Rot4.East)
+            {
+                flip = true;
 
-            //return ModifyCarriedThingDrawPosWorker(ref drawPos, ref behind, ref flip, closestGatherSpotParentCell, this.pawn);
-            //return false;
+                if (!pawn.pather.Moving)
+                    drawPos += new Vector3(props.xOffset, 0f, props.zOffset);
+                return true;
+            }
+            else if (rotation == Rot4.South)
+            {
+                if (!pawn.pather.Moving)
+                    drawPos += new Vector3(0f, 0f, props.zOffset);
+                return true;
+            }
+            else if (rotation == Rot4.West)
+            {
+                if (!pawn.pather.Moving)
+                    drawPos += new Vector3(0f - props.xOffset, 0f, props.zOffset);
+                return true;
+            }
+
+            return false;
         }
-
-        //public static bool ModifyCarriedThingDrawPosWorker(ref Vector3 drawPos, ref bool behind, ref bool flip, IntVec3 placeCell, Pawn pawn)
-        //{
-        //    if (pawn.pather.Moving)
-        //    {
-        //        return false;
-        //    }
-        //    Thing carriedThing = pawn.carryTracker.CarriedThing;
-        //    if (carriedThing == null || !carriedThing.IngestibleNow)
-        //    {
-        //        return false;
-        //    }
-        //    if (placeCell.IsValid && placeCell.AdjacentToCardinal(pawn.Position) && placeCell.HasEatSurface(pawn.Map) && carriedThing.def.ingestible.ingestHoldUsesTable)
-        //    {
-        //        drawPos = new Vector3((float)placeCell.x + 0.5f, drawPos.y, (float)placeCell.z + 0.5f);
-        //        return true;
-        //    }
-        //    if (carriedThing.def.ingestible.ingestHoldOffsetStanding != null)
-        //    {
-        //        HoldOffset holdOffset = carriedThing.def.ingestible.ingestHoldOffsetStanding.Pick(pawn.Rotation);
-        //        if (holdOffset != null)
-        //        {
-        //            drawPos += holdOffset.offset;
-        //            behind = holdOffset.behind;
-        //            flip = holdOffset.flip;
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
 
         protected void ThrowMusicNotes(Vector3 loc, Map map)
         {
