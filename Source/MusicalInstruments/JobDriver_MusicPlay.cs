@@ -94,6 +94,7 @@ namespace MusicalInstruments
             }
             else
             {
+                //get instrument out ready to play
                 yield return Toils_Misc.TakeItemFromInventoryToCarrier(musician, InstrumentInd);
 
             }
@@ -114,7 +115,7 @@ namespace MusicalInstruments
             play.tickAction = delegate
             {
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 0.5f * PerformanceTracker.GetPerformanceQuality(venue), null);
+                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 2f * Math.Abs(PerformanceTracker.GetPerformanceQuality(venue)), null);
 
                 if (this.ticksLeftThisToil % 100 == 99)
                 {

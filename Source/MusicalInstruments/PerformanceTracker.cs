@@ -44,6 +44,11 @@ namespace MusicalInstruments
 
         private static Dictionary<int, Performance> Performances = new Dictionary<int, Performance>();
 
+        private static string LogMusician(Pawn musician)
+        {
+            return String.Format("{0}({1} skill) on {2}", musician.LabelShort, musician.skills.GetSkill(SkillDefOf.Artistic).Level, musician.carryTracker.CarriedThing.LabelShort);
+        }
+
         public static void StartPlaying(Pawn musician, Thing venue)
         {
             int hash = venue.GetHashCode();
@@ -53,6 +58,13 @@ namespace MusicalInstruments
 
             Performances[hash].Musicians.Add(musician);
             Performances[hash].CalculateQuality();
+
+#if DEBUG
+
+            Verse.Log.Message(String.Format("Musicians: {0}", String.Join(", ", Performances[hash].Musicians.Select(x => LogMusician(x)).ToArray())));
+            Verse.Log.Message(String.Format("Quality: {0}", Performances[hash].Quality));
+
+#endif
         }
 
         public static void StopPlaying(Pawn musician, Thing venue)
@@ -79,12 +91,12 @@ namespace MusicalInstruments
 
             if (!Performances.ContainsKey(hash))
             {
-                //Verse.Log.Message(String.Format("Gather spot #{0} has no performance.", hash));
+                //Verse.Log.Error(String.Format("Gather spot #{0} has no performance.", hash));
                 return 0f;
             }
             else
             {
-                //Verse.Log.Message(String.Format("Performance quality of gather spot #{0} = {1}.", hash, performances[hash].Quality));
+                //Verse.Log.Error(String.Format("Performance quality of gather spot #{0} = {1}.", hash, performances[hash].Quality));
                 return Performances[hash].Quality;
             }
 
@@ -102,7 +114,9 @@ namespace MusicalInstruments
             float easiness = instrumentComp.Props.easiness;
             float expressiveness = instrumentComp.Props.expressiveness;
 
-            return (easiness + (expressiveness * (artSkill / 8.0f) * (isInspired ? 2.0f : 1.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
+            float quality = (easiness + (expressiveness * (artSkill / 6.0f) * (isInspired ? 2.0f : 1.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
+
+            return quality - 0.3f;
         }
     }
 }
