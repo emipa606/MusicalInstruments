@@ -150,7 +150,7 @@ namespace MusicalInstruments
             IntVec3 centre = venue.Position;
             int roomHash = venue.GetRoom().GetHashCode();
 
-            List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => centre.DistanceTo(x.Position) < Radius && roomHash == x.GetRoom().GetHashCode()).ToList();
+            List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => centre.DistanceTo(x.Position) < Radius && roomHash == x.GetRoom().GetHashCode() && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
 
             if (!audience.Any()) return;
 
