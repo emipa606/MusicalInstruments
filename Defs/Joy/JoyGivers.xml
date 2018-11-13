@@ -20,7 +20,7 @@
   <JoyGiverDef>
     <defName>MusicListen</defName>
     <giverClass>MusicalInstruments.JoyGiver_MusicListen</giverClass>
-    <baseChance>9</baseChance>
+    <baseChance>12</baseChance>
     <jobDef>MusicListen</jobDef>
     <joyKind>Music</joyKind>
     <thingDefs>

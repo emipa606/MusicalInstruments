@@ -16,6 +16,8 @@ namespace MusicalInstruments
 
         public float zOffset = 0f;
 
+        public float xOffsetFacing = 0f;
+
         public CompProperties_MusicalInstrument()
         {
             this.compClass = typeof(CompMusicalInstrument);

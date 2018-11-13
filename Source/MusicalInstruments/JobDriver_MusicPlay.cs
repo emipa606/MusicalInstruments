@@ -33,6 +33,13 @@ namespace MusicalInstruments
 
         private const TargetIndex InstrumentInd = TargetIndex.C;
 
+        public int Luck { get; }
+
+        public JobDriver_MusicPlay() : base ()
+        {
+            Luck = Verse.Rand.Range(-3, 2);
+        }
+
         private Thing GatherSpotParent
         {
             get
@@ -115,11 +122,12 @@ namespace MusicalInstruments
             play.tickAction = delegate
             {
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 2f * Math.Abs(PerformanceTracker.GetPerformanceQuality(venue)), null);
+                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 1f, null);
 
                 if (this.ticksLeftThisToil % 100 == 99)
                 {
                     ThrowMusicNotes(musician.DrawPos, this.Map);
+                    PerformanceTracker.ApplyThoughts(venue);
                 }
 
          
@@ -153,28 +161,36 @@ namespace MusicalInstruments
             {
                 behind = true;
 
-                if(!pawn.pather.Moving)
-                    drawPos += new Vector3(0f, 0f, props.zOffset);
+                if (!pawn.pather.Moving)
+                {
+                    drawPos += new Vector3(0f - props.xOffsetFacing, 0f, props.zOffset);
+                }
                 return true;
             }
             else if (rotation == Rot4.East)
             {
-                flip = true;
-
                 if (!pawn.pather.Moving)
+                {
+                    flip = true;
                     drawPos += new Vector3(props.xOffset, 0f, props.zOffset);
+                }
                 return true;
             }
             else if (rotation == Rot4.South)
             {
                 if (!pawn.pather.Moving)
-                    drawPos += new Vector3(0f, 0f, props.zOffset);
+                {
+                    flip = true;
+                    drawPos += new Vector3(props.xOffsetFacing, 0f, props.zOffset);
+                }
                 return true;
             }
             else if (rotation == Rot4.West)
             {
                 if (!pawn.pather.Moving)
+                {
                     drawPos += new Vector3(0f - props.xOffset, 0f, props.zOffset);
+                }
                 return true;
             }
 

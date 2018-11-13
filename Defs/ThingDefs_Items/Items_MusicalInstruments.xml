@@ -13,6 +13,7 @@
       <Flammability>0.7</Flammability>
       <DeteriorationRate>2.0</DeteriorationRate>
       <Beauty>0</Beauty>
+      <SellPriceFactor>0.50</SellPriceFactor>
     </statBases>
     <graphicData>
       <graphicClass>Graphic_Single</graphicClass>
@@ -85,6 +86,7 @@
         <expressiveness>0.2</expressiveness>
         <xOffset>0.1</xOffset>
         <zOffset>-0.2</zOffset>
+        <xOffsetFacing>0.0</xOffsetFacing>
       </li>
     </comps>
   </ThingDef>
@@ -136,6 +138,7 @@
         <expressiveness>0.5</expressiveness>
         <xOffset>0.4</xOffset>
         <zOffset>0.1</zOffset>
+        <xOffsetFacing>0.1</xOffsetFacing>
       </li>
     </comps>
   </ThingDef>
@@ -187,6 +190,7 @@
         <expressiveness>0.5</expressiveness>
         <xOffset>0.2</xOffset>
         <zOffset>-0.2</zOffset>
+        <xOffsetFacing>0.0</xOffsetFacing>
       </li>
     </comps>
   </ThingDef>
@@ -238,6 +242,7 @@
         <expressiveness>1.0</expressiveness>
         <xOffset>0.4</xOffset>
         <zOffset>0</zOffset>
+        <xOffsetFacing>0.3</xOffsetFacing>
       </li>
     </comps>
   </ThingDef>
