@@ -58,7 +58,7 @@ namespace MusicalInstruments
                 workingSpots.Remove(compGatherSpot);
 
                 // is a performance currently in progress
-                if (PerformanceTracker.HasPerformance(compGatherSpot.parent))
+                if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(compGatherSpot.parent))
                 {
                     Job job = new Job(def.jobDef, compGatherSpot.parent, pawn.CurrentBed());
                 }
@@ -104,7 +104,7 @@ namespace MusicalInstruments
                                 {
                                     
                                     // is a performance currently in progress
-                                    if (PerformanceTracker.HasPerformance(compGatherSpot.parent))
+                                    if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(compGatherSpot.parent))
                                     {
                                         
                                         

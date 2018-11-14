@@ -54,8 +54,10 @@
     <Compile Include="JobDriver_TakeInstrument.cs" />
     <Compile Include="JoyGiver_MusicListen.cs" />
     <Compile Include="JoyGiver_MusicPlay.cs" />
+    <Compile Include="JobDefOf_MusicPlay.cs" />
     <Compile Include="JoyKindDefOf_Music.cs" />
-    <Compile Include="PerformanceTracker.cs" />
+    <Compile Include="PerformanceManager.cs" />
+    <Compile Include="Performance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

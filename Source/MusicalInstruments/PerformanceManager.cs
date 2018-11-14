@@ -10,68 +10,43 @@ using Verse.AI;
 
 using RimWorld;
 
-
 namespace MusicalInstruments
 {
-    public class Performance
-    {
-        private const int SmallEnsembleCutoff = 6;
-
-        public List<Pawn> Musicians;
-        public float Quality;
-
-        public void CalculateQuality()
-        {
-            if (Musicians.Any())
-            {
-                float f;
-
-                if(Musicians.Count == 1)
-                {
-                    f = 1f;
-                } else if(Musicians.Count >= SmallEnsembleCutoff)
-                {
-                    f = Musicians.Count / 2f;
-                }
-                else
-                {
-                    float x = (Musicians.Count - 1) / (float)(SmallEnsembleCutoff - 1);
-                    f = 1f + x * Musicians.Count / 2f - x;
-                }
-
-#if DEBUG
-
-                Verse.Log.Message(String.Format("s={0},f={1}", Musicians.Count, f));
-
-#endif 
-
-                Quality = Musicians.Select(x => PerformanceTracker.GetMusicQuality(x, x.carryTracker.CarriedThing)).Sum() / f;
-
-            }
-
-            else Quality = 0f;
-            
-        }
-
-    }
-
-
-    public static class PerformanceTracker
+    public class PerformanceManager : MapComponent
     {
         private const float Radius = 9f;
-        private static Dictionary<int, Performance> Performances = new Dictionary<int, Performance>();
+        private Dictionary<int, Performance> Performances;
+        
+        public PerformanceManager(Map map) : base(map)
+        {
+            Performances = new Dictionary<int, Performance>();
+        }
+
+        public override void FinalizeInit()
+        {
+            //foreach(CompGatherSpot gatherSpot in map.gatherSpotLister.activeSpots)
+            //{
+            //    foreach(Pawn pawn in map.mapPawns.FreeColonistsAndPrisoners)
+            //    {
+            //        if (pawn.CurJobDef == JobDefOf_MusicPlay.MusicPlay && pawn.CurJob.targetA.Thing.GetHashCode() == gatherSpot.parent.GetHashCode())
+            //        {
+            //            StartPlaying(pawn, gatherSpot.parent);
+            //        }
+            //    }
+            //}
+        }
 
         private static string LogMusician(Pawn musician)
         {
             return String.Format("{0}({1} skill) on {2}", musician.LabelShort, musician.skills.GetSkill(SkillDefOf.Artistic).Level, musician.carryTracker.CarriedThing.LabelShort);
         }
 
-        public static void StartPlaying(Pawn musician, Thing venue)
+        public void StartPlaying(Pawn musician, Thing venue)
         {
             int hash = venue.GetHashCode();
 
             if (!Performances.ContainsKey(hash))
-                Performances[hash] = new Performance() { Musicians = new List<Pawn>(), Quality = 0f };
+                Performances[hash] = new Performance() { Venue = venue, Musicians = new List<Pawn>(), Quality = 0f };
 
             Performances[hash].Musicians.Add(musician);
             Performances[hash].CalculateQuality();
@@ -86,7 +61,7 @@ namespace MusicalInstruments
 #endif
         }
 
-        public static void StopPlaying(Pawn musician, Thing venue)
+        public void StopPlaying(Pawn musician, Thing venue)
         {
             int hash = venue.GetHashCode();
 
@@ -96,7 +71,7 @@ namespace MusicalInstruments
             Performances[hash].CalculateQuality();
         }
 
-        public static bool HasPerformance(Thing venue)
+        public bool HasPerformance(Thing venue)
         {
             int hash = venue.GetHashCode();
 
@@ -105,9 +80,9 @@ namespace MusicalInstruments
             return Performances[hash].Musicians.Any();
         }
 
-        public static float GetPerformanceQuality(Thing venue)
+        public float GetPerformanceQuality(Thing venue)
         {
-            
+
             int hash = venue.GetHashCode();
 
             if (!Performances.ContainsKey(hash))
@@ -124,29 +99,23 @@ namespace MusicalInstruments
 
         }
 
-        public static float GetMusicQuality(Pawn musician, Thing instrument)
+        public override void MapComponentTick()
         {
-            int artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
-            int luck = ((JobDriver_MusicPlay)musician.jobs.curDriver).Luck;
-            bool isInspired = musician.Inspired ? musician.Inspiration.def == InspirationDefOf.Inspired_Creativity : false;
-            QualityCategory instrumentQuality = QualityCategory.Normal;
-            instrument.TryGetQuality(out instrumentQuality);
-            float instrumentCondition = (float)instrument.HitPoints / instrument.MaxHitPoints;
-            CompMusicalInstrument instrumentComp = instrument.TryGetComp<CompMusicalInstrument>();
-            float easiness = instrumentComp.Props.easiness;
-            float expressiveness = instrumentComp.Props.expressiveness;
-
-            float quality = (easiness + (expressiveness * ((artSkill + luck + (isInspired ? 0 : -3)) / 5.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
-
-            return quality - 0.3f;
+            if (Find.TickManager.TicksGame % 100 == 99)
+            {
+                foreach(int hash in Performances.Keys)
+                {
+                    ApplyThoughts(Performances[hash].Venue);
+                }
+            }
         }
 
-        public static void ApplyThoughts(Thing venue)
+        public void ApplyThoughts(Thing venue)
         {
             float quality = Performances[venue.GetHashCode()].Quality;
 
             if (quality >= 0f && quality < .5f) return;
-            
+
             IntVec3 centre = venue.Position;
             int roomHash = venue.GetRoom().GetHashCode();
 
@@ -163,7 +132,7 @@ namespace MusicalInstruments
             {
                 thought = ThoughtDef.Named("GreatMusic");
             }
-            else 
+            else
             {
                 thought = ThoughtDef.Named("NiceMusic");
             };

@@ -66,7 +66,7 @@ namespace MusicalInstruments
             listen.tickAction = delegate
             {
                 this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, 1f + Math.Abs(PerformanceTracker.GetPerformanceQuality(venue)), null);
+                JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, 1f + Math.Abs(pawn.Map.GetComponent<PerformanceManager>().GetPerformanceQuality(venue)), null);
             };
 
             listen.handlingFacing = true;
@@ -75,7 +75,7 @@ namespace MusicalInstruments
 
             listen.AddEndCondition(delegate 
             {
-                if (PerformanceTracker.HasPerformance(venue))
+                if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(venue))
                     return JobCondition.Ongoing;
                 else
                     return JobCondition.Incompletable;

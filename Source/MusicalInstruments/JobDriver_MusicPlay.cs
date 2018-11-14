@@ -134,7 +134,7 @@ namespace MusicalInstruments
 
             play.initAction = delegate
             {
-                PerformanceTracker.StartPlaying(musician, venue);
+                pawn.Map.GetComponent<PerformanceManager>().StartPlaying(musician, venue);
             };
 
 
@@ -147,7 +147,7 @@ namespace MusicalInstruments
                 if (this.ticksLeftThisToil % 100 == 99)
                 {
                     ThrowMusicNotes(musician.DrawPos, this.Map);
-                    PerformanceTracker.ApplyThoughts(venue);
+                    //pawn.Map.GetComponent<PerformanceManager>().ApplyThoughts(venue);
                 }
 
          
@@ -159,7 +159,7 @@ namespace MusicalInstruments
 
             play.AddFinishAction(delegate
             {
-                PerformanceTracker.StopPlaying(musician, venue);
+                pawn.Map.GetComponent<PerformanceManager>().StopPlaying(musician, venue);
             });
 
             play.socialMode = RandomSocialMode.Quiet;
