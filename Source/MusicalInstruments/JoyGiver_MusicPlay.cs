@@ -33,8 +33,6 @@ namespace MusicalInstruments
                                                                             orderby Mathf.Abs((c - IntVec3.Zero).LengthHorizontal - 1.95f)
                                                                             select c).ToList<IntVec3>();
 
-        private static List<ThingDef> nurseableDrugs = new List<ThingDef>();
-
         public override Job TryGiveJob(Pawn pawn)
         {
             return this.TryGiveJobInt(pawn, null);
@@ -125,23 +123,59 @@ namespace MusicalInstruments
         {
             instrument = null;
 
+            Thing heldInstrument = null;
+
             foreach(Thing inventoryThing in musician.inventory.innerContainer) {
                 if (IsInstrument(inventoryThing)) {
-                    instrument = inventoryThing;
-                    return true;
+                    heldInstrument = inventoryThing;
+                    break;
                 }
-
             }
 
-            foreach (ThingDef instrumentDef in JoyGiver_MusicPlay.allInstruments.InRandomOrder()) {
+            List<Thing> mapInstruments = allInstruments.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x)).ToList();
 
-                List<Thing> list = musician.Map.listerThings.ThingsOfDef(instrumentDef);
-                Predicate<Thing> validator = (Thing t) => musician.CanReserve(t, 1, -1, null, false) && !t.IsForbidden(musician);
-                instrument = GenClosest.ClosestThing_Global_Reachable(center, musician.Map, list, PathEndMode.OnCell, TraverseParms.For(musician, Danger.Deadly, TraverseMode.ByPawn, false), validator: validator);
-                if (instrument != null) return true;
+            if (musician.skills.GetSkill(SkillDefOf.Artistic).Level <= 6)
+                mapInstruments = mapInstruments.OrderByDescending(x => ((CompProperties_MusicalInstrument)x.TryGetComp<CompMusicalInstrument>().props).easiness)
+                                                .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
+            else
+                mapInstruments = mapInstruments.OrderByDescending(x => ((CompProperties_MusicalInstrument)x.TryGetComp<CompMusicalInstrument>().props).expressiveness)
+                                                .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
+
+            if (!mapInstruments.Any())
+            {
+                instrument = heldInstrument;
+                return (instrument != null);
             }
 
-            return false;
+            Thing bestInstrument = mapInstruments.First();
+
+            if (heldInstrument == null)
+            {
+                instrument = bestInstrument;
+                return true;
+            }
+
+            bool swap = false;
+
+            float rand = Verse.Rand.Range(0f, 1f);
+
+            if (rand > .9f)
+            {
+                swap = true;
+            }
+            else if (rand > 0.4f)
+            {
+                swap = ((musician.skills.GetSkill(SkillDefOf.Artistic).Level <= 6 &&
+                            ((CompProperties_MusicalInstrument)heldInstrument.TryGetComp<CompMusicalInstrument>().props).easiness <
+                            ((CompProperties_MusicalInstrument)bestInstrument.TryGetComp<CompMusicalInstrument>().props).easiness) ||
+                        (musician.skills.GetSkill(SkillDefOf.Artistic).Level > 6 &&
+                            ((CompProperties_MusicalInstrument)heldInstrument.TryGetComp<CompMusicalInstrument>().props).expressiveness <
+                            ((CompProperties_MusicalInstrument)bestInstrument.TryGetComp<CompMusicalInstrument>().props).expressiveness));
+            }
+
+            instrument = swap ? bestInstrument : heldInstrument;
+
+            return true;
         }
 
         

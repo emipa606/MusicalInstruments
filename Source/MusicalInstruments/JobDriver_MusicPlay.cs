@@ -96,6 +96,26 @@ namespace MusicalInstruments
             {
                 // go to where instrument is
                 yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.OnCell).FailOnSomeonePhysicallyInteracting(InstrumentInd);
+
+                //drop other instruments if any
+                List<Thing> heldInstruments = pawn.inventory.innerContainer.Where(x => JoyGiver_MusicPlay.IsInstrument(x)).ToList();
+
+                if(heldInstruments.Any())
+                {
+                    Toil dropInstruments = new Toil();
+                    dropInstruments.initAction = delegate
+                    {
+                        Thing result;
+
+                        foreach (Thing heldInstrument in heldInstruments)
+                        {
+                            pawn.inventory.innerContainer.TryDrop(heldInstrument, pawn.Position, pawn.Map, ThingPlaceMode.Near, out result);
+                        }
+                    };
+
+                    yield return dropInstruments;
+                }
+
                 // pick up instrument
                 yield return Toils_Haul.StartCarryThing(InstrumentInd);
             }
