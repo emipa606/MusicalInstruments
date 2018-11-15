@@ -49,16 +49,19 @@
   <ItemGroup>
     <Compile Include="CompMusicalInstrument.cs" />
     <Compile Include="CompProperties_MusicalInstrument.cs" />
+    <Compile Include="JobDefOf_MusicPlayWork.cs" />
     <Compile Include="JobDriver_MusicListen.cs" />
-    <Compile Include="JobDriver_MusicPlay.cs" />
+    <Compile Include="JobDriver_MusicPlayBase.cs" />
+    <Compile Include="JobDriver_MusicPlayWork.cs" />
+    <Compile Include="JobDriver_MusicPlayJoy.cs" />
     <Compile Include="JobDriver_TakeInstrument.cs" />
     <Compile Include="JoyGiver_MusicListen.cs" />
     <Compile Include="JoyGiver_MusicPlay.cs" />
-    <Compile Include="JobDefOf_MusicPlay.cs" />
     <Compile Include="JoyKindDefOf_Music.cs" />
     <Compile Include="PerformanceManager.cs" />
     <Compile Include="Performance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorkGiver_MusicPlay.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

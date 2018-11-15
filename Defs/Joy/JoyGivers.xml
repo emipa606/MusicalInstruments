@@ -4,7 +4,7 @@
     <defName>MusicPlay</defName>
     <giverClass>MusicalInstruments.JoyGiver_MusicPlay</giverClass>
     <baseChance>3</baseChance>
-    <jobDef>MusicPlay</jobDef>
+    <jobDef>MusicPlayJoy</jobDef>
     <joyKind>Music</joyKind>
     <thingDefs>
       <li>FrameDrum</li>
@@ -17,6 +17,7 @@
       <li>Hearing</li>
     </requiredCapacities>    
   </JoyGiverDef>
+
   <JoyGiverDef>
     <defName>MusicListen</defName>
     <giverClass>MusicalInstruments.JoyGiver_MusicListen</giverClass>

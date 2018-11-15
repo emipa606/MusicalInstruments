@@ -60,7 +60,7 @@ namespace MusicalInstruments
             if (instrument == null) return 0f;
 
             int artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
-            int luck = ((JobDriver_MusicPlay)musician.jobs.curDriver).Luck;
+            int luck = ((JobDriver_MusicPlayBase)musician.jobs.curDriver).Luck;
             bool isInspired = musician.Inspired ? musician.Inspiration.def == InspirationDefOf.Inspired_Creativity : false;
             QualityCategory instrumentQuality = QualityCategory.Normal;
             instrument.TryGetQuality(out instrumentQuality);

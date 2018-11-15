@@ -14,24 +14,12 @@ namespace MusicalInstruments
 {
     class JoyGiver_MusicPlay : JoyGiver
     {
-        private static readonly List<ThingDef> allInstruments = new List<ThingDef> {
-            ThingDef.Named("FrameDrum"),
-            ThingDef.Named("Ocarina"),
-            ThingDef.Named("Guitar"),
-            ThingDef.Named("Violin")
-        };
+
 
         private static readonly WorkTypeDef art = WorkTypeDefsUtility.WorkTypeDefsInPriorityOrder.Where(wtd => wtd.defName == "Art").SingleOrDefault();
 
         private static List<CompGatherSpot> workingSpots = new List<CompGatherSpot>();
 
-        private const float GatherRadius = 3.9f;
-
-        private static readonly int NumRadiusCells = GenRadial.NumCellsInRadius(GatherRadius);
-
-        private static readonly List<IntVec3> RadialPatternMiddleOutward = (from c in GenRadial.RadialPattern.Take(JoyGiver_MusicPlay.NumRadiusCells)
-                                                                            orderby Mathf.Abs((c - IntVec3.Zero).LengthHorizontal - 1.95f)
-                                                                            select c).ToList<IntVec3>();
 
         public override Job TryGiveJob(Pawn pawn)
         {
@@ -83,7 +71,7 @@ namespace MusicalInstruments
                                     Job job;
                                 
                                     IntVec3 standingSpot;
-                                    if (!JoyGiver_MusicPlay.TryFindSitSpotOnGroundNear(compGatherSpot.parent.Position, pawn, out standingSpot))
+                                    if (!PerformanceManager.TryFindSitSpotOnGroundNear(compGatherSpot.parent.Position, pawn, out standingSpot))
                                     {
                                         return null;
                                     }
@@ -92,7 +80,7 @@ namespace MusicalInstruments
                                     Thing instrument;
 
                                     if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
-                                        JoyGiver_MusicPlay.TryFindInstrumentToPlay(compGatherSpot.parent.Position, pawn, out instrument))
+                                        PerformanceManager.TryFindInstrumentToPlay(compGatherSpot.parent.Position, pawn, out instrument))
                                     {
 
                                         job.targetC = instrument;
@@ -113,86 +101,6 @@ namespace MusicalInstruments
             return null;
         }
 
-        public static bool IsInstrument(Thing thing)
-        {
-            return allInstruments.Contains(thing.def);
 
-        }
-
-        private static bool TryFindInstrumentToPlay(IntVec3 center, Pawn musician, out Thing instrument)
-        {
-            instrument = null;
-
-            Thing heldInstrument = null;
-
-            foreach(Thing inventoryThing in musician.inventory.innerContainer) {
-                if (IsInstrument(inventoryThing)) {
-                    heldInstrument = inventoryThing;
-                    break;
-                }
-            }
-
-            List<Thing> mapInstruments = allInstruments.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x)).ToList();
-
-            if (musician.skills.GetSkill(SkillDefOf.Artistic).Level <= 6)
-                mapInstruments = mapInstruments.OrderByDescending(x => ((CompProperties_MusicalInstrument)x.TryGetComp<CompMusicalInstrument>().props).easiness)
-                                                .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
-            else
-                mapInstruments = mapInstruments.OrderByDescending(x => ((CompProperties_MusicalInstrument)x.TryGetComp<CompMusicalInstrument>().props).expressiveness)
-                                                .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
-
-            if (!mapInstruments.Any())
-            {
-                instrument = heldInstrument;
-                return (instrument != null);
-            }
-
-            Thing bestInstrument = mapInstruments.First();
-
-            if (heldInstrument == null)
-            {
-                instrument = bestInstrument;
-                return true;
-            }
-
-            bool swap = false;
-
-            float rand = Verse.Rand.Range(0f, 1f);
-
-            if (rand > .9f)
-            {
-                swap = true;
-            }
-            else if (rand > 0.4f)
-            {
-                swap = ((musician.skills.GetSkill(SkillDefOf.Artistic).Level <= 6 &&
-                            ((CompProperties_MusicalInstrument)heldInstrument.TryGetComp<CompMusicalInstrument>().props).easiness <
-                            ((CompProperties_MusicalInstrument)bestInstrument.TryGetComp<CompMusicalInstrument>().props).easiness) ||
-                        (musician.skills.GetSkill(SkillDefOf.Artistic).Level > 6 &&
-                            ((CompProperties_MusicalInstrument)heldInstrument.TryGetComp<CompMusicalInstrument>().props).expressiveness <
-                            ((CompProperties_MusicalInstrument)bestInstrument.TryGetComp<CompMusicalInstrument>().props).expressiveness));
-            }
-
-            instrument = swap ? bestInstrument : heldInstrument;
-
-            return true;
-        }
-
-        
-
-        private static bool TryFindSitSpotOnGroundNear(IntVec3 center, Pawn sitter, out IntVec3 result)
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                IntVec3 intVec = center + GenRadial.RadialPattern[Rand.Range(1, JoyGiver_MusicPlay.NumRadiusCells)];
-                if (sitter.CanReserveAndReach(intVec, PathEndMode.OnCell, Danger.None, 1, -1, null, false) && intVec.GetEdifice(sitter.Map) == null && GenSight.LineOfSight(center, intVec, sitter.Map, true, null, 0, 0))
-                {
-                    result = intVec;
-                    return true;
-                }
-            }
-            result = IntVec3.Invalid;
-            return false;
-        }
     }
 }

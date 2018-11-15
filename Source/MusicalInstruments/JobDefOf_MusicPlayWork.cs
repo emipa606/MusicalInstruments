@@ -13,13 +13,13 @@ using RimWorld;
 namespace MusicalInstruments
 {
     [DefOf]
-    public static class JobDefOf_MusicPlay
+    public static class JobDefOf_MusicPlayWork
     {
-        public static JobDef MusicPlay;
+        public static JobDef MusicPlayWork;
 
-        static JobDefOf_MusicPlay()
+        static JobDefOf_MusicPlayWork()
         {
-            DefOfHelper.EnsureInitializedInCtor(typeof(JobDefOf_MusicPlay));
+            DefOfHelper.EnsureInitializedInCtor(typeof(JobDefOf_MusicPlayWork));
         }
     }
 }

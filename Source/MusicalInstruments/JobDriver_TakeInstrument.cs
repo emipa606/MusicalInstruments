@@ -51,7 +51,7 @@ namespace MusicalInstruments
 
             dropInstruments.initAction = delegate
             {
-                List<Thing> instruments = pawn.inventory.innerContainer.Where(x => JoyGiver_MusicPlay.IsInstrument(x)).ToList();
+                List<Thing> instruments = pawn.inventory.innerContainer.Where(x => PerformanceManager.IsInstrument(x)).ToList();
                 Thing result;
 
                 foreach (Thing instrument in instruments)

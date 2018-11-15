@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <JobDef>
-    <defName>MusicPlay</defName>
-    <driverClass>MusicalInstruments.JobDriver_MusicPlay</driverClass>
+    <defName>MusicPlayJoy</defName>
+    <driverClass>MusicalInstruments.JobDriver_MusicPlayJoy</driverClass>
     <reportString>playing music.</reportString>
     <joyDuration>4000</joyDuration>
     <joyKind>Music</joyKind>
