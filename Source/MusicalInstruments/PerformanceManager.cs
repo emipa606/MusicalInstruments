@@ -47,7 +47,7 @@ namespace MusicalInstruments
 
         }
 
-        public static bool TryFindInstrumentToPlay(IntVec3 center, Pawn musician, out Thing instrument)
+        public static bool TryFindInstrumentToPlay(IntVec3 center, Pawn musician, out Thing instrument, bool isWork = false)
         {
             instrument = null;
 
@@ -62,14 +62,14 @@ namespace MusicalInstruments
                 }
             }
 
-            List<Thing> mapInstruments = allInstruments.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x)).ToList();
+            int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
 
-            if (musician.skills.GetSkill(SkillDefOf.Artistic).Level <= 6)
-                mapInstruments = mapInstruments.OrderByDescending(x => ((CompProperties_MusicalInstrument)x.TryGetComp<CompMusicalInstrument>().props).easiness)
-                                                .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
-            else
-                mapInstruments = mapInstruments.OrderByDescending(x => ((CompProperties_MusicalInstrument)x.TryGetComp<CompMusicalInstrument>().props).expressiveness)
-                                                .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
+            if (!isWork && heldInstrument == null && skill < 3 && Verse.Rand.Chance(0.75f))
+                return false;
+
+            List<Thing> mapInstruments = allInstruments.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x))
+                                                        .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
+                                                        .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
 
             if (!mapInstruments.Any())
             {
@@ -95,12 +95,7 @@ namespace MusicalInstruments
             }
             else if (rand > 0.4f)
             {
-                swap = ((musician.skills.GetSkill(SkillDefOf.Artistic).Level <= 6 &&
-                            ((CompProperties_MusicalInstrument)heldInstrument.TryGetComp<CompMusicalInstrument>().props).easiness <
-                            ((CompProperties_MusicalInstrument)bestInstrument.TryGetComp<CompMusicalInstrument>().props).easiness) ||
-                        (musician.skills.GetSkill(SkillDefOf.Artistic).Level > 6 &&
-                            ((CompProperties_MusicalInstrument)heldInstrument.TryGetComp<CompMusicalInstrument>().props).expressiveness <
-                            ((CompProperties_MusicalInstrument)bestInstrument.TryGetComp<CompMusicalInstrument>().props).expressiveness));
+                swap = heldInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill) < bestInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill);
             }
 
             instrument = swap ? bestInstrument : heldInstrument;
@@ -128,13 +123,23 @@ namespace MusicalInstruments
         // non-static
 
         private Dictionary<int, Performance> Performances;
+        private Dictionary<int, int> WorkPerformanceTimestamps;
 
         public PerformanceManager(Map map) : base(map)
         {
             Performances = new Dictionary<int, Performance>();
+            WorkPerformanceTimestamps = new Dictionary<int, int>();
         }
 
-        public void StartPlaying(Pawn musician, Thing venue)
+        public bool CanPlayForWorkNow(Pawn musician)
+        {
+            int hash = musician.GetHashCode();
+            if (!WorkPerformanceTimestamps.ContainsKey(hash)) return true;
+            int ticksSince = Find.TickManager.TicksGame - WorkPerformanceTimestamps[hash];
+            return (ticksSince >= 30000);
+        }
+
+        public void StartPlaying(Pawn musician, Thing venue, bool isWork)
         {
             int hash = venue.GetHashCode();
 
@@ -144,7 +149,10 @@ namespace MusicalInstruments
             Performances[hash].Musicians.Add(musician);
             Performances[hash].CalculateQuality();
 
-            ApplyThoughts(venue);
+            //ApplyThoughts(venue);
+
+            if (isWork)
+                WorkPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
 
 #if DEBUG
 
@@ -158,10 +166,14 @@ namespace MusicalInstruments
         {
             int hash = venue.GetHashCode();
 
-            ApplyThoughts(venue);
+            //ApplyThoughts(venue);
 
-            Performances[hash].Musicians.Remove(musician);
-            Performances[hash].CalculateQuality();
+            if (Performances.ContainsKey(hash))
+            {
+                if(Performances[hash].Musicians.Contains(musician))
+                    Performances[hash].Musicians.Remove(musician);
+                Performances[hash].CalculateQuality();
+            }
         }
 
         public bool HasPerformance(Thing venue)
@@ -205,7 +217,11 @@ namespace MusicalInstruments
 
         public void ApplyThoughts(Thing venue)
         {
-            float quality = Performances[venue.GetHashCode()].Quality;
+            int hash = venue.GetHashCode();
+
+            if (!Performances.ContainsKey(hash)) return;
+
+            float quality = Performances[hash].Quality;
 
             if (quality >= 0f && quality < .5f) return;
 
