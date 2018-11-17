@@ -33,6 +33,13 @@ namespace MusicalInstruments
 
         private Job TryGiveJobInt(Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator)
         {
+            //quit roll for low skill without instrument
+            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+            int skill = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
+
+            if (pm.HeldInstrument(pawn) == null && skill < 3 && Verse.Rand.Chance(.75f))
+                return null;
+
             // if no gathering sports then give up
             if (pawn.Map.gatherSpotLister.activeSpots.Count == 0)
             {

@@ -16,7 +16,7 @@ namespace MusicalInstruments
     {
         // static
 
-        private static readonly List<ThingDef> allInstruments = new List<ThingDef> {
+        private static readonly List<ThingDef> allInstrumentDefs = new List<ThingDef> {
             ThingDef.Named("FrameDrum"),
             ThingDef.Named("Ocarina"),
             ThingDef.Named("Guitar"),
@@ -43,9 +43,11 @@ namespace MusicalInstruments
 
         public static bool IsInstrument(Thing thing)
         {
-            return allInstruments.Contains(thing.def);
+            return allInstrumentDefs.Contains(thing.def);
 
         }
+
+
 
         public static bool TryFindInstrumentToPlay(IntVec3 center, Pawn musician, out Thing instrument, bool isWork = false)
         {
@@ -64,12 +66,13 @@ namespace MusicalInstruments
 
             int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
 
-            if (!isWork && heldInstrument == null && skill < 3 && Verse.Rand.Chance(0.75f))
-                return false;
 
-            List<Thing> mapInstruments = allInstruments.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x))
+            //if (!isWork && heldInstrument == null && skill < 3 && Verse.Rand.Chance(0.75f))
+            //    return false;
+
+            IEnumerable<Thing> mapInstruments = allInstrumentDefs.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x))
                                                         .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
-                                                        .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality).ToList();
+                                                        .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
 
             if (!mapInstruments.Any())
             {
@@ -129,6 +132,24 @@ namespace MusicalInstruments
         {
             Performances = new Dictionary<int, Performance>();
             WorkPerformanceTimestamps = new Dictionary<int, int>();
+        }
+
+        public bool AnyMapInstruments()
+        {
+            return allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x)).Any();
+        }
+
+        public Thing HeldInstrument(Pawn musician)
+        {
+            foreach (Thing inventoryThing in musician.inventory.innerContainer)
+            {
+                if (IsInstrument(inventoryThing))
+                {
+                    return inventoryThing;
+                }
+            }
+
+            return null;
         }
 
         public bool CanPlayForWorkNow(Pawn musician)

@@ -12,21 +12,46 @@ using RimWorld;
 
 namespace MusicalInstruments
 {
-    class WorkGiver_MusicPlay : WorkGiver_Scanner
+
+
+    public class WorkGiver_MusicPlay : WorkGiver_Scanner
     {
 
         private static readonly WorkTypeDef art = WorkTypeDefsUtility.WorkTypeDefsInPriorityOrder.Where(wtd => wtd.defName == "Art").SingleOrDefault();
 
         private static List<CompGatherSpot> workingSpots = new List<CompGatherSpot>();
 
+        public override ThingRequest PotentialWorkThingRequest
+        {
+            get
+            {
+                return ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial);
+            }
+        }
+
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
+            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+
+            if (!pm.CanPlayForWorkNow(pawn))
+                return null;
+
+            //we also need to check for availibilty of an instrument here...?
+            if (pm.HeldInstrument(pawn) == null && !pm.AnyMapInstruments())
+                return null;
+
             return pawn.Map.gatherSpotLister.activeSpots.Select(x => (Thing)x.parent);
         }
 
         public override Job JobOnThing(Pawn pawn, Thing thing, bool forced = false)
         {
+            if (!pawn.Map.GetComponent<PerformanceManager>().CanPlayForWorkNow(pawn))
+                return null;
+
             CompGatherSpot compGatherSpot = thing.TryGetComp<CompGatherSpot>();
+
+            if (compGatherSpot == null)
+                return null;
 
             Job job;
 
