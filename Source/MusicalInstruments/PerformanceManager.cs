@@ -134,6 +134,23 @@ namespace MusicalInstruments
             WorkPerformanceTimestamps = new Dictionary<int, int>();
         }
 
+        public override void ExposeData()
+        {
+            Scribe_Collections.Look<int, Performance>(ref Performances, "MusicalInstruments.Performances", LookMode.Value, LookMode.Deep);
+            Scribe_Collections.Look<int, int>(ref WorkPerformanceTimestamps, "MusicalInstruments.WorkPerformanceTimestamps", LookMode.Value, LookMode.Value);
+
+            if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
+            {
+                //try to avoid breaking saves from old versions
+                if (Performances == null)
+                    Performances = new Dictionary<int, Performance>();
+                if (WorkPerformanceTimestamps == null)
+                    WorkPerformanceTimestamps = new Dictionary<int, int>();
+            }
+
+        }
+
+
         public bool AnyMapInstruments()
         {
             return allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x)).Any();
@@ -162,38 +179,47 @@ namespace MusicalInstruments
 
         public void StartPlaying(Pawn musician, Thing venue, bool isWork)
         {
-            int hash = venue.GetHashCode();
+            int venueHash = venue.GetHashCode();
 
-            if (!Performances.ContainsKey(hash))
-                Performances[hash] = new Performance() { Venue = venue, Musicians = new List<Pawn>(), Quality = 0f };
+            if (!Performances.ContainsKey(venueHash))
+                Performances[venueHash] = new Performance(venue);
 
-            Performances[hash].Musicians.Add(musician);
-            Performances[hash].CalculateQuality();
+            int musicianHash = musician.GetHashCode();
 
-            //ApplyThoughts(venue);
+            if (!Performances[venueHash].Musicians.ContainsKey(musicianHash))
+            {
+                Performances[venueHash].Musicians[musicianHash] = musician;
+                Performances[venueHash].CalculateQuality();
 
-            if (isWork)
-                WorkPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
+                if (isWork)
+                    WorkPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
+
+            }
 
 #if DEBUG
 
-            Verse.Log.Message(String.Format("Musicians: {0}", String.Join(", ", Performances[hash].Musicians.Select(x => LogMusician(x)).ToArray())));
-            Verse.Log.Message(String.Format("Quality: {0}", Performances[hash].Quality));
+            Verse.Log.Message(String.Format("Musicians: {0}", String.Join(", ", Performances[venueHash].Musicians.Select(x => LogMusician(x.Value)).ToArray())));
+            Verse.Log.Message(String.Format("Quality: {0}", Performances[venueHash].Quality));
 
 #endif
         }
 
         public void StopPlaying(Pawn musician, Thing venue)
         {
-            int hash = venue.GetHashCode();
+            int venueHash = venue.GetHashCode();
+            int musicianHash = musician.GetHashCode();
 
-            //ApplyThoughts(venue);
-
-            if (Performances.ContainsKey(hash))
+            if (Performances.ContainsKey(venueHash))
             {
-                if(Performances[hash].Musicians.Contains(musician))
-                    Performances[hash].Musicians.Remove(musician);
-                Performances[hash].CalculateQuality();
+                if (Performances[venueHash].Musicians.ContainsKey(musicianHash))
+                {
+                    Performances[venueHash].Musicians.Remove(musicianHash);
+
+                    if (!Performances[venueHash].Musicians.Any())
+                        Performances.Remove(venueHash);
+                    else
+                        Performances[venueHash].CalculateQuality();
+                }
             }
         }
 

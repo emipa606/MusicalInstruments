@@ -13,13 +13,44 @@ using RimWorld;
 
 namespace MusicalInstruments
 {
-    public class Performance
+    public class Performance : IExposable
     {
         private const int SmallEnsembleCutoff = 6;
 
         public Thing Venue;
-        public List<Pawn> Musicians = new List<Pawn>();
+        public Dictionary<int, Pawn> Musicians;
         public float Quality;
+
+        private List<int> WorkingKeysMusicians;
+        private List<Pawn> WorkingValuesMusicians;
+
+
+        public Performance()
+        {
+            Venue = null;
+            Musicians = null;
+            Quality = 0f;
+
+            WorkingKeysMusicians = new List<int>();
+            WorkingValuesMusicians = new List<Pawn>();
+        }
+
+        public Performance(Thing venue)
+        {
+            Venue = venue;
+            Musicians = new Dictionary<int, Pawn>();
+            Quality = 0f;
+
+            WorkingKeysMusicians = new List<int>();
+            WorkingValuesMusicians = new List<Pawn>();
+        }
+
+        public void ExposeData()
+        {
+            Scribe_References.Look<Thing>(ref Venue, "MusicalInstruments.Venue");
+            Scribe_Collections.Look<int, Pawn>(ref Musicians, "MusicalInstruments.Musicians", LookMode.Value, LookMode.Reference, ref WorkingKeysMusicians, ref WorkingValuesMusicians);
+            Scribe_Values.Look<float>(ref Quality, "MusicalInstruments.Quality");
+        }
 
         public void CalculateQuality()
         {
@@ -46,7 +77,7 @@ namespace MusicalInstruments
 
 #endif 
 
-                Quality = Musicians.Select(x => GetMusicQuality(x, x.carryTracker.CarriedThing)).Sum() / f;
+                Quality = Musicians.Select(x => GetMusicQuality(x.Value, x.Value.carryTracker.CarriedThing)).Sum() / f;
 
             }
 
@@ -73,6 +104,7 @@ namespace MusicalInstruments
 
             return quality - 0.3f;
         }
+
 
     }
 
