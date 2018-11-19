@@ -37,7 +37,7 @@ namespace MusicalInstruments
                 return null;
 
             //we also need to check for availibilty of an instrument here...?
-            if (pm.HeldInstrument(pawn) == null && !pm.AnyMapInstruments())
+            if (pm.HeldInstrument(pawn) == null && !pm.AnyAvailableMapInstruments(pawn))
                 return null;
 
             return pawn.Map.gatherSpotLister.activeSpots.Select(x => (Thing)x.parent);

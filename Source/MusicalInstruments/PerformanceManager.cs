@@ -71,8 +71,11 @@ namespace MusicalInstruments
             //    return false;
 
             IEnumerable<Thing> mapInstruments = allInstrumentDefs.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x))
+                                                        .Where(x => musician.CanReserve(x))
                                                         .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
                                                         .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+
+            
 
             if (!mapInstruments.Any())
             {
@@ -151,9 +154,9 @@ namespace MusicalInstruments
         }
 
 
-        public bool AnyMapInstruments()
+        public bool AnyAvailableMapInstruments(Pawn pawn)
         {
-            return allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x)).Any();
+            return allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x)).Any(x => pawn.CanReserve(x));
         }
 
         public Thing HeldInstrument(Pawn musician)
