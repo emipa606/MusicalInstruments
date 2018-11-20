@@ -183,12 +183,14 @@ namespace MusicalInstruments
         {
             if (!ActiveMusicSpots.Contains(spot))
                 ActiveMusicSpots.Add(spot);
+            //Verse.Log.Message(String.Format("{0} activated, count={1}", spot.parent.Label, ActiveMusicSpots.Count));
         }
 
         public void RegisterDeactivatedMusicSpot(CompMusicSpot spot)
         {
             if (ActiveMusicSpots.Contains(spot))
                 ActiveMusicSpots.Remove(spot);
+            //Verse.Log.Message(String.Format("{0} deactivated, count={1}", spot.parent.Label, ActiveMusicSpots.Count));
         }
 
         public bool CanPlayForWorkNow(Pawn musician)

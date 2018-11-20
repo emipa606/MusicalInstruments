@@ -30,7 +30,7 @@ namespace MusicalInstruments
 
             play.tickAction = delegate
             {
-                this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
+                this.pawn.rotationTracker.FaceCell(this.ClosestMusicSpotParentCell);
                 this.pawn.skills.Learn(SkillDefOf.Artistic, 0.05f, false);
                 //JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 1f, null);
 

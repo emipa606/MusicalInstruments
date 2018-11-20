@@ -26,7 +26,7 @@ namespace MusicalInstruments
         //[TweakValue("MusicalInstruments.Flip", 0f, 100f)]
         //private static bool Flip = false;
 
-        protected const TargetIndex GatherSpotParentInd = TargetIndex.A;
+        protected const TargetIndex MusicSpotParentInd = TargetIndex.A;
 
         protected const TargetIndex StandingSpotInd = TargetIndex.B;
 
@@ -39,19 +39,19 @@ namespace MusicalInstruments
             Luck = Verse.Rand.Range(-3, 2);
         }
 
-        protected Thing GatherSpotParent
+        protected Thing MusicSpotParent
         {
             get
             {
-                return this.job.GetTarget(GatherSpotParentInd).Thing;
+                return this.job.GetTarget(MusicSpotParentInd).Thing;
             }
         }
 
-        protected IntVec3 ClosestGatherSpotParentCell
+        protected IntVec3 ClosestMusicSpotParentCell
         {
             get
             {
-                return this.GatherSpotParent.OccupiedRect().ClosestCellTo(this.pawn.Position);
+                return this.MusicSpotParent.OccupiedRect().ClosestCellTo(this.pawn.Position);
             }
         }
 
@@ -139,7 +139,7 @@ namespace MusicalInstruments
         // it also interacts with the JoyUtility static class so the pawns get joy
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.EndOnDespawnedOrNull(GatherSpotParentInd, JobCondition.Incompletable);
+            this.EndOnDespawnedOrNull(MusicSpotParentInd, JobCondition.Incompletable);
 
             //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
 

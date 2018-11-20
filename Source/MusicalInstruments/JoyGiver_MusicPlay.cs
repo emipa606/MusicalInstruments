@@ -18,7 +18,7 @@ namespace MusicalInstruments
 
         private static readonly WorkTypeDef art = WorkTypeDefsUtility.WorkTypeDefsInPriorityOrder.Where(wtd => wtd.defName == "Art").SingleOrDefault();
 
-        private static List<CompGatherSpot> workingSpots = new List<CompGatherSpot>();
+        private static List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
 
 
         public override Job TryGiveJob(Pawn pawn)
@@ -28,10 +28,10 @@ namespace MusicalInstruments
 
         public override Job TryGiveJobInPartyArea(Pawn pawn, IntVec3 partySpot)
         {
-            return this.TryGiveJobInt(pawn, (CompGatherSpot x) => PartyUtility.InPartyArea(x.parent.Position, partySpot, pawn.Map));
+            return this.TryGiveJobInt(pawn, (CompMusicSpot x) => PartyUtility.InPartyArea(x.parent.Position, partySpot, pawn.Map));
         }
 
-        private Job TryGiveJobInt(Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator)
+        private Job TryGiveJobInt(Pawn pawn, Predicate<CompMusicSpot> musicSpotValidator)
         {
             //quit if no available instrument / quit roll for low skill without instrument
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
@@ -42,56 +42,56 @@ namespace MusicalInstruments
 
 
 
-            // if no gathering sports then give up
-            if (pawn.Map.gatherSpotLister.activeSpots.Count == 0)
+            // if no music spots then give up
+            if (pm.ListActiveMusicSpots().Count == 0)
             {
                 return null;
             }
 
 
-            // load all social areas on map into list
+            // load all music spots on map into list
             JoyGiver_MusicPlay.workingSpots.Clear();
-            for (int i = 0; i < pawn.Map.gatherSpotLister.activeSpots.Count; i++)
+            for (int i = 0; i < pm.ListActiveMusicSpots().Count; i++)
             {
-                JoyGiver_MusicPlay.workingSpots.Add(pawn.Map.gatherSpotLister.activeSpots[i]);
+                JoyGiver_MusicPlay.workingSpots.Add(pm.ListActiveMusicSpots()[i]);
             }
 
             // pick a random one
-            CompGatherSpot compGatherSpot;
-            while (JoyGiver_MusicPlay.workingSpots.TryRandomElement(out compGatherSpot))
+            CompMusicSpot CompMusicSpot;
+            while (JoyGiver_MusicPlay.workingSpots.TryRandomElement(out CompMusicSpot))
             {
                 // remove from list
-                JoyGiver_MusicPlay.workingSpots.Remove(compGatherSpot);
+                JoyGiver_MusicPlay.workingSpots.Remove(CompMusicSpot);
                 // check zones etc
-                if (!compGatherSpot.parent.IsForbidden(pawn))
+                if (!CompMusicSpot.parent.IsForbidden(pawn))
                 {
                     // see if there's a safe path to get there
-                    if (pawn.CanReach(compGatherSpot.parent, PathEndMode.Touch, Danger.None, false, TraverseMode.ByPawn))
+                    if (pawn.CanReach(CompMusicSpot.parent, PathEndMode.Touch, Danger.None, false, TraverseMode.ByPawn))
                     {
                         // prisoners seperated from colonists
-                        if (compGatherSpot.parent.IsSociallyProper(pawn))
+                        if (CompMusicSpot.parent.IsSociallyProper(pawn))
                         {
                             // only friendly factions
-                            if (compGatherSpot.parent.IsPoliticallyProper(pawn))
+                            if (CompMusicSpot.parent.IsPoliticallyProper(pawn))
                             {
                                 // check passed in predicate - i.e. parties
-                                if (gatherSpotValidator == null || gatherSpotValidator(compGatherSpot))
+                                if (musicSpotValidator == null || musicSpotValidator(CompMusicSpot))
                                 {
                                     // find a place to sit or stand, or return null if there aren't any
 
                                     Job job;
                                 
                                     IntVec3 standingSpot;
-                                    if (!PerformanceManager.TryFindSitSpotOnGroundNear(compGatherSpot.parent.Position, pawn, out standingSpot))
+                                    if (!PerformanceManager.TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
                                     {
                                         return null;
                                     }
-                                    job = new Job(this.def.jobDef, compGatherSpot.parent, standingSpot);
+                                    job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
                     
                                     Thing instrument;
 
                                     if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
-                                        PerformanceManager.TryFindInstrumentToPlay(compGatherSpot.parent.Position, pawn, out instrument))
+                                        PerformanceManager.TryFindInstrumentToPlay(CompMusicSpot.parent.Position, pawn, out instrument))
                                     {
 
                                         job.targetC = instrument;

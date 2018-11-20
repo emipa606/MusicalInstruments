@@ -24,7 +24,7 @@ namespace MusicalInstruments
                                                                             select c).ToList();
 
 
-        private static List<CompGatherSpot> workingSpots = new List<CompGatherSpot>();
+        private static List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
 
         public override Job TryGiveJob(Pawn pawn)
         {
@@ -33,78 +33,81 @@ namespace MusicalInstruments
 
         public override Job TryGiveJobInPartyArea(Pawn pawn, IntVec3 partySpot)
         {
-            return this.TryGiveJobInt(pawn, (CompGatherSpot x) => PartyUtility.InPartyArea(x.parent.Position, partySpot, pawn.Map));
+            return this.TryGiveJobInt(pawn, (CompMusicSpot x) => PartyUtility.InPartyArea(x.parent.Position, partySpot, pawn.Map));
         }
 
         public override Job TryGiveJobWhileInBed(Pawn pawn)
         {
             Room room = pawn.GetRoom();
+            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
 
-            // get gather spots in pawn's current room
-            List<CompGatherSpot> localGatherSpots = pawn.Map.gatherSpotLister.activeSpots.Where(x => room.Cells.Contains(x.parent.Position)).ToList();
+            // get music spots in pawn's current room
+            List<CompMusicSpot> localMusicSpots = pm.ListActiveMusicSpots().Where(x => room.Cells.Contains(x.parent.Position)).ToList();
 
-            // if no gathering spots then give up
-            if (localGatherSpots.Count == 0)
+            // if no music spots then give up
+            if (localMusicSpots.Count == 0)
             {
                 return null;
             }
 
-            workingSpots = localGatherSpots;
+            workingSpots = localMusicSpots;
 
             // pick a random one
-            CompGatherSpot compGatherSpot;
-            while (workingSpots.TryRandomElement(out compGatherSpot))
+            CompMusicSpot CompMusicSpot;
+            while (workingSpots.TryRandomElement(out CompMusicSpot))
             {
-                workingSpots.Remove(compGatherSpot);
+                workingSpots.Remove(CompMusicSpot);
 
                 // is a performance currently in progress
-                if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(compGatherSpot.parent))
+                if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(CompMusicSpot.parent))
                 {
-                    Job job = new Job(def.jobDef, compGatherSpot.parent, pawn.CurrentBed());
+                    Job job = new Job(def.jobDef, CompMusicSpot.parent, pawn.CurrentBed());
                 }
             }
 
             return null;
         }
 
-        private Job TryGiveJobInt(Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator)
+        private Job TryGiveJobInt(Pawn pawn, Predicate<CompMusicSpot> musicSpotValidator)
         {
-            // if no gathering spots then give up
-            if (pawn.Map.gatherSpotLister.activeSpots.Count == 0)
+            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+
+            // if no music spots then give up
+            if (pm.ListActiveMusicSpots().Count == 0)
             {
                 return null;
             }
-            // load all social areas on map into list
+            // load all music spots on map into list
             workingSpots.Clear();
-            for (int i = 0; i < pawn.Map.gatherSpotLister.activeSpots.Count; i++)
+            for (int i = 0; i < pm.ListActiveMusicSpots().Count; i++)
             {
-                workingSpots.Add(pawn.Map.gatherSpotLister.activeSpots[i]);
+                workingSpots.Add(pm.ListActiveMusicSpots()[i]);
             }
 
             // pick a random one
-            CompGatherSpot compGatherSpot;
-            while (workingSpots.TryRandomElement(out compGatherSpot))
+            CompMusicSpot CompMusicSpot;
+            while (workingSpots.TryRandomElement(out CompMusicSpot))
             {
                 // remove from list
-                workingSpots.Remove(compGatherSpot);
+                workingSpots.Remove(CompMusicSpot);
                 // check zones etc
-                if (!compGatherSpot.parent.IsForbidden(pawn))
+                if (!CompMusicSpot.parent.IsForbidden(pawn))
                 {
                     // see if there's a safe path to get there
-                    if (pawn.CanReach(compGatherSpot.parent, PathEndMode.Touch, Danger.None, false, TraverseMode.ByPawn))
+                    if (pawn.CanReach(CompMusicSpot.parent, PathEndMode.Touch, Danger.None, false, TraverseMode.ByPawn))
                     {
                         // prisoners seperated from colonists
-                        if (compGatherSpot.parent.IsSociallyProper(pawn))
+                        if (CompMusicSpot.parent.IsSociallyProper(pawn))
                         {
                             // only friendly factions
-                            if (compGatherSpot.parent.IsPoliticallyProper(pawn))
+                            if (CompMusicSpot.parent.IsPoliticallyProper(pawn))
                             {
                                 // check passed in predicate - i.e. parties
-                                if (gatherSpotValidator == null || gatherSpotValidator(compGatherSpot))
+                                if (musicSpotValidator == null || musicSpotValidator(CompMusicSpot))
                                 {
                                     
                                     // is a performance currently in progress
-                                    if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(compGatherSpot.parent))
+                                    if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(CompMusicSpot.parent))
                                     {
                                         
                                         
@@ -114,14 +117,14 @@ namespace MusicalInstruments
                                         Job job;
 
                                         IntVec3 standingSpot;
-                                        if (TryFindChairNear(compGatherSpot.parent.Position, pawn, out Thing chair))
+                                        if (TryFindChairNear(CompMusicSpot.parent.Position, pawn, out Thing chair))
                                         {
-                                            job = new Job(this.def.jobDef, compGatherSpot.parent, chair);
+                                            job = new Job(this.def.jobDef, CompMusicSpot.parent, chair);
                                             return job;
                                         }                                        
-                                        else if (TryFindSitSpotOnGroundNear(compGatherSpot.parent.Position, pawn, out standingSpot))
+                                        else if (TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
                                         {
-                                            job = new Job(this.def.jobDef, compGatherSpot.parent, standingSpot);
+                                            job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
                                             return job;
                                         }
                                         else return null;

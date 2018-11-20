@@ -29,7 +29,7 @@ namespace MusicalInstruments
 
             play.tickAction = delegate
             {
-                this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
+                this.pawn.rotationTracker.FaceCell(this.ClosestMusicSpotParentCell);
                 JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 1f, null);
 
                 if (this.ticksLeftThisToil % 100 == 99)

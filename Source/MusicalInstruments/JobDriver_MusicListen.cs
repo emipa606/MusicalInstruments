@@ -14,16 +14,16 @@ namespace MusicalInstruments
 {
     class JobDriver_MusicListen : JobDriver
     {
-        private const TargetIndex GatherSpotParentInd = TargetIndex.A;
+        private const TargetIndex MusicSpotParentInd = TargetIndex.A;
 
         private const TargetIndex ChairOrSpotOrBedInd = TargetIndex.B;
 
-        private Thing GatherSpotParent => job.GetTarget(TargetIndex.A).Thing;
+        private Thing MusicSpotParent => job.GetTarget(TargetIndex.A).Thing;
 
         private bool HasChairOrBed => job.GetTarget(TargetIndex.B).HasThing;
 
 
-        private IntVec3 ClosestGatherSpotParentCell => GatherSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
+        private IntVec3 ClosestMusicSpotParentCell => MusicSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -41,7 +41,7 @@ namespace MusicalInstruments
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.EndOnDespawnedOrNull(GatherSpotParentInd);
+            this.EndOnDespawnedOrNull(MusicSpotParentInd);
 
             //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
 
@@ -65,7 +65,7 @@ namespace MusicalInstruments
 
             listen.tickAction = delegate
             {
-                this.pawn.rotationTracker.FaceCell(this.ClosestGatherSpotParentCell);
+                this.pawn.rotationTracker.FaceCell(this.ClosestMusicSpotParentCell);
                 JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, 1f + Math.Abs(pawn.Map.GetComponent<PerformanceManager>().GetPerformanceQuality(venue)), null);
             };
 
