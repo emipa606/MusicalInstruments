@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+    <!-- give CompMusicSpot to vanilla things with CompGatherSpot -->
+
+    <Operation Class="PatchOperationInsert">
+        <xpath>*/ThingDef/comps/li[compClass="CompGatherSpot"]</xpath>
+        <value>
+            <li>
+                <compClass>MusicalInstruments.CompMusicSpot</compClass>
+            </li>
+        </value>
+    </Operation>
+</Patch>

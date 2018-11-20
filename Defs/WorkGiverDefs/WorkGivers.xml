@@ -5,12 +5,12 @@
   
   <WorkGiverDef>
     <defName>MusicPlay</defName>
-    <label>play music</label>
+    <label>perform music</label>
     <giverClass>MusicalInstruments.WorkGiver_MusicPlay</giverClass>
     <workType>Art</workType>
     <priorityInType>50</priorityInType>
-    <verb>play</verb>
-    <gerund>playing at</gerund>
+    <verb>perform</verb>
+    <gerund>performing at</gerund>
     <requiredCapacities>
       <li>Manipulation</li>
       <li>Hearing</li>

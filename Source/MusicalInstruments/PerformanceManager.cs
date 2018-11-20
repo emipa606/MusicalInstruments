@@ -130,11 +130,13 @@ namespace MusicalInstruments
 
         private Dictionary<int, Performance> Performances;
         private Dictionary<int, int> WorkPerformanceTimestamps;
+        private List<CompMusicSpot> ActiveMusicSpots;   //don't need to serialize this as the CompMusicSpot automatically registers/deregisters itself
 
         public PerformanceManager(Map map) : base(map)
         {
             Performances = new Dictionary<int, Performance>();
             WorkPerformanceTimestamps = new Dictionary<int, int>();
+            ActiveMusicSpots = new List<CompMusicSpot>();
         }
 
         public override void ExposeData()
@@ -170,6 +172,23 @@ namespace MusicalInstruments
             }
 
             return null;
+        }
+
+        public List<CompMusicSpot> ListActiveMusicSpots()
+        {
+            return ActiveMusicSpots;
+        }
+
+        public void RegisterActivatedMusicSpot(CompMusicSpot spot)
+        {
+            if (!ActiveMusicSpots.Contains(spot))
+                ActiveMusicSpots.Add(spot);
+        }
+
+        public void RegisterDeactivatedMusicSpot(CompMusicSpot spot)
+        {
+            if (ActiveMusicSpots.Contains(spot))
+                ActiveMusicSpots.Remove(spot);
         }
 
         public bool CanPlayForWorkNow(Pawn musician)
