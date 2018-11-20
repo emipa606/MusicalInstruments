@@ -59,7 +59,7 @@ namespace MusicalInstruments
             base.PostDeSpawn(map);
             if (Active)
             {
-                PerformanceManager pm = this.parent.Map.GetComponent<PerformanceManager>();
+                PerformanceManager pm = map.GetComponent<PerformanceManager>();
                 pm.RegisterDeactivatedMusicSpot(this);
             }
         }
