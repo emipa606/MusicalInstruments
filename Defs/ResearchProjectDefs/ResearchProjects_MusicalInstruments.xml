@@ -27,5 +27,19 @@
     </prerequisites>
   </ResearchProjectDef>
 
+  <ResearchProjectDef>
+    <defName>ElectricInstruments</defName>
+    <label>electric instruments</label>
+    <description>Construct electrically amplified instruments.</description>
+    <baseCost>1000</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>4</researchViewX>
+    <researchViewY>4</researchViewY>
+    <prerequisites>
+      <li>StringedInstruments</li>
+      <li>Electricity</li>
+    </prerequisites>
+  </ResearchProjectDef>  
+
 
 </Defs>
