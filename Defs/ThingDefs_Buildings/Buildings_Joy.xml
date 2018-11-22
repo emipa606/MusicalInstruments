@@ -1,15 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-  <ThingDef ParentName="BuildingBase">
-    <defName>ElectronicOrgan</defName>
-    <label>electronic organ</label>
-    <description>A keyboard instrument that generates sound using analog electronics. Often seen in midworld churches and concert halls.</description>
-    <graphicData>
-      <texPath>Things/Building/Organ</texPath>
-      <graphicClass>Graphic_Multi</graphicClass>
-      <drawSize>(2,1)</drawSize>
-    </graphicData>
+  <ThingDef Name="MusicalInstrumentBuildingBase" ParentName="BuildingBase"  Abstract="true">
     <castEdgeShadows>true</castEdgeShadows>
     <staticSunShadowHeight>0.20</staticSunShadowHeight>    
     <altitudeLayer>Building</altitudeLayer>
@@ -19,35 +11,16 @@
     <socialPropernessMatters>true</socialPropernessMatters>
     <fillPercent>0.40</fillPercent>
     <thingCategories>
-      <li>BuildingsJoy</li>
-    </thingCategories>
-    <statBases>
-      <WorkToBuild>10000</WorkToBuild>
-      <MaxHitPoints>100</MaxHitPoints>
-      <Mass>14</Mass>
-      <Flammability>1.0</Flammability>
-      <Beauty>3</Beauty>
-    </statBases>
-    <size>(2,1)</size>
+      <li>MusicalInstruments</li>
+    </thingCategories>    
     <hasInteractionCell>True</hasInteractionCell>
-    <interactionCellOffset>(1,0,-1)</interactionCellOffset>    
-    <costList>
-      <Steel>40</Steel>
-      <WoodLog>60</WoodLog>
-      <ComponentIndustrial>6</ComponentIndustrial>
-    </costList>
-    <pathCost>70</pathCost>
     <passability>PassThroughOnly</passability>
     <defaultPlacingRot>North</defaultPlacingRot>
-
-    <comps>
-      <li Class="CompProperties_Power">
-        <compClass>CompPowerTrader</compClass>
-        <shortCircuitInRain>true</shortCircuitInRain>
-        <basePowerConsumption>200</basePowerConsumption>
-      </li>
-      <li Class="CompProperties_Flickable"/>
-			<li Class="CompProperties_RoomIdentifier">
+    <statBases>
+      <SellPriceFactor>0.50</SellPriceFactor>
+    </statBases>
+    <comps>			
+      <li Class="CompProperties_RoomIdentifier">
 				<roomStat>Impressiveness</roomStat>
 			</li>
       <li>
@@ -58,9 +31,59 @@
         <descriptionMaker>ArtDescription_MusicalInstrument</descriptionMaker>
         <minQualityForArtistic>Excellent</minQualityForArtistic>
       </li>
+      <li>
+        <compClass>MusicalInstruments.CompMusicSpot</compClass>
+      </li>
     </comps>
-    <constructEffect>ConstructMetal</constructEffect>
     <designationCategory>Joy</designationCategory>
+
+  </ThingDef>
+
+  <ThingDef ParentName="MusicalInstrumentBuildingBase">
+    <defName>ElectronicOrgan</defName>
+    <label>electronic organ</label>
+    <description>A keyboard instrument that generates sound using analog electronics. Often seen in midworld churches and concert halls.</description>
+    <graphicData>
+      <texPath>Things/Building/Organ</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(2,1)</drawSize>
+    </graphicData>
+
+    <statBases>
+      <WorkToBuild>30000</WorkToBuild>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Mass>25</Mass>
+      <Flammability>1.0</Flammability>
+      <Beauty>3</Beauty>
+    </statBases>
+    <size>(2,1)</size>
+    <interactionCellOffset>(1,0,-1)</interactionCellOffset>    
+    <costList>
+      <Steel>40</Steel>
+      <WoodLog>60</WoodLog>
+      <ComponentIndustrial>6</ComponentIndustrial>
+    </costList>
+    <pathCost>70</pathCost>
+
+
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <shortCircuitInRain>true</shortCircuitInRain>
+        <basePowerConsumption>200</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Flickable"/>
+
+      <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
+        <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
+        <easiness>0.4</easiness>
+        <expressiveness>0.7</expressiveness>
+        <isBuilding>true</isBuilding>
+      </li>
+          
+    </comps>
+
+    <constructEffect>ConstructMetal</constructEffect>
     <constructionSkillPrerequisite>8</constructionSkillPrerequisite>
     <researchPrerequisites>
       <li>ElectricInstruments</li>

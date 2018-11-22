@@ -20,7 +20,8 @@ namespace MusicalInstruments
             ThingDef.Named("FrameDrum"),
             ThingDef.Named("Ocarina"),
             ThingDef.Named("Guitar"),
-            ThingDef.Named("Violin")
+            ThingDef.Named("Violin")//,
+            //ThingDef.Named("ElectronicOrgan")
         };
 
 

@@ -112,4 +112,41 @@
             </li>
         </value>
     </Operation>
+
+    <!-- orbital -->
+   <Operation Class="PatchOperationInsert">
+        <xpath>*/TraderKindDef[defName="Orbital_Exotic"]/stockGenerators/li[last()]</xpath>
+        <value>
+            <li Class="StockGenerator_SingleDef">
+                <thingDef>Ocarina</thingDef>
+                <countRange>
+                    <min>-1</min>
+                    <max>1</max>
+                </countRange>
+            </li>
+            <li Class="StockGenerator_SingleDef">
+                <thingDef>Violin</thingDef>
+                <countRange>
+                    <min>-1</min>
+                    <max>1</max>
+                </countRange>
+            </li>
+            <li Class="StockGenerator_SingleDef">
+                <thingDef>ElectronicOrgan</thingDef>
+                <countRange>
+                    <min>-1</min>
+                    <max>1</max>
+                </countRange>
+            </li>            
+            <li Class="StockGenerator_BuySingleDef">
+                <thingDef>Ocarina</thingDef>
+            </li>
+            <li Class="StockGenerator_BuySingleDef">
+                <thingDef>Violin</thingDef>
+            </li>
+            <li Class="StockGenerator_BuySingleDef">
+                <thingDef>ElectronicOrgan</thingDef>
+            </li>
+        </value>
+    </Operation>
 </Patch>

@@ -12,7 +12,7 @@
       <MaxHitPoints>50</MaxHitPoints>
       <Flammability>0.7</Flammability>
       <DeteriorationRate>2.0</DeteriorationRate>
-      <Beauty>0</Beauty>
+      <Beauty>1</Beauty>
       <SellPriceFactor>0.50</SellPriceFactor>
     </statBases>
     <graphicData>
@@ -139,6 +139,7 @@
         <xOffset>0.4</xOffset>
         <zOffset>0.1</zOffset>
         <xOffsetFacing>0.1</xOffsetFacing>
+        <isWindInstrument>true</isWindInstrument>
       </li>
     </comps>
   </ThingDef>
