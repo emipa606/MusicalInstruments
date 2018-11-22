@@ -82,7 +82,7 @@ namespace MusicalInstruments
                                     Job job;
                                 
                                     IntVec3 standingSpot;
-                                    if (!PerformanceManager.TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
+                                    if (!pm.TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
                                     {
                                         return null;
                                     }
@@ -91,7 +91,7 @@ namespace MusicalInstruments
                                     Thing instrument;
 
                                     if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
-                                        PerformanceManager.TryFindInstrumentToPlay(CompMusicSpot.parent.Position, pawn, out instrument))
+                                        pm.TryFindInstrumentToPlay(CompMusicSpot.parent, pawn, out instrument))
                                     {
 
                                         job.targetC = instrument;

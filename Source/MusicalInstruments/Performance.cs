@@ -13,71 +13,90 @@ using RimWorld;
 
 namespace MusicalInstruments
 {
+    public class Performer : IExposable
+    {
+        public Pawn Musician;
+        public Thing Instrument;
+
+        public void ExposeData()
+        {
+            Scribe_References.Look<Pawn>(ref Musician, "MusicalInstruments.Musician");
+            Scribe_References.Look<Thing>(ref Instrument, "MusicalInstruments.Instrument");
+        }
+    }
+
     public class Performance : IExposable
     {
         private const int SmallEnsembleCutoff = 6;
 
         public Thing Venue;
-        public Dictionary<int, Pawn> Musicians;
+        public Dictionary<int, Performer> Performers;
         public float Quality;
 
-        private List<int> WorkingKeysMusicians;
-        private List<Pawn> WorkingValuesMusicians;
+        private List<int> WorkingKeysPerformers;
+        private List<Performer> WorkingValuesPerformers;
 
 
         public Performance()
         {
             Venue = null;
-            Musicians = null;
+            Performers = null;
             Quality = 0f;
 
-            WorkingKeysMusicians = new List<int>();
-            WorkingValuesMusicians = new List<Pawn>();
+            WorkingKeysPerformers = new List<int>();
+            WorkingValuesPerformers = new List<Performer>();
         }
 
         public Performance(Thing venue)
         {
             Venue = venue;
-            Musicians = new Dictionary<int, Pawn>();
+            Performers = new Dictionary<int, Performer>();
             Quality = 0f;
 
-            WorkingKeysMusicians = new List<int>();
-            WorkingValuesMusicians = new List<Pawn>();
+            WorkingKeysPerformers = new List<int>();
+            WorkingValuesPerformers = new List<Performer>();
         }
 
         public void ExposeData()
         {
             Scribe_References.Look<Thing>(ref Venue, "MusicalInstruments.Venue");
-            Scribe_Collections.Look<int, Pawn>(ref Musicians, "MusicalInstruments.Musicians", LookMode.Value, LookMode.Reference, ref WorkingKeysMusicians, ref WorkingValuesMusicians);
+            Scribe_Collections.Look<int, Performer>(ref Performers, "MusicalInstruments.Performers", LookMode.Value, LookMode.Deep, ref WorkingKeysPerformers, ref WorkingValuesPerformers);
             Scribe_Values.Look<float>(ref Quality, "MusicalInstruments.Quality");
+
+            if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
+            {
+                //try to avoid breaking saves from old versions
+                if (Performers == null)
+                    Performers = new Dictionary<int, Performer>();
+            }
         }
 
         public void CalculateQuality()
         {
-            if (Musicians.Any())
+            if (Performers.Any())
             {
                 float f;
 
-                if(Musicians.Count == 1)
+                if(Performers.Count == 1)
                 {
                     f = 1f;
-                } else if(Musicians.Count >= SmallEnsembleCutoff)
+                } else if(Performers.Count >= SmallEnsembleCutoff)
                 {
-                    f = Musicians.Count / 2f;
+                    f = Performers.Count / 2f;
                 }
                 else
                 {
-                    float x = (Musicians.Count - 1) / (float)(SmallEnsembleCutoff - 1);
-                    f = 1f + x * Musicians.Count / 2f - x;
+                    float x = (Performers.Count - 1) / (float)(SmallEnsembleCutoff - 1);
+                    f = 1f + x * Performers.Count / 2f - x;
                 }
 
 #if DEBUG
 
-                Verse.Log.Message(String.Format("s={0},f={1}", Musicians.Count, f));
+                Verse.Log.Message(String.Format("s={0},f={1}", Performers.Count, f));
 
 #endif 
 
-                Quality = Musicians.Select(x => GetMusicQuality(x.Value, x.Value.carryTracker.CarriedThing)).Sum() / f;
+                Quality = Performers.Select(x => GetMusicQuality(x.Value.Musician, x.Value.Instrument)).Sum() / f;
 
             }
 

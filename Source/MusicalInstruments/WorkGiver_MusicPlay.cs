@@ -52,7 +52,9 @@ namespace MusicalInstruments
         {
             //Verse.Log.Message(String.Format("Trying to play at {0}", thing.Label));
 
-            if (!pawn.Map.GetComponent<PerformanceManager>().CanPlayForWorkNow(pawn))
+            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+
+            if (!pm.CanPlayForWorkNow(pawn))
                 return null;
 
             CompMusicSpot compMusicSpot = thing.TryGetComp<CompMusicSpot>();
@@ -66,7 +68,7 @@ namespace MusicalInstruments
             Job job;
 
             IntVec3 standingSpot;
-            if (!PerformanceManager.TryFindSitSpotOnGroundNear(compMusicSpot.parent.Position, pawn, out standingSpot))
+            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot.parent.Position, pawn, out standingSpot))
             {
                 return null;
             }
@@ -75,11 +77,18 @@ namespace MusicalInstruments
 
             Thing instrument;
 
-            if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
-                PerformanceManager.TryFindInstrumentToPlay(compMusicSpot.parent.Position, pawn, out instrument))
+            if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art))
             {
+                CompMusicalInstrument comp = thing.TryGetComp<CompMusicalInstrument>();
 
-                job.targetC = instrument;
+                if(forced && comp!=null && comp.Props.isBuilding && pawn.CanReserve(thing))
+                {
+                    job.targetC = thing;
+                } else if(pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out instrument))
+                {
+                    job.targetC = instrument;
+                }
+                else return null;
             }
             else return null;
 

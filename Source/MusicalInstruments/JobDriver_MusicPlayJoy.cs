@@ -15,29 +15,39 @@ namespace MusicalInstruments
     public class JobDriver_MusicPlayJoy : JobDriver_MusicPlayBase
     {
 
-        protected override Toil GetPlayToil(Pawn musician, Thing venue)
+        protected override Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue)
         {
             // custom toil.
             Toil play = new Toil();
 
+            CompProperties_MusicalInstrument props = instrument.TryGetComp<CompMusicalInstrument>().Props;
+
             play.initAction = delegate
             {
-                pawn.Map.GetComponent<PerformanceManager>().StartPlaying(musician, venue, false);
+                pawn.Map.GetComponent<PerformanceManager>().StartPlaying(musician, instrument, venue, false);
             };
 
 
 
             play.tickAction = delegate
             {
-                this.pawn.rotationTracker.FaceCell(this.ClosestMusicSpotParentCell);
-                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 1f, null);
 
-                if (this.ticksLeftThisToil % 100 == 99)
+                if (props.isBuilding)
                 {
-                    ThrowMusicNotes(musician.DrawPos, this.Map);
-                    //pawn.Map.GetComponent<PerformanceManager>().ApplyThoughts(venue);
+                    pawn.rotationTracker.FaceTarget(TargetC);
+                    pawn.GainComfortFromCellIfPossible();
+                }
+                else
+                {
+                    pawn.rotationTracker.FaceCell(ClosestMusicSpotParentCell);
                 }
 
+                if (ticksLeftThisToil % 100 == 99)
+                {
+                    ThrowMusicNotes(musician.DrawPos, this.Map);
+                }
+
+                JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 1f, null);
 
             };
 

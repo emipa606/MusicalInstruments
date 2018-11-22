@@ -20,8 +20,8 @@ namespace MusicalInstruments
             ThingDef.Named("FrameDrum"),
             ThingDef.Named("Ocarina"),
             ThingDef.Named("Guitar"),
-            ThingDef.Named("Violin")//,
-            //ThingDef.Named("ElectronicOrgan")
+            ThingDef.Named("Violin"),
+            ThingDef.Named("ElectronicOrgan")
         };
 
 
@@ -37,9 +37,9 @@ namespace MusicalInstruments
 
 
 
-        private static string LogMusician(Pawn musician)
+        private static string LogMusician(Pawn musician, Thing instrument)
         {
-            return String.Format("{0}({1} skill) on {2}", musician.LabelShort, musician.skills.GetSkill(SkillDefOf.Artistic).Level, musician.carryTracker.CarriedThing.LabelShort);
+            return String.Format("{0}({1} skill) on {2}", musician.LabelShort, musician.skills.GetSkill(SkillDefOf.Artistic).Level, instrument.LabelShort);
         }
 
         public static bool IsInstrument(Thing thing)
@@ -48,85 +48,14 @@ namespace MusicalInstruments
 
         }
 
-
-
-        public static bool TryFindInstrumentToPlay(IntVec3 center, Pawn musician, out Thing instrument, bool isWork = false)
+        public static bool RadiusCheck(Thing thing1, Thing thing2)
         {
-            instrument = null;
+            return (thing1.GetRoom().GetHashCode() == thing2.GetRoom().GetHashCode() &&
+                    thing1.Position.DistanceTo(thing2.Position) < Radius);
 
-            Thing heldInstrument = null;
-
-            foreach (Thing inventoryThing in musician.inventory.innerContainer)
-            {
-                if (IsInstrument(inventoryThing))
-                {
-                    heldInstrument = inventoryThing;
-                    break;
-                }
-            }
-
-            int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
-
-
-            //if (!isWork && heldInstrument == null && skill < 3 && Verse.Rand.Chance(0.75f))
-            //    return false;
-
-            IEnumerable<Thing> mapInstruments = allInstrumentDefs.SelectMany(x => musician.Map.listerThings.ThingsOfDef(x))
-                                                        .Where(x => musician.CanReserve(x))
-                                                        .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
-                                                        .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
-
-            
-
-            if (!mapInstruments.Any())
-            {
-                instrument = heldInstrument;
-                return (instrument != null);
-            }
-
-            Thing bestInstrument = mapInstruments.First();
-
-            if (heldInstrument == null)
-            {
-                instrument = bestInstrument;
-                return true;
-            }
-
-            bool swap = false;
-
-            float rand = Verse.Rand.Range(0f, 1f);
-
-            if (rand > .9f)
-            {
-                swap = true;
-            }
-            else if (rand > 0.4f)
-            {
-                swap = heldInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill) < bestInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill);
-            }
-
-            instrument = swap ? bestInstrument : heldInstrument;
-
-            return true;
         }
 
-
-
-        public static bool TryFindSitSpotOnGroundNear(IntVec3 center, Pawn sitter, out IntVec3 result)
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                IntVec3 intVec = center + GenRadial.RadialPattern[Rand.Range(1, NumRadiusCells)];
-                if (sitter.CanReserveAndReach(intVec, PathEndMode.OnCell, Danger.None, 1, -1, null, false) && intVec.GetEdifice(sitter.Map) == null && GenSight.LineOfSight(center, intVec, sitter.Map, true, null, 0, 0))
-                {
-                    result = intVec;
-                    return true;
-                }
-            }
-            result = IntVec3.Invalid;
-            return false;
-        }
-
+   
         // non-static
 
         private Dictionary<int, Performance> Performances;
@@ -202,18 +131,27 @@ namespace MusicalInstruments
             return (ticksSince >= 30000);
         }
 
-        public void StartPlaying(Pawn musician, Thing venue, bool isWork)
+        public void StartPlaying(Pawn musician, Thing instrument, Thing venue, bool isWork)
         {
             int venueHash = venue.GetHashCode();
+
+            foreach(int otherVenueHash in Performances.Keys)
+            {
+                if(RadiusCheck(Performances[otherVenueHash].Venue, venue))
+                {
+                    venueHash = otherVenueHash;
+                    break;
+                }
+            }
 
             if (!Performances.ContainsKey(venueHash))
                 Performances[venueHash] = new Performance(venue);
 
             int musicianHash = musician.GetHashCode();
 
-            if (!Performances[venueHash].Musicians.ContainsKey(musicianHash))
+            if (!Performances[venueHash].Performers.ContainsKey(musicianHash))
             {
-                Performances[venueHash].Musicians[musicianHash] = musician;
+                Performances[venueHash].Performers[musicianHash] = new Performer() { Musician = musician, Instrument = instrument };
                 Performances[venueHash].CalculateQuality();
 
                 if (isWork)
@@ -223,7 +161,7 @@ namespace MusicalInstruments
 
 #if DEBUG
 
-            Verse.Log.Message(String.Format("Musicians: {0}", String.Join(", ", Performances[venueHash].Musicians.Select(x => LogMusician(x.Value)).ToArray())));
+            Verse.Log.Message(String.Format("Musicians: {0}", String.Join(", ", Performances[venueHash].Performers.Select(x => LogMusician(x.Value.Musician, x.Value.Instrument)).ToArray())));
             Verse.Log.Message(String.Format("Quality: {0}", Performances[venueHash].Quality));
 
 #endif
@@ -236,14 +174,25 @@ namespace MusicalInstruments
 
             if (Performances.ContainsKey(venueHash))
             {
-                if (Performances[venueHash].Musicians.ContainsKey(musicianHash))
+                if (Performances[venueHash].Performers.ContainsKey(musicianHash))
                 {
-                    Performances[venueHash].Musicians.Remove(musicianHash);
+                    Performances[venueHash].Performers.Remove(musicianHash);
 
-                    if (!Performances[venueHash].Musicians.Any())
+                    if (!Performances[venueHash].Performers.Any())
                         Performances.Remove(venueHash);
                     else
                         Performances[venueHash].CalculateQuality();
+                }
+            }
+            else
+            {
+                foreach (int otherVenueHash in Performances.Keys)
+                {
+                    if (Performances[otherVenueHash].Performers.Keys.Contains(musicianHash))
+                    {
+                        Performances[otherVenueHash].Performers.Remove(musicianHash);
+                        Performances[otherVenueHash].CalculateQuality();
+                    }
                 }
             }
         }
@@ -254,7 +203,7 @@ namespace MusicalInstruments
 
             if (!Performances.ContainsKey(hash))
                 return false;
-            return Performances[hash].Musicians.Any();
+            return Performances[hash].Performers.Any();
         }
 
         public float GetPerformanceQuality(Thing venue)
@@ -297,10 +246,10 @@ namespace MusicalInstruments
 
             if (quality >= 0f && quality < .5f) return;
 
-            IntVec3 centre = venue.Position;
-            int roomHash = venue.GetRoom().GetHashCode();
+            //IntVec3 centre = venue.Position;
+            //int roomHash = venue.GetRoom().GetHashCode();
 
-            List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => centre.DistanceTo(x.Position) < Radius && roomHash == x.GetRoom().GetHashCode() && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
+            List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => RadiusCheck(venue, x)  && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
 
             if (!audience.Any()) return;
 
@@ -330,6 +279,86 @@ namespace MusicalInstruments
             }
 
 
+        }     
+        
+        public bool TryFindInstrumentToPlay(Thing venue, Pawn musician, out Thing instrument, bool isWork = false)
+        {
+            instrument = null;
+
+            Thing heldInstrument = null;
+
+            foreach (Thing inventoryThing in musician.inventory.innerContainer)
+            {
+                if (IsInstrument(inventoryThing))
+                {
+                    heldInstrument = inventoryThing;
+                    break;
+                }
+            }
+
+            int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
+
+
+            //if (!isWork && heldInstrument == null && skill < 3 && Verse.Rand.Chance(0.75f))
+            //    return false;
+
+            IEnumerable<Thing> mapInstruments = allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
+                                                        .Where(x => musician.CanReserve(x))
+                                                        .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn)
+                                                        .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusCheck(x, venue))
+                                                        .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
+                                                        .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+
+            
+
+            if (!mapInstruments.Any())
+            {
+                instrument = heldInstrument;
+                return (instrument != null);
+            }
+
+            Thing bestInstrument = mapInstruments.First();
+
+            if (heldInstrument == null)
+            {
+                instrument = bestInstrument;
+                return true;
+            }
+
+            bool swap = false;
+
+            float rand = Verse.Rand.Range(0f, 1f);
+
+            if (rand > .9f)
+            {
+                swap = true;
+            }
+            else if (rand > 0.4f)
+            {
+                swap = heldInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill) < bestInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill);
+            }
+
+            instrument = swap ? bestInstrument : heldInstrument;
+
+            return true;
         }
+
+
+
+        public bool TryFindSitSpotOnGroundNear(IntVec3 center, Pawn sitter, out IntVec3 result)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                IntVec3 intVec = center + GenRadial.RadialPattern[Rand.Range(1, NumRadiusCells)];
+                if (sitter.CanReserveAndReach(intVec, PathEndMode.OnCell, Danger.None, 1, -1, null, false) && intVec.GetEdifice(map) == null && GenSight.LineOfSight(center, intVec, map, true, null, 0, 0))
+                {
+                    result = intVec;
+                    return true;
+                }
+            }
+            result = IntVec3.Invalid;
+            return false;
+        }
+
     }
 }
