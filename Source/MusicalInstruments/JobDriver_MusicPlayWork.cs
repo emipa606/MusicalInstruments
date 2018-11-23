@@ -28,8 +28,6 @@ namespace MusicalInstruments
                 pawn.Map.GetComponent<PerformanceManager>().StartPlaying(musician, instrument, venue, true);
             };
 
-
-
             play.tickAction = delegate
             {
 

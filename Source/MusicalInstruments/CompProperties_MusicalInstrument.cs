@@ -6,7 +6,7 @@ using Verse;
 
 namespace MusicalInstruments
 {
-    class CompProperties_MusicalInstrument : CompProperties
+    public class CompProperties_MusicalInstrument : CompProperties
     {
         public float easiness = 0f;
 

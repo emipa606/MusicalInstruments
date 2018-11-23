@@ -6,7 +6,7 @@
     <Operation Class="PatchOperationInsert">
         <xpath>*/ThingDef/comps/li[compClass="CompGatherSpot"]</xpath>
         <value>
-            <li>
+            <li Class="MusicalInstruments.CompProperties_MusicSpot">
                 <compClass>MusicalInstruments.CompMusicSpot</compClass>
             </li>
         </value>

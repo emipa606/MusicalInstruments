@@ -16,16 +16,26 @@ namespace MusicalInstruments
     {
         private bool active = true;
 
-        public bool Active
+        public CompProperties_MusicSpot Props
         {
             get
             {
-                return active;
+                return (CompProperties_MusicSpot)this.props;
+            }
+        }
+
+        public bool Active
+        {
+            get
+            {   
+                return active || !Props.canBeDisabled;
             }
             set
             {
-                if (value == active) return;
-                active = value;
+                bool actualValue = value || !Props.canBeDisabled;
+
+                if (actualValue == active) return;
+                active = actualValue;
                 if(parent.Spawned)
                 {
                     PerformanceManager pm = parent.Map.GetComponent<PerformanceManager>();
@@ -66,24 +76,27 @@ namespace MusicalInstruments
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            Command_Toggle com = new Command_Toggle();
-            com.hotKey = KeyBindingDefOf.Designator_RotateLeft;
-            com.defaultLabel = "Music spot";
-            com.icon = TexCommand.GatherSpotActive;
-            com.isActive = new Func<bool>(IsActive);
-            com.toggleAction = delegate
+            if (Props.canBeDisabled)
             {
-                Active = !Active;
-            };
-            if (Active)
-            {
-                com.defaultDesc = "Active - colonists will play music here";
+                Command_Toggle com = new Command_Toggle();
+                com.hotKey = KeyBindingDefOf.Misc5;
+                com.defaultLabel = "Music spot";
+                com.icon = TexCommand.GatherSpotActive;
+                com.isActive = new Func<bool>(IsActive);
+                com.toggleAction = delegate
+                {
+                    Active = !Active;
+                };
+                if (Active)
+                {
+                    com.defaultDesc = "Active - colonists will play music here";
+                }
+                else
+                {
+                    com.defaultDesc = "Inactive - colonists will not play music here";
+                }
+                yield return com;
             }
-            else
-            {
-                com.defaultDesc = "Inactive - colonists will not play music here";
-            }
-            yield return com;
         }
 
     }

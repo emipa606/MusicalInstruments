@@ -31,8 +31,9 @@
         <descriptionMaker>ArtDescription_MusicalInstrument</descriptionMaker>
         <minQualityForArtistic>Excellent</minQualityForArtistic>
       </li>
-      <li>
+      <li Class="MusicalInstruments.CompProperties_MusicSpot">
         <compClass>MusicalInstruments.CompMusicSpot</compClass>
+        <canBeDisabled>false</canBeDisabled>
       </li>
     </comps>
     <designationCategory>Joy</designationCategory>
@@ -46,7 +47,7 @@
     <graphicData>
       <texPath>Things/Building/Organ</texPath>
       <graphicClass>Graphic_Multi</graphicClass>
-      <drawSize>(2,1)</drawSize>
+      <drawSize>(2.2,1.1)</drawSize>
     </graphicData>
 
     <statBases>

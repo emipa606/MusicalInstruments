@@ -86,9 +86,23 @@ namespace MusicalInstruments
         }
 
 
-        public bool AnyAvailableMapInstruments(Pawn pawn)
+        private IEnumerable<Thing> AvailableMapInstruments(Pawn musician, Thing venue)
         {
-            return allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x)).Any(x => pawn.CanReserve(x));
+            int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
+
+            return allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
+                                    .Where(x => musician.CanReserveAndReach(x, PathEndMode.Touch, Danger.None))
+                                    .Where(x => !x.IsForbidden(musician))
+                                    .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn)
+                                    .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusCheck(x, venue))
+                                    .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
+                                    .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+        }
+
+
+        public bool AnyAvailableMapInstruments(Pawn musician, Thing venue)
+        {
+            return AvailableMapInstruments(musician, venue).Any();
         }
 
         public Thing HeldInstrument(Pawn musician)
@@ -299,15 +313,7 @@ namespace MusicalInstruments
             int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
 
 
-            //if (!isWork && heldInstrument == null && skill < 3 && Verse.Rand.Chance(0.75f))
-            //    return false;
-
-            IEnumerable<Thing> mapInstruments = allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
-                                                        .Where(x => musician.CanReserve(x))
-                                                        .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn)
-                                                        .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusCheck(x, venue))
-                                                        .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
-                                                        .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+            IEnumerable<Thing> mapInstruments = AvailableMapInstruments(musician, venue);
 
             
 

@@ -50,6 +50,7 @@
     <Compile Include="CompMusicalInstrument.cs" />
     <Compile Include="CompMusicSpot.cs" />
     <Compile Include="CompProperties_MusicalInstrument.cs" />
+    <Compile Include="CompProperties_MusicSpot.cs" />
     <Compile Include="JobDefOf_MusicPlayWork.cs" />
     <Compile Include="JobDriver_MusicListen.cs" />
     <Compile Include="JobDriver_MusicPlayBase.cs" />

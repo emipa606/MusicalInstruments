@@ -134,6 +134,21 @@ namespace MusicalInstruments
               
         protected abstract Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue);
 
+        protected bool PowerMissing(Thing instrument)
+        {
+            CompProperties_MusicalInstrument propsinstrument = instrument.TryGetComp<CompMusicalInstrument>().Props;
+            if (!propsinstrument.isBuilding)
+                return false;
+
+            CompPowerTrader compPower = instrument.TryGetComp<CompPowerTrader>();
+
+            if (compPower == null)
+                return false;
+
+            return !compPower.PowerOn;
+
+        }
+
         // this function does three things:
         // it adds generic delegate functions to globalFailConditions (inherited from IJobEndable) via `This.EndOn...` extensions
         // it also yield returns a collection of toils: some generic, some custom
@@ -150,15 +165,18 @@ namespace MusicalInstruments
             this.FailOnDestroyedNullOrForbidden(InstrumentInd);
 
             Thing instrument = this.TargetC.Thing;
-
+            
             Thing venue = this.TargetA.Thing;
 
             CompProperties_MusicalInstrument props = instrument.TryGetComp<CompMusicalInstrument>().Props;
 
             if (props.isBuilding)
             {
+                this.FailOn(() => PowerMissing(instrument));
+
                 // go to where instrument is
-                yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.InteractionCell).FailOnSomeonePhysicallyInteracting(InstrumentInd);
+                yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.InteractionCell)
+                                        .FailOnSomeonePhysicallyInteracting(InstrumentInd);
 
                 yield return GetPlayToil(musician, instrument, venue);
 

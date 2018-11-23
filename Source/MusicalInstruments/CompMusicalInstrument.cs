@@ -6,7 +6,7 @@ using Verse;
 
 namespace MusicalInstruments
 {
-    class CompMusicalInstrument : ThingComp
+    public class CompMusicalInstrument : ThingComp
     {
         public CompProperties_MusicalInstrument Props
         {
@@ -18,9 +18,9 @@ namespace MusicalInstruments
 
         public float WeightedSuitability(int musicianSkill)
         {
-            if (musicianSkill < 8)
-                return Props.easiness + Props.expressiveness * .5f;
-            return Props.easiness * .5f + Props.expressiveness;
+            float f = musicianSkill / 20f;
+
+            return Props.easiness * (1-f) + Props.expressiveness * f;
 
         }
     }

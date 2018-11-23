@@ -33,11 +33,11 @@ namespace MusicalInstruments
 
         private Job TryGiveJobInt(Pawn pawn, Predicate<CompMusicSpot> musicSpotValidator)
         {
-            //quit if no available instrument / quit roll for low skill without instrument
+            //quit roll for low skill without instrument
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
             int skill = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
 
-            if (pm.HeldInstrument(pawn) == null && (!pm.AnyAvailableMapInstruments(pawn) || (skill < 3 && Verse.Rand.Chance(.75f))))
+            if (pm.HeldInstrument(pawn) == null && skill < 3 && Verse.Rand.Chance(.75f))
                 return null;
 
 
@@ -77,32 +77,39 @@ namespace MusicalInstruments
                                 // check passed in predicate - i.e. parties
                                 if (musicSpotValidator == null || musicSpotValidator(CompMusicSpot))
                                 {
-                                    // find a place to sit or stand, or return null if there aren't any
 
-                                    Job job;
+                                    //check for an instrument
+                                    if (pm.AnyAvailableMapInstruments(pawn, CompMusicSpot.parent))
+                                    {
+                                        // find a place to sit or stand, or return null if there aren't any
+
+                                        Job job;
                                 
-                                    IntVec3 standingSpot;
-                                    if (!pm.TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
-                                    {
-                                        return null;
-                                    }
-                                    job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
+                                        IntVec3 standingSpot;
+                                        if (!pm.TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
+                                        {
+                                            return null;
+                                        }
+                                        job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
                     
-                                    Thing instrument;
+                                        Thing instrument;
 
-                                    if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
-                                        pm.TryFindInstrumentToPlay(CompMusicSpot.parent, pawn, out instrument))
-                                    {
+                                        if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
+                                            pm.TryFindInstrumentToPlay(CompMusicSpot.parent, pawn, out instrument))
+                                        {
 
-                                        job.targetC = instrument;
-                                    }
-                                    else return null;
+                                            job.targetC = instrument;
+                                        }
+                                        else return null;
 
       
 
-                                    job.count = 1;
+                                        job.count = 1;
 
-                                    return job;
+                                        return job;
+
+                                    }
+
                                 }
                             }
                         }

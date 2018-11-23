@@ -38,10 +38,11 @@ namespace MusicalInstruments
             if (!pm.CanPlayForWorkNow(pawn))
                 return null;
 
-            //we also need to check for availibilty of an instrument here...?
-            if (pm.HeldInstrument(pawn) == null && !pm.AnyAvailableMapInstruments(pawn))
-                return null;
             IEnumerable<Thing> things = pm.ListActiveMusicSpots().Select(x => (Thing)x.parent);
+
+            //we also need to check for availibilty of an instrument here
+            if (pm.HeldInstrument(pawn) == null)
+                things = things.Where(x => pm.AnyAvailableMapInstruments(pawn, x));
 
             //Verse.Log.Message(String.Format("PotentialWorkThingsGlobal for {0}: {1} things", pawn.Label, things.Count()));
 
@@ -79,13 +80,24 @@ namespace MusicalInstruments
 
             if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art))
             {
-                CompMusicalInstrument comp = thing.TryGetComp<CompMusicalInstrument>();
+                CompMusicalInstrument instrumentComp = thing.TryGetComp<CompMusicalInstrument>();
+                CompPowerTrader powerComp = thing.TryGetComp<CompPowerTrader>();
 
-                if(forced && comp!=null && comp.Props.isBuilding && pawn.CanReserve(thing))
+                if (forced && 
+                    instrumentComp != null && 
+                    instrumentComp.Props.isBuilding && 
+                    pawn.CanReserveAndReach(thing, PathEndMode.Touch, Danger.None) &&
+                    (powerComp == null || powerComp.PowerOn))
                 {
                     job.targetC = thing;
-                } else if(pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out instrument))
+                }
+                else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out instrument))
                 {
+#if DEBUG
+
+                    Verse.Log.Message(String.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
+      
+#endif
                     job.targetC = instrument;
                 }
                 else return null;

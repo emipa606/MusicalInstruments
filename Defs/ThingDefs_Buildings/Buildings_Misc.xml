@@ -11,7 +11,7 @@
     <graphicData>
       <texPath>Things/Building/Misc/PartySpot</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <color>(20,60,20)</color>
+      <color>(158, 196, 222)</color>
     </graphicData>
     <altitudeLayer>FloorEmplacement</altitudeLayer>
     <statBases>
@@ -23,8 +23,9 @@
     <designationCategory>Misc</designationCategory>
     <passability>Standable</passability>
     <comps>
-      <li>
+      <li Class="MusicalInstruments.CompProperties_MusicSpot">
         <compClass>MusicalInstruments.CompMusicSpot</compClass>
+        <canBeDisabled>false</canBeDisabled>
       </li>
     </comps>
     <building>
