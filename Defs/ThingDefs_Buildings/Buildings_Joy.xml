@@ -19,6 +19,9 @@
     <statBases>
       <SellPriceFactor>0.50</SellPriceFactor>
     </statBases>
+    <building>
+      <joyKind>Music</joyKind>
+    </building>
     <comps>			
       <li Class="CompProperties_RoomIdentifier">
 				<roomStat>Impressiveness</roomStat>

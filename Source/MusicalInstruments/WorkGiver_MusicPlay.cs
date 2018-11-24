@@ -49,9 +49,72 @@ namespace MusicalInstruments
             return things;
         }
 
+        public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
+        {
+            if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
+                !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
+                pawn.story.WorkTypeIsDisabled(art))
+                return false;
+
+            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+
+            if (!pm.CanPlayForWorkNow(pawn))
+                return false;
+
+            CompMusicSpot compMusicSpot = t.TryGetComp<CompMusicSpot>();
+
+            if (compMusicSpot == null)
+                return false;
+
+            if (!compMusicSpot.Active)
+                return false;
+
+            IntVec3 standingSpot;
+            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot, pawn, out standingSpot))
+            {
+                return false;
+            }
+
+            Thing instrument;
+
+            CompMusicSpot musicSpotComp = t.TryGetComp<CompMusicSpot>();
+            CompMusicalInstrument instrumentComp = t.TryGetComp<CompMusicalInstrument>();
+            CompPowerTrader powerComp = t.TryGetComp<CompPowerTrader>();
+
+            LocalTargetInfo chairOrSpot = null;
+
+            if (forced &&
+                instrumentComp != null &&
+                instrumentComp.Props.isBuilding &&
+                pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.None) &&
+                (powerComp == null || powerComp.PowerOn))
+            {
+                if (!pm.TryFindStandingSpotOrChair(musicSpotComp, pawn, t, out chairOrSpot))
+                    return false;
+            }
+            else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out instrument))
+            {
+
+#if DEBUG
+                Verse.Log.Message(String.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
+#endif
+
+                if (!pm.TryFindStandingSpotOrChair(musicSpotComp, pawn, instrument, out chairOrSpot))
+                    return false;
+            }
+            else return false;
+
+            return true;
+        }
+
         public override Job JobOnThing(Pawn pawn, Thing thing, bool forced = false)
         {
             //Verse.Log.Message(String.Format("Trying to play at {0}", thing.Label));
+
+            if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
+                !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
+                pawn.story.WorkTypeIsDisabled(art))
+                return null;
 
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
 
@@ -69,40 +132,49 @@ namespace MusicalInstruments
             Job job;
 
             IntVec3 standingSpot;
-            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot.parent.Position, pawn, out standingSpot))
+            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot, pawn, out standingSpot))
             {
                 return null;
             }
 
-            job = new Job(JobDefOf_MusicPlayWork.MusicPlayWork, compMusicSpot.parent, standingSpot);
+            job = new Job(JobDefOf_MusicPlayWork.MusicPlayWork, compMusicSpot.parent); //, standingSpot);
 
             Thing instrument;
 
-            if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art))
+
+            CompMusicSpot musicSpotComp = thing.TryGetComp<CompMusicSpot>();
+            CompMusicalInstrument instrumentComp = thing.TryGetComp<CompMusicalInstrument>();
+            CompPowerTrader powerComp = thing.TryGetComp<CompPowerTrader>();
+
+            LocalTargetInfo chairOrSpot = null;
+
+            if (forced && 
+                instrumentComp != null && 
+                instrumentComp.Props.isBuilding && 
+                pawn.CanReserveAndReach(thing, PathEndMode.Touch, Danger.None) &&
+                (powerComp == null || powerComp.PowerOn))
             {
-                CompMusicalInstrument instrumentComp = thing.TryGetComp<CompMusicalInstrument>();
-                CompPowerTrader powerComp = thing.TryGetComp<CompPowerTrader>();
+                if (!pm.TryFindStandingSpotOrChair(musicSpotComp, pawn, thing, out chairOrSpot))
+                    return null;
 
-                if (forced && 
-                    instrumentComp != null && 
-                    instrumentComp.Props.isBuilding && 
-                    pawn.CanReserveAndReach(thing, PathEndMode.Touch, Danger.None) &&
-                    (powerComp == null || powerComp.PowerOn))
-                {
-                    job.targetC = thing;
-                }
-                else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out instrument))
-                {
+                job.targetB = chairOrSpot;
+                job.targetC = thing;
+            }
+            else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out instrument))
+            {
+
 #if DEBUG
-
-                    Verse.Log.Message(String.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
-      
+                Verse.Log.Message(String.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
 #endif
-                    job.targetC = instrument;
-                }
-                else return null;
+
+                if (!pm.TryFindStandingSpotOrChair(musicSpotComp, pawn, instrument, out chairOrSpot))
+                    return null;
+
+                job.targetB = chairOrSpot;
+                job.targetC = instrument;
             }
             else return null;
+
 
 
 
@@ -110,5 +182,7 @@ namespace MusicalInstruments
 
             return job;
         }
+
+
     }
 }

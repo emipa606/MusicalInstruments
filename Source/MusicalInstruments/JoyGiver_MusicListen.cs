@@ -70,6 +70,10 @@ namespace MusicalInstruments
 
         private Job TryGiveJobInt(Pawn pawn, Predicate<CompMusicSpot> musicSpotValidator)
         {
+#if DEBUG
+            Verse.Log.Message(String.Format("{0} trying to listen to music", pawn.LabelShort));
+#endif      
+
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
 
             // if no music spots then give up
@@ -109,25 +113,38 @@ namespace MusicalInstruments
                                     // is a performance currently in progress
                                     if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(CompMusicSpot.parent))
                                     {
-                                        
-                                        
+#if DEBUG
+                                        Verse.Log.Message("Found performance to listen to");
+#endif                                        
                                         // find a place to sit or stand, or return null if there aren't any                                  
 
-                                    
+
                                         Job job;
 
                                         IntVec3 standingSpot;
-                                        if (TryFindChairNear(CompMusicSpot.parent.Position, pawn, out Thing chair))
+                                        if (pm.TryFindChairNear(CompMusicSpot, pawn, out Thing chair))
                                         {
+#if DEBUG
+                                            Verse.Log.Message("Found chair");
+#endif                                        
                                             job = new Job(this.def.jobDef, CompMusicSpot.parent, chair);
                                             return job;
-                                        }                                        
-                                        else if (TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
+                                        }
+                                        else if (pm.TryFindSitSpotOnGroundNear(CompMusicSpot, pawn, out standingSpot))
                                         {
+#if DEBUG
+                                            Verse.Log.Message("Found standing spot");
+#endif                                        
                                             job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
                                             return job;
                                         }
-                                        else return null;
+                                        else
+                                        {
+#if DEBUG
+                                            Verse.Log.Message("Failed to find chair or standing spot");
+#endif                                        
+                                            return null;
+                                        }
                                     }
  
                                 }
@@ -136,38 +153,12 @@ namespace MusicalInstruments
                     }
                 }
             }
+
+#if DEBUG
+            Verse.Log.Message("Failed to find performance");
+#endif  
             return null;
         }
 
-        private static bool TryFindChairNear(IntVec3 center, Pawn sitter, out Thing chair)
-        {
-            for (int i = 0; i < RadialPatternMiddleOutward.Count; i++)
-            {
-                IntVec3 c = center + RadialPatternMiddleOutward[i];
-                Building edifice = c.GetEdifice(sitter.Map);
-                if (edifice != null && edifice.def.building.isSittable && sitter.CanReserve(edifice) && !edifice.IsForbidden(sitter) && GenSight.LineOfSight(center, edifice.Position, sitter.Map, skipFirstCell: true))
-                {
-                    chair = edifice;
-                    return true;
-                }
-            }
-            chair = null;
-            return false;
-        }
-
-        private static bool TryFindSitSpotOnGroundNear(IntVec3 center, Pawn sitter, out IntVec3 result)
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                IntVec3 intVec = center + GenRadial.RadialPattern[Rand.Range(1, NumRadiusCells)];
-                if (sitter.CanReserveAndReach(intVec, PathEndMode.OnCell, Danger.None) && intVec.GetEdifice(sitter.Map) == null && GenSight.LineOfSight(center, intVec, sitter.Map, skipFirstCell: true))
-                {
-                    result = intVec;
-                    return true;
-                }
-            }
-            result = IntVec3.Invalid;
-            return false;
-        }
     }
 }

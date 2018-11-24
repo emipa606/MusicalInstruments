@@ -184,17 +184,20 @@ namespace MusicalInstruments
             }
 
 #if DEBUG
-
             Verse.Log.Message(String.Format("Musicians: {0}", String.Join(", ", Performances[venueHash].Performers.Select(x => LogMusician(x.Value.Musician, x.Value.Instrument)).ToArray())));
             Verse.Log.Message(String.Format("Quality: {0}", Performances[venueHash].Quality));
-
 #endif
+
         }
 
         public void StopPlaying(Pawn musician, Thing venue)
         {
             int venueHash = venue.GetHashCode();
             int musicianHash = musician.GetHashCode();
+
+#if DEBUG
+            Verse.Log.Message(String.Format("StopPlaying: Musician: {0}, Venue: {1}. {2} performances currently", musician.LabelShort, venue.LabelShort, Performances.Count));
+#endif
 
             if (Performances.ContainsKey(venueHash))
             {
@@ -207,17 +210,40 @@ namespace MusicalInstruments
                     else
                         Performances[venueHash].CalculateQuality();
                 }
+
+#if DEBUG
+                Verse.Log.Message(String.Format("Done, now ({0}) performances on map.", Performances.Count));
+#endif
+
             }
             else
             {
+
+#if DEBUG
+                Verse.Log.Message("StopPlaying continuing for all performances on map...");
+#endif
+
+                List<int> ongoingPerformanceHashes = new List<int>();
+
                 foreach (int otherVenueHash in Performances.Keys)
                 {
                     if (Performances[otherVenueHash].Performers.Keys.Contains(musicianHash))
                     {
                         Performances[otherVenueHash].Performers.Remove(musicianHash);
-                        Performances[otherVenueHash].CalculateQuality();
+                        if (Performances[otherVenueHash].Performers.Any())
+                        {
+                            Performances[otherVenueHash].CalculateQuality();
+                            ongoingPerformanceHashes.Add(otherVenueHash);
+                        }
                     }
                 }
+
+                Performances = Performances.Where(x => ongoingPerformanceHashes.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+
+#if DEBUG
+                Verse.Log.Message(String.Format("Done, now ({0}) performances on map.", Performances.Count));
+#endif
+
             }
         }
 
@@ -242,7 +268,6 @@ namespace MusicalInstruments
             }
             else
             {
-                //Verse.Log.Error(String.Format("Performance quality of gather spot #{0} = {1}.", hash, performances[hash].Quality));
                 return Performances[hash].Quality;
             }
 
@@ -269,9 +294,6 @@ namespace MusicalInstruments
             float quality = Performances[hash].Quality;
 
             if (quality >= 0f && quality < .5f) return;
-
-            //IntVec3 centre = venue.Position;
-            //int roomHash = venue.GetRoom().GetHashCode();
 
             List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => RadiusAndRoomCheck(venue, x)  && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
 
@@ -343,15 +365,15 @@ namespace MusicalInstruments
 
             bool swap = false;
 
-            float chanceToSwapAnyway = bestInstrument.TryGetComp<CompMusicalInstrument>().Props.isBuilding ? .7f : .9f;
+            float buildingSwapModifier = bestInstrument.TryGetComp<CompMusicalInstrument>().Props.isBuilding ? .2f : 0f;
 
             float rand = Verse.Rand.Range(0f, 1f);
 
-            if (rand > chanceToSwapAnyway)
+            if (rand > .9f - buildingSwapModifier)
             {
                 swap = true;
             }
-            else if (rand > 0.4f)
+            else if (rand > .4f - buildingSwapModifier)
             {
                 swap = heldInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill) < bestInstrument.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill);
             }
@@ -361,10 +383,46 @@ namespace MusicalInstruments
             return true;
         }
 
-
-
-        public bool TryFindSitSpotOnGroundNear(IntVec3 center, Pawn sitter, out IntVec3 result)
+        public bool TryFindStandingSpotOrChair(CompMusicSpot musicSpot, Pawn musician, Thing instrument, out LocalTargetInfo target)
         {
+            IntVec3 standingSpot;
+            Thing chair;
+
+            target = null;
+
+            PerformanceManager pm = musician.Map.GetComponent<PerformanceManager>();
+
+            CompMusicalInstrument comp = instrument.TryGetComp<CompMusicalInstrument>();
+
+            if (comp.Props.isBuilding)
+            {
+                if (pm.TryFindChairAt(comp, musician, out chair))
+                {
+                    target = chair;
+                    return true;
+                }
+                else if (pm.TryFindSpotAt(comp, musician, out standingSpot))
+                {
+                    target = standingSpot;
+                    return true;
+                }
+            }
+            else
+            {
+                if (pm.TryFindSitSpotOnGroundNear(musicSpot, musician, out standingSpot))
+                {
+                    target = standingSpot;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool TryFindSitSpotOnGroundNear(CompMusicSpot spot, Pawn sitter, out IntVec3 result)
+        {
+            IntVec3 center = spot.parent.Position;
+
             for (int i = 0; i < 30; i++)
             {
                 IntVec3 intVec = center + GenRadial.RadialPattern[Rand.Range(1, NumRadiusCells)];
@@ -376,6 +434,65 @@ namespace MusicalInstruments
             }
             result = IntVec3.Invalid;
             return false;
+        }
+
+        public bool TryFindChairNear(CompMusicSpot spot, Pawn sitter, out Thing chair)
+        {
+            IntVec3 center = spot.parent.Position;
+
+            CompMusicalInstrument comp = spot.parent.TryGetComp<CompMusicalInstrument>();
+
+            for (int i = 0; i < RadialPatternMiddleOutward.Count; i++)
+            {
+                IntVec3 c =  center + RadialPatternMiddleOutward[i];
+
+                if (comp != null && comp.Props.isBuilding && c == comp.parent.InteractionCell)
+                    continue;
+
+                Building edifice = c.GetEdifice(map);
+                if (edifice != null && edifice.def.building.isSittable && sitter.CanReserveAndReach(edifice, PathEndMode.OnCell, Danger.None) && !edifice.IsForbidden(sitter) && GenSight.LineOfSight(center, edifice.Position, map, skipFirstCell: true))
+                {
+                    chair = edifice;
+                    return true;
+                }
+            }
+            chair = null;
+            return false;
+        }
+
+        public bool TryFindChairAt(CompMusicalInstrument instrument, Pawn sitter, out Thing chair)
+        {
+            chair = null;
+
+            if (!instrument.Props.isBuilding) return false;
+
+            Building edifice = instrument.parent.InteractionCell.GetEdifice(map);
+            if (edifice != null && edifice.def.building.isSittable && sitter.CanReserveAndReach(edifice, PathEndMode.OnCell, Danger.None) && !edifice.IsForbidden(sitter))
+            {
+                chair = edifice;
+                return true;
+            }
+
+            return false;
+
+        }
+
+        public bool TryFindSpotAt(CompMusicalInstrument instrument, Pawn sitter, out IntVec3 result)
+        {
+            result = IntVec3.Invalid;
+
+            if (!instrument.Props.isBuilding) return false;
+
+            IntVec3 intVec = instrument.parent.InteractionCell;
+
+            if (sitter.CanReserveAndReach(intVec, PathEndMode.OnCell, Danger.None, 1, -1, null, false) && intVec.GetEdifice(map) == null)
+            {
+                result = intVec;
+                return true;
+            }
+
+            return false;
+
         }
 
     }

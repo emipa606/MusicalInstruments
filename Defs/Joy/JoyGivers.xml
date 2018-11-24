@@ -11,6 +11,7 @@
       <li>Ocarina</li>
       <li>Guitar</li>
       <li>Violin</li>
+      <li>ElectronicOrgan</li>
     </thingDefs>
     <requiredCapacities>
       <li>Manipulation</li>
@@ -29,6 +30,7 @@
       <li>Ocarina</li>
       <li>Guitar</li>
       <li>Violin</li>
+      <li>ElectronicOrgan</li>
     </thingDefs>
     <requiredCapacities>
       <li>Hearing</li>

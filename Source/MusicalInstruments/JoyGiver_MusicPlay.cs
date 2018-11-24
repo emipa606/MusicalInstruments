@@ -48,6 +48,10 @@ namespace MusicalInstruments
                 return null;
             }
 
+            if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
+                !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
+                pawn.story.WorkTypeIsDisabled(art))
+                return null;
 
             // load all music spots on map into list
             JoyGiver_MusicPlay.workingSpots.Clear();
@@ -81,35 +85,24 @@ namespace MusicalInstruments
                                     //check for an instrument
                                     if (pm.AnyAvailableMapInstruments(pawn, CompMusicSpot.parent))
                                     {
-                                        // find a place to sit or stand, or return null if there aren't any
-
-                                        Job job;
-                                
-                                        IntVec3 standingSpot;
-                                        if (!pm.TryFindSitSpotOnGroundNear(CompMusicSpot.parent.Position, pawn, out standingSpot))
-                                        {
-                                            return null;
-                                        }
-                                        job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
-                    
                                         Thing instrument;
 
-                                        if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && !pawn.story.WorkTypeIsDisabled(art) &&
-                                            pm.TryFindInstrumentToPlay(CompMusicSpot.parent, pawn, out instrument))
+                                        if (pm.TryFindInstrumentToPlay(CompMusicSpot.parent, pawn, out instrument))
                                         {
+                                            // find a place to sit or stand, or return null if there aren't any
+                                            LocalTargetInfo chairOrSpot = null;
 
-                                            job.targetC = instrument;
-                                        }
-                                        else return null;
+                                            if (pm.TryFindStandingSpotOrChair(CompMusicSpot, pawn, instrument, out chairOrSpot))
+                                            {
+                                                Job job = new Job(def.jobDef, CompMusicSpot.parent, chairOrSpot, instrument);
 
-      
+                                                job.count = 1;
 
-                                        job.count = 1;
+                                                return job;
 
-                                        return job;
-
+                                            }
+                                        }                                        
                                     }
-
                                 }
                             }
                         }

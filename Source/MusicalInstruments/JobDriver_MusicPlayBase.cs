@@ -28,7 +28,7 @@ namespace MusicalInstruments
 
         protected const TargetIndex MusicSpotParentInd = TargetIndex.A;
 
-        protected const TargetIndex StandingSpotInd = TargetIndex.B;
+        protected const TargetIndex StandingSpotOrChairInd = TargetIndex.B;
 
         protected const TargetIndex InstrumentInd = TargetIndex.C;
 
@@ -59,7 +59,7 @@ namespace MusicalInstruments
         {
             Pawn pawn = this.pawn;
 
-            LocalTargetInfo target = job.GetTarget(StandingSpotInd);
+            LocalTargetInfo target = job.GetTarget(StandingSpotOrChairInd);
 
             // try to reserve a place to sit or stand
             if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed)) return false;
@@ -218,7 +218,7 @@ namespace MusicalInstruments
                 }
 
                 // go to the sitting / standing spot
-                yield return Toils_Goto.GotoCell(StandingSpotInd, PathEndMode.OnCell);
+                yield return Toils_Goto.GotoCell(StandingSpotOrChairInd, PathEndMode.OnCell);
 
                 yield return GetPlayToil(musician, instrument, venue);
 

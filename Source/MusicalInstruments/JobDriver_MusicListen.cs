@@ -57,19 +57,24 @@ namespace MusicalInstruments
             
             Thing venue = this.TargetA.Thing;
 
-            if(!(chairOrBed is Building_Bed))
+            if(!HasChairOrBed)
+            {
                 yield return Toils_Goto.GotoCell(ChairOrSpotOrBedInd, PathEndMode.OnCell);
+            }
+            else if(!(chairOrBed is Building_Bed))
+                yield return Toils_Goto.GotoThing(ChairOrSpotOrBedInd, PathEndMode.OnCell);
 
             // custom toil.
             Toil listen = new Toil();
 
             listen.tickAction = delegate
             {
-                this.pawn.rotationTracker.FaceCell(this.ClosestMusicSpotParentCell);
+                if(!HasChairOrBed)
+                    this.pawn.rotationTracker.FaceCell(this.ClosestMusicSpotParentCell);
                 JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, 1f + Math.Abs(pawn.Map.GetComponent<PerformanceManager>().GetPerformanceQuality(venue)), null);
             };
 
-            listen.handlingFacing = true;
+            listen.handlingFacing = !HasChairOrBed;
             listen.defaultCompleteMode = ToilCompleteMode.Delay;
             listen.defaultDuration = this.job.def.joyDuration;
 
