@@ -48,8 +48,18 @@ namespace MusicalInstruments
 
         }
 
-        public static bool RadiusCheck(Thing thing1, Thing thing2)
+        public static bool RadiusAndRoomCheck(Thing thing1, Thing thing2)
         {
+
+            if (thing1 == null || thing2 == null)
+                return false;
+
+            Room room1 = thing1.GetRoom();
+            Room room2 = thing2.GetRoom();
+
+            if (room1 == null || room2 == null)
+                return false;
+
             return (thing1.GetRoom().GetHashCode() == thing2.GetRoom().GetHashCode() &&
                     thing1.Position.DistanceTo(thing2.Position) < Radius);
 
@@ -94,7 +104,7 @@ namespace MusicalInstruments
                                     .Where(x => musician.CanReserveAndReach(x, PathEndMode.Touch, Danger.None))
                                     .Where(x => !x.IsForbidden(musician))
                                     .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn)
-                                    .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusCheck(x, venue))
+                                    .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusAndRoomCheck(x, venue))
                                     .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
                                     .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
         }
@@ -151,7 +161,7 @@ namespace MusicalInstruments
 
             foreach(int otherVenueHash in Performances.Keys)
             {
-                if(RadiusCheck(Performances[otherVenueHash].Venue, venue))
+                if(RadiusAndRoomCheck(Performances[otherVenueHash].Venue, venue))
                 {
                     venueHash = otherVenueHash;
                     break;
@@ -263,7 +273,7 @@ namespace MusicalInstruments
             //IntVec3 centre = venue.Position;
             //int roomHash = venue.GetRoom().GetHashCode();
 
-            List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => RadiusCheck(venue, x)  && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
+            List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => RadiusAndRoomCheck(venue, x)  && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
 
             if (!audience.Any()) return;
 
@@ -333,9 +343,11 @@ namespace MusicalInstruments
 
             bool swap = false;
 
+            float chanceToSwapAnyway = bestInstrument.TryGetComp<CompMusicalInstrument>().Props.isBuilding ? .7f : .9f;
+
             float rand = Verse.Rand.Range(0f, 1f);
 
-            if (rand > .9f)
+            if (rand > chanceToSwapAnyway)
             {
                 swap = true;
             }
