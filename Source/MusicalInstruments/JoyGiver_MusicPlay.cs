@@ -16,7 +16,7 @@ namespace MusicalInstruments
     {
 
 
-        private static readonly WorkTypeDef art = WorkTypeDefsUtility.WorkTypeDefsInPriorityOrder.Where(wtd => wtd.defName == "Art").SingleOrDefault();
+        public static readonly WorkTypeDef Art = WorkTypeDefsUtility.WorkTypeDefsInPriorityOrder.Where(wtd => wtd.defName == "Art").SingleOrDefault();
 
         private static List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
 
@@ -50,7 +50,7 @@ namespace MusicalInstruments
 
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
                 !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
-                pawn.story.WorkTypeIsDisabled(art))
+                pawn.story.WorkTypeIsDisabled(Art))
                 return null;
 
             // load all music spots on map into list

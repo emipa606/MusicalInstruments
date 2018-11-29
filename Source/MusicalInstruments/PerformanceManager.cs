@@ -100,13 +100,31 @@ namespace MusicalInstruments
         {
             int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
 
-            return allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
-                                    .Where(x => musician.CanReserveAndReach(x, PathEndMode.Touch, Danger.None))
-                                    .Where(x => !x.IsForbidden(musician))
-                                    .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn)
-                                    .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusAndRoomCheck(x, venue))
-                                    .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
-                                    .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+            IEnumerable<Thing> instruments = allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
+                                                              .Where(x => musician.CanReserveAndReach(x, PathEndMode.Touch, Danger.None))
+                                                              .Where(x => !x.IsForbidden(musician))
+                                                              .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn);
+
+            if (venue != null)
+                instruments = instruments.Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusAndRoomCheck(x, venue));
+
+            return instruments.OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
+                              .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+        }
+
+        public bool MusicJoyKindAvailable()
+        {
+            if (!ActiveMusicSpots.Any()) return false;
+
+            foreach(Pawn pawn in map.mapPawns.FreeColonists)
+            {
+                if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) &&
+                    pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
+                    !pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art) &&
+                    (HeldInstrument(pawn) != null || AnyAvailableMapInstruments(pawn, null) ))
+                        return true;
+            }
+            return false;
         }
 
 
@@ -117,6 +135,9 @@ namespace MusicalInstruments
 
         public Thing HeldInstrument(Pawn musician)
         {
+            if (musician.carryTracker.CarriedThing != null && IsInstrument(musician.carryTracker.CarriedThing))
+                return musician.carryTracker.CarriedThing;
+
             foreach (Thing inventoryThing in musician.inventory.innerContainer)
             {
                 if (IsInstrument(inventoryThing))
@@ -295,7 +316,7 @@ namespace MusicalInstruments
 
             if (quality >= 0f && quality < .5f) return;
 
-            List<Pawn> audience = venue.Map.mapPawns.FreeColonistsAndPrisoners.Where(x => RadiusAndRoomCheck(venue, x)  && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
+            List<Pawn> audience = map.mapPawns.FreeColonists.Where(x => RadiusAndRoomCheck(venue, x)  && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
 
             if (!audience.Any()) return;
 
