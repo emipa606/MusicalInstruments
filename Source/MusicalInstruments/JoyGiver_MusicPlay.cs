@@ -40,7 +40,9 @@ namespace MusicalInstruments
             if (pm.HeldInstrument(pawn) == null && skill < 3 && Verse.Rand.Chance(.75f))
                 return null;
 
-
+            //visitors only play their own instruments
+            if (pm.HeldInstrument(pawn) == null && !pawn.Faction.IsPlayer)
+                return null;
 
             // if no music spots then give up
             if (pm.ListActiveMusicSpots().Count == 0)

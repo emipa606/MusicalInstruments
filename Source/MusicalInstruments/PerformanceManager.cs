@@ -16,6 +16,9 @@ namespace MusicalInstruments
     {
         // static
 
+        [TweakValue("MusicalInstruments.MinTicksBetweenWorkPerfomances", 0, 60000)]
+        private static int MinTicksBetweenWorkPerfomances = 30000;
+
         private static readonly List<ThingDef> allInstrumentDefs = new List<ThingDef> {
             ThingDef.Named("FrameDrum"),
             ThingDef.Named("Ocarina"),
@@ -60,7 +63,7 @@ namespace MusicalInstruments
             if (room1 == null || room2 == null)
                 return false;
 
-            return (thing1.GetRoom().GetHashCode() == thing2.GetRoom().GetHashCode() &&
+            return (room1.GetHashCode() == room2.GetHashCode() &&
                     thing1.Position.DistanceTo(thing2.Position) < Radius);
 
         }
@@ -98,32 +101,36 @@ namespace MusicalInstruments
 
         private IEnumerable<Thing> AvailableMapInstruments(Pawn musician, Thing venue)
         {
-            int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
-
             IEnumerable<Thing> instruments = allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
-                                                              .Where(x => musician.CanReserveAndReach(x, PathEndMode.Touch, Danger.None))
-                                                              .Where(x => !x.IsForbidden(musician))
                                                               .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn);
 
             if (venue != null)
                 instruments = instruments.Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusAndRoomCheck(x, venue));
 
-            return instruments.OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(skill))
-                              .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+            if(musician != null)
+                instruments = instruments.Where(x => musician.CanReserveAndReach(x, PathEndMode.Touch, Danger.None))
+                                         .Where(x => !x.IsForbidden(musician))
+                                         .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(musician.skills.GetSkill(SkillDefOf.Artistic).Level))
+                                         .ThenByDescending(x => x.TryGetComp<CompQuality>().Quality);
+
+            return instruments;
         }
 
         public bool MusicJoyKindAvailable()
         {
             if (!ActiveMusicSpots.Any()) return false;
 
+            if (AnyAvailableMapInstruments(null, null)) return true;
+
             foreach(Pawn pawn in map.mapPawns.FreeColonists)
             {
                 if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) &&
                     pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
                     !pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art) &&
-                    (HeldInstrument(pawn) != null || AnyAvailableMapInstruments(pawn, null) ))
+                    HeldInstrument(pawn) != null)
                         return true;
             }
+
             return false;
         }
 
@@ -173,7 +180,7 @@ namespace MusicalInstruments
             int hash = musician.GetHashCode();
             if (!WorkPerformanceTimestamps.ContainsKey(hash)) return true;
             int ticksSince = Find.TickManager.TicksGame - WorkPerformanceTimestamps[hash];
-            return (ticksSince >= 30000);
+            return (ticksSince >= MinTicksBetweenWorkPerfomances);
         }
 
         public void StartPlaying(Pawn musician, Thing instrument, Thing venue, bool isWork)
@@ -316,8 +323,10 @@ namespace MusicalInstruments
 
             if (quality >= 0f && quality < .5f) return;
 
-            List<Pawn> audience = map.mapPawns.FreeColonists.Where(x => RadiusAndRoomCheck(venue, x)  && x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)).ToList();
-
+            IEnumerable<Pawn> audience = map.mapPawns.AllPawnsSpawned.Where(x => x.RaceProps.Humanlike &&
+                                                                                 (x.Faction.IsPlayer || (x.HostFaction != null && x.HostFaction.IsPlayer)) &&
+                                                                                 x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) && 
+                                                                                 RadiusAndRoomCheck(venue, x));
             if (!audience.Any()) return;
 
             ThoughtDef thought;
@@ -336,7 +345,7 @@ namespace MusicalInstruments
 
 #if DEBUG
 
-            Verse.Log.Message(String.Format("Giving memory of {0} to {1} pawns", thought.stages[0].label, audience.Count));
+            Verse.Log.Message(String.Format("Giving memory of {0} to {1} pawns", thought.stages[0].label, audience.Count()));
 
 #endif
 
@@ -361,6 +370,13 @@ namespace MusicalInstruments
                     heldInstrument = inventoryThing;
                     break;
                 }
+            }
+
+            //visitors only play their own instruments
+            if (!musician.Faction.IsPlayer)
+            {
+                instrument = heldInstrument;
+                return (instrument != null);
             }
 
             int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;

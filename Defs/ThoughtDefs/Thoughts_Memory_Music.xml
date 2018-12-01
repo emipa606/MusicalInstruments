@@ -5,6 +5,7 @@
     <defName>BadMusic</defName>
     <durationDays>1</durationDays>
     <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
     <stages>
 			<li>
 				<label>bad music</label>
@@ -18,6 +19,7 @@
     <defName>NiceMusic</defName>
     <durationDays>1</durationDays>
     <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
     <stages>
 			<li>
 				<label>nice music</label>
@@ -31,6 +33,7 @@
     <defName>GreatMusic</defName>
     <durationDays>1</durationDays>
     <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
     <stages>
 			<li>
 				<label>great music</label>

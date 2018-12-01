@@ -222,6 +222,9 @@ namespace MusicalInstruments
 
                 yield return GetPlayToil(musician, instrument, venue);
 
+                // temporary fix for Hospitality guests stealing instruments
+                //if(!musician.Faction.IsPlayer)
+
                 yield return Toils_General.PutCarriedThingInInventory();
             }
 
