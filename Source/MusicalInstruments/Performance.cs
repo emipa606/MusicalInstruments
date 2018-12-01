@@ -107,10 +107,11 @@ namespace MusicalInstruments
 
         private static float GetMusicQuality(Pawn musician, Thing instrument)
         {
-            if (instrument == null) return 0f;
+            if (musician == null || instrument == null) return 0f;
 
             int artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
-            int luck = ((JobDriver_MusicPlayBase)musician.jobs.curDriver).Luck;
+            JobDriver driver = musician.jobs.curDriver;
+            int luck = (driver != null && driver is JobDriver_MusicPlayBase ? ((JobDriver_MusicPlayBase)driver).Luck : 0);
             bool isInspired = musician.Inspired ? musician.Inspiration.def == InspirationDefOf.Inspired_Creativity : false;
             QualityCategory instrumentQuality = QualityCategory.Normal;
             instrument.TryGetQuality(out instrumentQuality);

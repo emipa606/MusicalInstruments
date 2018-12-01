@@ -99,10 +99,13 @@ namespace MusicalInstruments
         }
 
 
-        private IEnumerable<Thing> AvailableMapInstruments(Pawn musician, Thing venue)
+        private IEnumerable<Thing> AvailableMapInstruments(Pawn musician, Thing venue, bool buildingOnly = false)
         {
             IEnumerable<Thing> instruments = allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
                                                               .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn);
+
+            if (buildingOnly)
+                instruments = instruments.Where(x => x.TryGetComp<CompMusicalInstrument>().Props.isBuilding);
 
             if (venue != null)
                 instruments = instruments.Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusAndRoomCheck(x, venue));
@@ -116,19 +119,32 @@ namespace MusicalInstruments
             return instruments;
         }
 
-        public bool MusicJoyKindAvailable()
+        public bool MusicJoyKindAvailable(out Thing exampleInstrument)
         {
+            exampleInstrument = null;
             if (!ActiveMusicSpots.Any()) return false;
 
-            if (AnyAvailableMapInstruments(null, null)) return true;
+            IEnumerable<Thing> allInstruments = AvailableMapInstruments(null, null);
+
+            if (allInstruments.Any())
+            {
+                exampleInstrument = allInstruments.First();
+                return true;
+            }
 
             foreach(Pawn pawn in map.mapPawns.FreeColonists)
             {
                 if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) &&
                     pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
-                    !pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art) &&
-                    HeldInstrument(pawn) != null)
+                    !pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art))
+                {
+                    Thing heldInstrument = HeldInstrument(pawn);
+                    if (heldInstrument != null)
+                    {
+                        exampleInstrument = heldInstrument;
                         return true;
+                    }
+                }                        
             }
 
             return false;
@@ -227,52 +243,52 @@ namespace MusicalInstruments
             Verse.Log.Message(String.Format("StopPlaying: Musician: {0}, Venue: {1}. {2} performances currently", musician.LabelShort, venue.LabelShort, Performances.Count));
 #endif
 
-            if (Performances.ContainsKey(venueHash))
+//            if (Performances.ContainsKey(venueHash))
+//            {
+//                if (Performances[venueHash].Performers.ContainsKey(musicianHash))
+//                {
+//                    Performances[venueHash].Performers.Remove(musicianHash);
+
+//                    if (!Performances[venueHash].Performers.Any())
+//                        Performances.Remove(venueHash);
+//                    else
+//                        Performances[venueHash].CalculateQuality();
+//                }
+
+//#if DEBUG
+//                Verse.Log.Message(String.Format("Done, now ({0}) performances on map.", Performances.Count));
+//#endif
+
+//            }
+//            else
+//            {
+
+//#if DEBUG
+//                Verse.Log.Message("StopPlaying continuing for all performances on map...");
+//#endif
+
+            List<int> ongoingPerformanceHashes = new List<int>();
+
+            foreach (int otherVenueHash in Performances.Keys)
             {
-                if (Performances[venueHash].Performers.ContainsKey(musicianHash))
+                if (Performances[otherVenueHash].Performers.Keys.Contains(musicianHash))
                 {
-                    Performances[venueHash].Performers.Remove(musicianHash);
-
-                    if (!Performances[venueHash].Performers.Any())
-                        Performances.Remove(venueHash);
-                    else
-                        Performances[venueHash].CalculateQuality();
-                }
-
-#if DEBUG
-                Verse.Log.Message(String.Format("Done, now ({0}) performances on map.", Performances.Count));
-#endif
-
-            }
-            else
-            {
-
-#if DEBUG
-                Verse.Log.Message("StopPlaying continuing for all performances on map...");
-#endif
-
-                List<int> ongoingPerformanceHashes = new List<int>();
-
-                foreach (int otherVenueHash in Performances.Keys)
-                {
-                    if (Performances[otherVenueHash].Performers.Keys.Contains(musicianHash))
+                    Performances[otherVenueHash].Performers.Remove(musicianHash);
+                    if (Performances[otherVenueHash].Performers.Any())
                     {
-                        Performances[otherVenueHash].Performers.Remove(musicianHash);
-                        if (Performances[otherVenueHash].Performers.Any())
-                        {
-                            Performances[otherVenueHash].CalculateQuality();
-                            ongoingPerformanceHashes.Add(otherVenueHash);
-                        }
+                        Performances[otherVenueHash].CalculateQuality();
+                        ongoingPerformanceHashes.Add(otherVenueHash);
                     }
                 }
+            }
 
-                Performances = Performances.Where(x => ongoingPerformanceHashes.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+            Performances = Performances.Where(x => ongoingPerformanceHashes.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
 
 #if DEBUG
-                Verse.Log.Message(String.Format("Done, now ({0}) performances on map.", Performances.Count));
+            Verse.Log.Message(String.Format("Done, now ({0}) performances on map.", Performances.Count));
 #endif
 
-            }
+     //       }
         }
 
         public bool HasPerformance(Thing venue)
@@ -324,7 +340,7 @@ namespace MusicalInstruments
             if (quality >= 0f && quality < .5f) return;
 
             IEnumerable<Pawn> audience = map.mapPawns.AllPawnsSpawned.Where(x => x.RaceProps.Humanlike &&
-                                                                                 (x.Faction.IsPlayer || (x.HostFaction != null && x.HostFaction.IsPlayer)) &&
+                                                                                 ((x.Faction != null && x.Faction.IsPlayer) || (x.HostFaction != null && x.HostFaction.IsPlayer)) &&
                                                                                  x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) && 
                                                                                  RadiusAndRoomCheck(venue, x));
             if (!audience.Any()) return;
@@ -372,17 +388,11 @@ namespace MusicalInstruments
                 }
             }
 
-            //visitors only play their own instruments
-            if (!musician.Faction.IsPlayer)
-            {
-                instrument = heldInstrument;
-                return (instrument != null);
-            }
-
             int skill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
 
+            //                                                                          visitors only play their own instruments, unless building type
 
-            IEnumerable<Thing> mapInstruments = AvailableMapInstruments(musician, venue);
+            IEnumerable<Thing> mapInstruments = AvailableMapInstruments(musician, venue, (musician.Faction == null || !musician.Faction.IsPlayer));
 
             
 
