@@ -81,7 +81,7 @@ namespace MusicalInstruments
                                 {
 
                                     //check for an instrument
-                                    if (pm.AnyAvailableMapInstruments(pawn, CompMusicSpot.parent))
+                                    if (pm.HeldInstrument(pawn) != null || pm.AnyAvailableMapInstruments(pawn, CompMusicSpot.parent))
                                     {
                                         Thing instrument;
 
