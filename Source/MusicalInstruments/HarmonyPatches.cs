@@ -64,6 +64,8 @@ namespace MusicalInstruments
     {
         static void Postfix(Pawn pawn, PawnGenerationRequest request)
         {
+            if (pawn.NonHumanlikeOrWildMan()) return;
+
             try
             {
 #if DEBUG
@@ -75,7 +77,7 @@ namespace MusicalInstruments
 
 #endif
 
-                if (!pawn.NonHumanlikeOrWildMan() && request.Context == PawnGenerationContext.NonPlayer && request.Faction == null || request.Faction.PlayerRelationKind != FactionRelationKind.Hostile)
+                if (request.Context == PawnGenerationContext.NonPlayer && request.Faction == null || request.Faction.PlayerRelationKind != FactionRelationKind.Hostile)
                 {
                     int artLevel = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
                     bool neolithic = request.Faction != null && request.Faction.def.techLevel <= TechLevel.Neolithic;
@@ -89,7 +91,7 @@ namespace MusicalInstruments
 
 #endif
 
-                    if (pawn.skills.GetSkill(SkillDefOf.Artistic).Level > 8 && Verse.Rand.Chance(.75f))
+                    if (artLevel > 12 || (artLevel > 8 && Verse.Rand.Chance(.75f)))
                     {
 #if DEBUG
                         Verse.Log.Message(">>>Giving hard instrument");
@@ -98,7 +100,7 @@ namespace MusicalInstruments
                         Thing instrument = ThingMaker.MakeThing(ThingDef.Named(neolithic ? "Ocarina" : "Violin"), ThingDef.Named(neolithic ? "Jade" : spacer ? "Plasteel" : "WoodLog"));
                         pawn.inventory.TryAddItemNotForSale(instrument);
                     }
-                    else if (pawn.skills.GetSkill(SkillDefOf.Artistic).Level > 4 && Verse.Rand.Chance(.75f))
+                    else if (artLevel > 4 && Verse.Rand.Chance(.75f))
                     {
 #if DEBUG
                         Verse.Log.Message(">>>Giving easy instrument");
@@ -114,5 +116,6 @@ namespace MusicalInstruments
                 Verse.Log.Warning(String.Format("Failed to generate instrument for {0}", pawn == null ? "NULL" : pawn.LabelShort));
             }
         }
+
     }
 }
