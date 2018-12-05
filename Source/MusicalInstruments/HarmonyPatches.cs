@@ -64,57 +64,70 @@ namespace MusicalInstruments
     {
         static void Postfix(Pawn pawn, PawnGenerationRequest request)
         {
-            if (pawn.NonHumanlikeOrWildMan()) return;
+#if DEBUG
+            Verse.Log.Message(String.Format("Trying to generate an instrument for {0}", pawn.Label));
 
-            try
+#endif
+
+            if(Current.ProgramState != ProgramState.Playing)
             {
 #if DEBUG
-
-                Verse.Log.Message(String.Format("Trying to generate an instrument for {0}", pawn.Label));
-                Verse.Log.Message(String.Format("Humanlike? {0}", !pawn.NonHumanlikeOrWildMan() ? "YES" : "NO"));
-                Verse.Log.Message(String.Format("Non-player? {0}", request.Context == PawnGenerationContext.NonPlayer ? "YES" : "NO"));
-                Verse.Log.Message(String.Format("Non-hostile? {0}", request.Faction == null || request.Faction.PlayerRelationKind != FactionRelationKind.Hostile ? "YES" : "NO"));
-
+                Verse.Log.Message("World generation phase, exit");
 #endif
-
-                if (request.Context == PawnGenerationContext.NonPlayer && request.Faction == null || request.Faction.PlayerRelationKind != FactionRelationKind.Hostile)
-                {
-                    int artLevel = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
-                    bool neolithic = request.Faction != null && request.Faction.def.techLevel <= TechLevel.Neolithic;
-                    bool spacer = request.Faction != null && request.Faction.def.techLevel >= TechLevel.Spacer;
-
-#if DEBUG
-
-                    Verse.Log.Message(String.Format("Art level = {0}", artLevel));
-                    Verse.Log.Message(String.Format("Neolithic? {0}", neolithic ? "YES" : "NO"));
-                    Verse.Log.Message(String.Format("Spacer? {0}", spacer ? "YES" : "NO"));
-
-#endif
-
-                    if (artLevel > 12 || (artLevel > 8 && Verse.Rand.Chance(.75f)))
-                    {
-#if DEBUG
-                        Verse.Log.Message(">>>Giving hard instrument");
-#endif
-
-                        Thing instrument = ThingMaker.MakeThing(ThingDef.Named(neolithic ? "Ocarina" : "Violin"), ThingDef.Named(neolithic ? "Jade" : spacer ? "Plasteel" : "WoodLog"));
-                        pawn.inventory.TryAddItemNotForSale(instrument);
-                    }
-                    else if (artLevel > 4 && Verse.Rand.Chance(.75f))
-                    {
-#if DEBUG
-                        Verse.Log.Message(">>>Giving easy instrument");
-#endif
-
-                        Thing instrument = ThingMaker.MakeThing(ThingDef.Named(neolithic ? "FrameDrum" : "Guitar"), ThingDef.Named(neolithic ? "Leather_Light" : spacer ? "Plasteel" : "WoodLog"));
-                        pawn.inventory.TryAddItemNotForSale(instrument);
-                    }
-                }
+                return;
             }
-            catch
+
+            if (pawn.NonHumanlikeOrWildMan())
             {
-                Verse.Log.Warning(String.Format("Failed to generate instrument for {0}", pawn == null ? "NULL" : pawn.LabelShort));
+#if DEBUG
+                Verse.Log.Message("NonHumanlikeOrWildMan, exit");
+#endif
+                return;
             }
+
+            if(pawn.Faction == null)
+            {
+#if DEBUG
+                Verse.Log.Message("null faction, exit");
+#endif
+                return;
+            }
+
+            if(pawn.Faction.IsPlayer)
+            {
+#if DEBUG
+                Verse.Log.Message("player faction, exit");
+#endif
+                return;
+            }
+
+            if(pawn.Faction.PlayerRelationKind == FactionRelationKind.Hostile)
+            {
+#if DEBUG
+                Verse.Log.Message("hostile faction, exit");
+#endif
+                return;
+            }
+
+#if DEBUG
+            Verse.Log.Message("continuing...");
+#endif
+            int artLevel = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
+            bool neolithic = request.Faction != null && request.Faction.def.techLevel <= TechLevel.Neolithic;
+            bool spacer = request.Faction != null && request.Faction.def.techLevel >= TechLevel.Spacer;
+                       
+            if (artLevel > 12 || (artLevel > 8 && Verse.Rand.Chance(.75f)))
+            {
+                Thing instrument = ThingMaker.MakeThing(ThingDef.Named(neolithic ? "Ocarina" : "Violin"), ThingDef.Named(neolithic ? "Jade" : spacer ? "Plasteel" : "WoodLog"));
+                pawn.inventory.TryAddItemNotForSale(instrument);
+            }
+            else if (artLevel > 4 && Verse.Rand.Chance(.75f))
+            {
+                Thing instrument = ThingMaker.MakeThing(ThingDef.Named(neolithic ? "FrameDrum" : "Guitar"), ThingDef.Named(neolithic ? "Leather_Light" : spacer ? "Plasteel" : "WoodLog"));
+                pawn.inventory.TryAddItemNotForSale(instrument);
+            }
+                
+
         }
 
     }
