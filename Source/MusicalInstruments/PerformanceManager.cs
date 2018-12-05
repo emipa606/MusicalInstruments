@@ -19,14 +19,7 @@ namespace MusicalInstruments
         [TweakValue("MusicalInstruments.MinTicksBetweenWorkPerfomances", 0, 60000)]
         private static int MinTicksBetweenWorkPerfomances = 30000;
 
-        private static readonly List<ThingDef> allInstrumentDefs = new List<ThingDef> {
-            ThingDef.Named("FrameDrum"),
-            ThingDef.Named("Ocarina"),
-            ThingDef.Named("Guitar"),
-            ThingDef.Named("Violin"),
-            ThingDef.Named("ElectronicOrgan")
-        };
-
+        private static readonly List<ThingDef> allInstrumentDefs = ThingCategoryDef.Named("MusicalInstruments").childThingDefs;  
 
         private const float Radius = 9f;
         private const float GatherRadius = 3.9f;
