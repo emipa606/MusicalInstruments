@@ -215,6 +215,9 @@ namespace MusicalInstruments
                 Performances[venueHash].Performers[musicianHash] = new Performer() { Musician = musician, Instrument = instrument };
                 Performances[venueHash].CalculateQuality();
 
+                if(Performances[venueHash].Quality >= 2f)
+                    TaleRecorder.RecordTale(TaleDef.Named("PlayedMusic"), new object[] { musician, instrument.def });
+
                 if (isWork)
                     WorkPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
 
