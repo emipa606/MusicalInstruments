@@ -2,8 +2,6 @@
 <Defs>
 
   <ThingDef Name="MusicalInstrumentBuildingBase" ParentName="BuildingBase"  Abstract="true">
-    <castEdgeShadows>true</castEdgeShadows>
-    <staticSunShadowHeight>0.20</staticSunShadowHeight>    
     <altitudeLayer>Building</altitudeLayer>
     <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
     <rotatable>true</rotatable>
@@ -43,6 +41,49 @@
 
   </ThingDef>
 
+
+  <ThingDef ParentName="MusicalInstrumentBuildingBase">
+    <defName>Marimba</defName>
+    <label>marimba</label>
+    <description>A tuned percussion instrument, played by striking wooden bars with mallets.</description>
+    <graphicData>
+      <texPath>Things/Building/Marimba</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(2.2,1.1)</drawSize>
+    </graphicData>
+    <statBases>
+      <WorkToBuild>20000</WorkToBuild>
+      <MaxHitPoints>50</MaxHitPoints>
+      <Mass>8</Mass>
+      <Flammability>1.0</Flammability>
+      <Beauty>1</Beauty>
+    </statBases>
+    <size>(2,1)</size>
+    <interactionCellOffset>(1,0,-1)</interactionCellOffset>    
+    <costList>
+      <WoodLog>150</WoodLog>
+    </costList>
+    <pathCost>70</pathCost>
+
+    <comps>
+      <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
+        <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
+        <easiness>0.3</easiness>
+        <expressiveness>0.6</expressiveness>
+        <isBuilding>true</isBuilding>
+      </li>
+          
+    </comps>
+
+    <constructEffect>ConstructWood</constructEffect>
+    <constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+    <researchPrerequisites>
+      <li>PrimitiveInstruments</li>
+    </researchPrerequisites>
+    <uiIconScale>0.9</uiIconScale>
+  </ThingDef>
+    
+
   <ThingDef ParentName="MusicalInstrumentBuildingBase">
     <defName>ElectronicOrgan</defName>
     <label>electronic organ</label>
@@ -52,7 +93,8 @@
       <graphicClass>Graphic_Multi</graphicClass>
       <drawSize>(2.2,1.1)</drawSize>
     </graphicData>
-
+    <staticSunShadowHeight>0.20</staticSunShadowHeight>  
+    <castEdgeShadows>true</castEdgeShadows>      
     <statBases>
       <WorkToBuild>30000</WorkToBuild>
       <MaxHitPoints>100</MaxHitPoints>

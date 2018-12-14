@@ -20,6 +20,13 @@
                     <max>1</max>
                 </countRange>
             </li>
+            <li Class="StockGenerator_SingleDef">
+                <thingDef>Marimba</thingDef>
+                <countRange>
+                    <min>-2</min>
+                    <max>1</max>
+                </countRange>
+            </li>             
             <li Class="StockGenerator_BuySingleDef">
                 <thingDef>FrameDrum</thingDef>
             </li>
@@ -48,6 +55,13 @@
                     <max>1</max>
                 </countRange>
             </li>
+            <li Class="StockGenerator_SingleDef">
+                <thingDef>ElectronicOrgan</thingDef>
+                <countRange>
+                    <min>-2</min>
+                    <max>1</max>
+                </countRange>
+            </li>              
             <li Class="StockGenerator_BuySingleDef">
                 <thingDef>Guitar</thingDef>
             </li>
@@ -118,28 +132,28 @@
         <xpath>*/TraderKindDef[defName="Orbital_Exotic"]/stockGenerators/li[last()]</xpath>
         <value>
             <li Class="StockGenerator_SingleDef">
-                <thingDef>Ocarina</thingDef>
+                <thingDef>Guitar</thingDef>
                 <countRange>
                     <min>-1</min>
-                    <max>1</max>
+                    <max>2</max>
                 </countRange>
             </li>
             <li Class="StockGenerator_SingleDef">
                 <thingDef>Violin</thingDef>
                 <countRange>
                     <min>-1</min>
-                    <max>1</max>
+                    <max>2</max>
                 </countRange>
             </li>
             <li Class="StockGenerator_SingleDef">
                 <thingDef>ElectronicOrgan</thingDef>
                 <countRange>
                     <min>-1</min>
-                    <max>1</max>
+                    <max>2</max>
                 </countRange>
             </li>            
             <li Class="StockGenerator_BuySingleDef">
-                <thingDef>Ocarina</thingDef>
+                <thingDef>Guitar</thingDef>
             </li>
             <li Class="StockGenerator_BuySingleDef">
                 <thingDef>Violin</thingDef>
