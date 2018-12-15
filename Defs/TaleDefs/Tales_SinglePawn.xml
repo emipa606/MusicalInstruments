@@ -6,7 +6,7 @@
 	<taleClass>Tale_SinglePawnAndDef</taleClass>
 	<type>Volatile</type>
 	<defSymbol>OBJECT</defSymbol>
-	<baseInterest>3</baseInterest>
+	<baseInterest>5</baseInterest>
 	<rulePack>
 	  <rulesStrings>
 		<li>tale_noun->[PAWN_nameDef] playing the [OBJECT_label]</li>

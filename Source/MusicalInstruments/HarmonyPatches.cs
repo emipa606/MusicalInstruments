@@ -113,21 +113,139 @@ namespace MusicalInstruments
             Verse.Log.Message("continuing...");
 #endif
             int artLevel = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
-            bool neolithic = request.Faction != null && request.Faction.def.techLevel <= TechLevel.Neolithic;
-            bool spacer = request.Faction != null && request.Faction.def.techLevel >= TechLevel.Spacer;
+            TechLevel techLevel = request.Faction == null ? TechLevel.Neolithic : request.Faction.def.techLevel;
+            ThingDef instrumentDef;
+            ThingDef stuffDef;
                        
             if (artLevel > 12 || (artLevel > 8 && Verse.Rand.Chance(.75f)))
             {
-                Thing instrument = ThingMaker.MakeThing(ThingDef.Named(neolithic ? "Ocarina" : "Violin"), ThingDef.Named(neolithic ? "Jade" : spacer ? "Plasteel" : "WoodLog"));
-                pawn.inventory.TryAddItemNotForSale(instrument);
+
+                if (TryGetHardInstrument(techLevel, out instrumentDef, out stuffDef))
+                {
+                    Thing instrument = ThingMaker.MakeThing(instrumentDef, stuffDef);
+                    pawn.inventory.TryAddItemNotForSale(instrument);
+                }
             }
             else if (artLevel > 4 && Verse.Rand.Chance(.75f))
             {
-                Thing instrument = ThingMaker.MakeThing(ThingDef.Named(neolithic ? "FrameDrum" : "Guitar"), ThingDef.Named(neolithic ? "Leather_Light" : spacer ? "Plasteel" : "WoodLog"));
-                pawn.inventory.TryAddItemNotForSale(instrument);
-            }
-                
+                if (TryGetEasyInstrument(techLevel, out instrumentDef, out stuffDef))
+                {
+                    Thing instrument = ThingMaker.MakeThing(instrumentDef, stuffDef);
+                    pawn.inventory.TryAddItemNotForSale(instrument);
+                }
 
+            }               
+
+        }
+
+        static bool TryGetEasyInstrument(TechLevel techLevel, out ThingDef instrumentDef, out ThingDef stuffDef)
+        {
+            ThingDef frameDrum = null;
+            ThingDef guitar = null;
+            ThingDef lightLeather = null;
+            ThingDef wood = null;
+            ThingDef plasteel = null;
+
+            instrumentDef = null;
+            stuffDef = null;
+
+            bool neolithic = techLevel <= TechLevel.Neolithic;
+            bool spacer = techLevel >= TechLevel.Spacer;
+
+            try { frameDrum = ThingDef.Named("FrameDrum"); }
+            catch { }
+
+            try { guitar = ThingDef.Named("Guitar"); }
+            catch { }
+
+            try { lightLeather = ThingDef.Named("Leather_Light"); }
+            catch { }
+
+            try { wood = ThingDef.Named("WoodLog"); }
+            catch { }
+
+            try { plasteel = ThingDef.Named("Plasteel"); }
+            catch { }
+
+            if (guitar != null && !neolithic)
+            {
+                if (plasteel != null && spacer)
+                {
+                    instrumentDef = guitar;
+                    stuffDef = plasteel;
+                    return true;
+                }
+                else if (wood != null)
+                {
+                    instrumentDef = guitar;
+                    stuffDef = wood;
+                    return true;
+                }
+            }
+
+            if (frameDrum != null && lightLeather != null)
+            {
+                instrumentDef = frameDrum;
+                stuffDef = lightLeather;
+                return true;
+            }
+
+            return false;
+        }
+
+        static bool TryGetHardInstrument(TechLevel techLevel, out ThingDef instrumentDef, out ThingDef stuffDef)
+        {
+            ThingDef ocarina = null;
+            ThingDef violin = null;
+            ThingDef jade = null;
+            ThingDef wood = null;
+            ThingDef plasteel = null;
+
+            instrumentDef = null;
+            stuffDef = null;
+
+            bool neolithic = techLevel <= TechLevel.Neolithic;
+            bool spacer = techLevel >= TechLevel.Spacer;
+
+            try { ocarina = ThingDef.Named("Ocarina"); }
+            catch { }
+
+            try { violin = ThingDef.Named("Violin"); }
+            catch { }
+
+            try { jade = ThingDef.Named("Jade"); }
+            catch { }
+
+            try { wood = ThingDef.Named("WoodLog"); }
+            catch { }
+
+            try { plasteel = ThingDef.Named("Plasteel"); }
+            catch { }
+
+            if (violin != null && !neolithic)
+            {
+                if (plasteel != null && spacer)
+                {
+                    instrumentDef = violin;
+                    stuffDef = plasteel;
+                    return true;
+                }
+                else if (wood != null)
+                {
+                    instrumentDef = violin;
+                    stuffDef = wood;
+                    return true;
+                }
+            }
+
+            if (ocarina != null && jade != null)
+            {
+                instrumentDef = ocarina;
+                stuffDef = jade;
+                return true;
+            }
+
+            return false;
         }
 
     }
