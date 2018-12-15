@@ -18,7 +18,7 @@
     <defName>StringedInstruments</defName>
     <label>stringed instruments</label>
     <description>Create tuned string instruments at the sculptor's table.</description>
-    <baseCost>1000</baseCost>
+    <baseCost>750</baseCost>
     <techLevel>Medieval</techLevel>
     <researchViewX>2</researchViewX>
     <researchViewY>4</researchViewY>

@@ -83,7 +83,7 @@
       <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
         <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
         <easiness>0.5</easiness>
-        <expressiveness>0.2</expressiveness>
+        <expressiveness>0.3</expressiveness>
         <xOffset>0.1</xOffset>
         <zOffset>-0.2</zOffset>
         <xOffsetFacing>0.0</xOffsetFacing>
@@ -238,7 +238,7 @@
       <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
         <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
         <easiness>0.1</easiness>
-        <expressiveness>1.0</expressiveness>
+        <expressiveness>0.9</expressiveness>
         <xOffset>0.4</xOffset>
         <zOffset>0</zOffset>
         <xOffsetFacing>0.3</xOffsetFacing>

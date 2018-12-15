@@ -10,7 +10,7 @@
 			<li>
 				<label>bad music</label>
 				<description>This is just noise, it makes me hate the very idea of music.</description>
-				<baseMoodEffect>-4</baseMoodEffect>
+				<baseMoodEffect>-2</baseMoodEffect>
 			</li>
     </stages>
   </ThoughtDef>
@@ -24,7 +24,7 @@
 			<li>
 				<label>nice music</label>
 				<description>Some music helps the colony feel more alive.</description>
-				<baseMoodEffect>4</baseMoodEffect>
+				<baseMoodEffect>3</baseMoodEffect>
 			</li>
     </stages>
   </ThoughtDef>
@@ -38,7 +38,7 @@
 			<li>
 				<label>great music</label>
 				<description>This music is beautiful, it lets me forget my worries.</description>
-				<baseMoodEffect>8</baseMoodEffect>
+				<baseMoodEffect>6</baseMoodEffect>
 			</li>
     </stages>
   </ThoughtDef>

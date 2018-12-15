@@ -49,8 +49,12 @@
     <graphicData>
       <texPath>Things/Building/Marimba</texPath>
       <graphicClass>Graphic_Multi</graphicClass>
-      <drawSize>(2.2,1.1)</drawSize>
+      <drawSize>(2,1)</drawSize>
+      <shadowData>
+        <volume>(1.8, 0.33, 0.6)</volume>
+      </shadowData>      
     </graphicData>
+    <castEdgeShadows>false</castEdgeShadows>
     <statBases>
       <WorkToBuild>20000</WorkToBuild>
       <MaxHitPoints>50</MaxHitPoints>
@@ -123,7 +127,7 @@
       <li Class="MusicalInstruments.CompProperties_MusicalInstrument">
         <compClass>MusicalInstruments.CompMusicalInstrument</compClass>
         <easiness>0.4</easiness>
-        <expressiveness>0.7</expressiveness>
+        <expressiveness>0.8</expressiveness>
         <isBuilding>true</isBuilding>
       </li>
           
