@@ -41,7 +41,7 @@ namespace MusicalInstruments
             IEnumerable<Thing> things = pm.ListActiveMusicSpots().Select(x => (Thing)x.parent);
 
             //we also need to check for availibilty of an instrument here
-            if (pm.HeldInstrument(pawn) == null)
+            if (PerformanceManager.HeldInstrument(pawn) == null)
                 things = things.Where(x => pm.AnyAvailableMapInstruments(pawn, x));
 
             //Verse.Log.Message(String.Format("PotentialWorkThingsGlobal for {0}: {1} things", pawn.Label, things.Count()));

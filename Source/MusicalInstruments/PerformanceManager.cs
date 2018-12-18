@@ -44,6 +44,37 @@ namespace MusicalInstruments
 
         }
 
+        public static Thing HeldInstrument(Pawn musician)
+        {
+            if (musician.carryTracker.CarriedThing != null && IsInstrument(musician.carryTracker.CarriedThing))
+                return musician.carryTracker.CarriedThing;
+
+            foreach (Thing inventoryThing in musician.inventory.innerContainer)
+            {
+                if (IsInstrument(inventoryThing))
+                {
+                    return inventoryThing;
+                }
+            }
+
+            return null;
+        }
+
+        public static bool IsPotentialCaravanMusician(Pawn pawn)
+        {
+            if (!pawn.IsColonist) return false;
+
+            if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
+                !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
+                pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art)) return false;
+
+            Thing heldInstrument = HeldInstrument(pawn);
+
+            if (heldInstrument == null) return false;
+
+            return true;
+        }
+
         public static bool RadiusAndRoomCheck(Thing thing1, Thing thing2)
         {
 
@@ -147,22 +178,6 @@ namespace MusicalInstruments
         public bool AnyAvailableMapInstruments(Pawn musician, Thing venue)
         {
             return AvailableMapInstruments(musician, venue).Any();
-        }
-
-        public Thing HeldInstrument(Pawn musician)
-        {
-            if (musician.carryTracker.CarriedThing != null && IsInstrument(musician.carryTracker.CarriedThing))
-                return musician.carryTracker.CarriedThing;
-
-            foreach (Thing inventoryThing in musician.inventory.innerContainer)
-            {
-                if (IsInstrument(inventoryThing))
-                {
-                    return inventoryThing;
-                }
-            }
-
-            return null;
         }
 
         public List<CompMusicSpot> ListActiveMusicSpots()

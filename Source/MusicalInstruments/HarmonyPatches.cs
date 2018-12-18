@@ -9,6 +9,7 @@ using Verse;
 using Verse.AI;
 
 using RimWorld;
+using RimWorld.Planet;
 
 using Harmony;
 using System.Reflection;
@@ -57,6 +58,35 @@ namespace MusicalInstruments
                 __result += String.Format("\n   {0} ({1})", label, exampleInstrument.def.label);
 
         }
+    }
+
+    [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", new Type[] { typeof(Pawn), typeof(List<JoyKindDef>)})]
+    class PatchGetAvailableJoyKindsFor
+    {
+        static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
+        {
+            if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)) return;
+
+            if (p.needs.joy.tolerances.BoredOf(JoyKindDefOf_Music.Music)) return;
+
+            foreach (Pawn pawn in ___caravan.pawns)
+            {
+                if(PerformanceManager.IsPotentialCaravanMusician(pawn))
+                {
+                    outJoyKinds.Add(JoyKindDefOf_Music.Music);
+
+#if DEBUG
+                    Verse.Log.Message(String.Format("Checking caravanner {0} for music availability : yes", p.Label));
+#endif
+                    return;
+                }
+            }
+#if DEBUG
+            Verse.Log.Message(String.Format("Checking caravanner {0} for music availability: no", p.Label));
+#endif
+
+        }
+
     }
 
     [HarmonyPatch(typeof(PawnGenerator), "GenerateGearFor", new Type[] { typeof(Pawn), typeof(PawnGenerationRequest) })]

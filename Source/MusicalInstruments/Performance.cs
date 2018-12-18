@@ -105,7 +105,7 @@ namespace MusicalInstruments
         }
 
 
-        private static float GetMusicQuality(Pawn musician, Thing instrument)
+        public static float GetMusicQuality(Pawn musician, Thing instrument)
         {
             if (musician == null || instrument == null) return 0f;
 

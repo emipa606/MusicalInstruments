@@ -32,11 +32,13 @@ namespace MusicalInstruments
 
         protected const TargetIndex InstrumentInd = TargetIndex.C;
 
-        public int Luck { get; }
+        private int luck;
+
+        public int Luck { get { return luck; } }
 
         public JobDriver_MusicPlayBase() : base()
         {
-            Luck = Verse.Rand.Range(-3, 2);
+            luck = Verse.Rand.Range(-3, 2);
         }
 
         protected Thing MusicSpotParent
@@ -225,6 +227,12 @@ namespace MusicalInstruments
                 yield return Toils_General.PutCarriedThingInInventory();
             }
 
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Values.Look<int>(ref luck, "MusicalInstruments.Luck", 0);
         }
     }
 }

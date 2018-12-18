@@ -37,7 +37,7 @@ namespace MusicalInstruments
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
             int skill = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
 
-            if (pm.HeldInstrument(pawn) == null && skill < 3 && Verse.Rand.Chance(.75f))
+            if (PerformanceManager.HeldInstrument(pawn) == null && skill < 3 && Verse.Rand.Chance(.75f))
                 return null;
 
             // if no music spots then give up
@@ -81,7 +81,7 @@ namespace MusicalInstruments
                                 {
 
                                     //check for an instrument
-                                    if (pm.HeldInstrument(pawn) != null || pm.AnyAvailableMapInstruments(pawn, CompMusicSpot.parent))
+                                    if (PerformanceManager.HeldInstrument(pawn) != null || pm.AnyAvailableMapInstruments(pawn, CompMusicSpot.parent))
                                     {
                                         Thing instrument;
 
