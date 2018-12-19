@@ -61,6 +61,108 @@ namespace MusicalInstruments
         }
     }
 
+    [HarmonyPatch(typeof(Pawn_InventoryTracker), "get_FirstUnloadableThing")]
+    class PatchFirstUnloadableThing
+    {
+        private static List<ThingDefCount> tmpDrugsToKeep = new List<ThingDefCount>();
+
+        static bool Prefix(Pawn_InventoryTracker __instance, ref ThingCount __result)
+        {
+            if (__instance.innerContainer.Count == 0)
+            {
+                __result = default(ThingCount);
+                return false;
+            }
+
+            tmpDrugsToKeep.Clear();
+
+            if (__instance.pawn.drugs != null && __instance.pawn.drugs.CurrentPolicy != null)
+            {
+                DrugPolicy currentPolicy = __instance.pawn.drugs.CurrentPolicy;
+                for (int i = 0; i < currentPolicy.Count; i++)
+                {
+                    if (currentPolicy[i].takeToInventory > 0)
+                    {
+                        tmpDrugsToKeep.Add(new ThingDefCount(currentPolicy[i].drug, currentPolicy[i].takeToInventory));
+                    }
+                }
+            }
+
+            Thing bestInstrument = null;
+
+            if(!__instance.pawn.NonHumanlikeOrWildMan() && !__instance.pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art))
+            {
+                int artSkill = __instance.pawn.skills.GetSkill(SkillDefOf.Artistic).levelInt;
+
+                IEnumerable<Thing> heldInstruments = __instance.innerContainer.Where(x => PerformanceManager.IsInstrument(x))
+                                                                .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding)
+                                                                .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(artSkill));
+
+                if(heldInstruments.Any())
+                    bestInstrument = heldInstruments.FirstOrDefault();
+            }
+
+            if (tmpDrugsToKeep.Any() || bestInstrument != null)
+            {
+                for (int j = 0; j < __instance.innerContainer.Count; j++)
+                {
+                    if (__instance.innerContainer[j].def.IsDrug)
+                    {
+                        int num = -1;
+
+                        for (int k = 0; k < tmpDrugsToKeep.Count; k++)
+                        {
+                            if (__instance.innerContainer[j].def == tmpDrugsToKeep[k].ThingDef)
+                            {
+                                num = k;
+                                break;
+                            }
+                        }
+                        if (num < 0)
+                        {
+                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
+                            return false;
+                        }
+                        if (__instance.innerContainer[j].stackCount > tmpDrugsToKeep[num].Count)
+                        {
+                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount - tmpDrugsToKeep[num].Count);
+                            return false;
+                        }
+                        tmpDrugsToKeep[num] = new ThingDefCount(tmpDrugsToKeep[num].ThingDef, tmpDrugsToKeep[num].Count - __instance.innerContainer[j].stackCount);
+                    }
+                    else if(PerformanceManager.IsInstrument(__instance.innerContainer[j]))
+                    {
+                        if (bestInstrument == null)
+                        {
+                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
+                            return false;
+                        }
+
+                        if(bestInstrument.GetHashCode() != __instance.innerContainer[j].GetHashCode())
+                        {
+                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
+                        return false;
+                    }
+
+                }
+                __result = default(ThingCount);
+                return false;
+            }
+            else
+            {
+                __result = new ThingCount(__instance.innerContainer[0], __instance.innerContainer[0].stackCount);
+                return false;
+            }
+        }
+
+    }
+
     [HarmonyPatch(typeof(Caravan_NeedsTracker), "TrySatisfyJoyNeed")]
     class PatchTrySatisfyJoyNeed
     {
@@ -112,7 +214,7 @@ namespace MusicalInstruments
         }
     }
 
-        [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", new Type[] { typeof(Pawn), typeof(List<JoyKindDef>)})]
+    [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", new Type[] { typeof(Pawn), typeof(List<JoyKindDef>)})]
     class PatchGetAvailableJoyKindsFor
     {
         static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
@@ -123,9 +225,14 @@ namespace MusicalInstruments
 
             float quality;
 
-            foreach (Pawn pawn in ___caravan.pawns)
+            List<Pawn> pawnsTmp = new List<Pawn>();
+            pawnsTmp.AddRange(___caravan.pawns);
+
+            Pawn musician;
+
+            while(pawnsTmp.TryRandomElement(out musician))
             {
-                if(PerformanceManager.IsPotentialCaravanMusician(pawn, out quality))
+                if(PerformanceManager.IsPotentialCaravanMusician(musician, out quality))
                 {
                     outJoyKinds.Add(JoyKindDefOf_Music.Music);
                     PatchTrySatisfyJoyNeed.MusicQuality = quality;
@@ -135,7 +242,12 @@ namespace MusicalInstruments
 #endif
                     return;
                 }
+                else
+                {
+                    pawnsTmp.Remove(musician);
+                }
             }
+
 #if DEBUG
             Verse.Log.Message(String.Format("Checking caravanner {0} for music availability: no", p.Label));
 #endif
