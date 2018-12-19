@@ -13,6 +13,7 @@ using RimWorld.Planet;
 
 using Harmony;
 using System.Reflection;
+using System.Reflection.Emit;
 
 
 namespace MusicalInstruments
@@ -60,7 +61,58 @@ namespace MusicalInstruments
         }
     }
 
-    [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", new Type[] { typeof(Pawn), typeof(List<JoyKindDef>)})]
+    [HarmonyPatch(typeof(Caravan_NeedsTracker), "TrySatisfyJoyNeed")]
+    class PatchTrySatisfyJoyNeed
+    {
+        public static float MusicQuality { get; set; }
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            foreach (CodeInstruction instruction in instructions)
+            {
+                yield return instruction;
+                if (instruction.opcode == OpCodes.Callvirt && instruction.operand.ToString().Contains("GainJoy"))
+                {
+                    // do something
+                    yield return new CodeInstruction(OpCodes.Ldarg_1);
+                    yield return new CodeInstruction(OpCodes.Ldloc_2);
+                    yield return new CodeInstruction(OpCodes.Call, typeof(PatchTrySatisfyJoyNeed).GetMethod("ApplyThoughts"));
+
+                }
+            }
+        }
+
+        public static void ApplyThoughts(Pawn listener, JoyKindDef joyKindDef)
+        {
+            if (joyKindDef != JoyKindDefOf_Music.Music)
+                return;
+
+            ThoughtDef thought = PerformanceManager.GetThoughtDef(MusicQuality);
+
+            if (thought == null)
+                return;
+
+            Caravan caravan = CaravanUtility.GetCaravan(listener);
+
+            List<Pawn> audience = new List<Pawn>();
+
+            foreach (Pawn pawn in caravan.pawns)
+            {
+                if (!pawn.NonHumanlikeOrWildMan() && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing))
+                    audience.Add(pawn);
+            }
+#if DEBUG
+            Verse.Log.Message(String.Format("Giving memory of {0} to {1} pawns (caravan)", thought.stages[0].label, audience.Count()));
+#endif        
+
+            foreach (Pawn audienceMember in audience)
+            {
+                audienceMember.needs.mood.thoughts.memories.TryGainMemory(thought);
+            }
+        }
+    }
+
+        [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", new Type[] { typeof(Pawn), typeof(List<JoyKindDef>)})]
     class PatchGetAvailableJoyKindsFor
     {
         static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
@@ -69,11 +121,14 @@ namespace MusicalInstruments
 
             if (p.needs.joy.tolerances.BoredOf(JoyKindDefOf_Music.Music)) return;
 
+            float quality;
+
             foreach (Pawn pawn in ___caravan.pawns)
             {
-                if(PerformanceManager.IsPotentialCaravanMusician(pawn))
+                if(PerformanceManager.IsPotentialCaravanMusician(pawn, out quality))
                 {
                     outJoyKinds.Add(JoyKindDefOf_Music.Music);
+                    PatchTrySatisfyJoyNeed.MusicQuality = quality;
 
 #if DEBUG
                     Verse.Log.Message(String.Format("Checking caravanner {0} for music availability : yes", p.Label));

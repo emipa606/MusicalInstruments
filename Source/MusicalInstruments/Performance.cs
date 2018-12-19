@@ -105,13 +105,23 @@ namespace MusicalInstruments
         }
 
 
-        public static float GetMusicQuality(Pawn musician, Thing instrument)
+        public static float GetMusicQuality(Pawn musician, Thing instrument, int? luck = null)
         {
             if (musician == null || instrument == null) return 0f;
 
             int artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
-            JobDriver driver = musician.jobs.curDriver;
-            int luck = (driver != null && driver is JobDriver_MusicPlayBase ? ((JobDriver_MusicPlayBase)driver).Luck : 0);
+            int luckActual;
+
+            if(luck.HasValue)
+            {
+                luckActual = luck.Value;
+            }
+            else
+            {
+                JobDriver driver = musician.jobs.curDriver;
+                luckActual = (driver != null && driver is JobDriver_MusicPlayBase ? ((JobDriver_MusicPlayBase)driver).Luck : 0);
+            }
+
             bool isInspired = musician.Inspired ? musician.Inspiration.def == InspirationDefOf.Inspired_Creativity : false;
             QualityCategory instrumentQuality = QualityCategory.Normal;
             instrument.TryGetQuality(out instrumentQuality);
@@ -120,7 +130,7 @@ namespace MusicalInstruments
             float easiness = instrumentComp.Props.easiness;
             float expressiveness = instrumentComp.Props.expressiveness;
 
-            float quality = (easiness + (expressiveness * ((artSkill + luck + (isInspired ? 0 : -3)) / 5.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
+            float quality = (easiness + (expressiveness * ((artSkill + luckActual + (isInspired ? 0 : -3)) / 5.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
 
             return quality - 0.3f;
         }

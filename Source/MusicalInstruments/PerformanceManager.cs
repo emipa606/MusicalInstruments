@@ -60,8 +60,10 @@ namespace MusicalInstruments
             return null;
         }
 
-        public static bool IsPotentialCaravanMusician(Pawn pawn)
+        public static bool IsPotentialCaravanMusician(Pawn pawn, out float quality)
         {
+            quality = 0;
+
             if (!pawn.IsColonist) return false;
 
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
@@ -71,6 +73,8 @@ namespace MusicalInstruments
             Thing heldInstrument = HeldInstrument(pawn);
 
             if (heldInstrument == null) return false;
+
+            quality = Performance.GetMusicQuality(pawn, heldInstrument, Verse.Rand.Range(-3, 2));
 
             return true;
         }
@@ -92,7 +96,25 @@ namespace MusicalInstruments
 
         }
 
-   
+        public static ThoughtDef GetThoughtDef(float quality)
+        {
+            if (quality < 0f)
+            {
+                return ThoughtDef.Named("BadMusic");
+            }
+            else if (quality >= 2f)
+            {
+                return ThoughtDef.Named("GreatMusic");
+            }
+            else if (quality >= .5f)
+            {
+                return ThoughtDef.Named("NiceMusic");
+            }
+            else return null;
+
+
+        }
+
         // non-static
 
         private Dictionary<int, Performance> Performances;
@@ -356,20 +378,9 @@ namespace MusicalInstruments
                                                                                  RadiusAndRoomCheck(venue, x));
             if (!audience.Any()) return;
 
-            ThoughtDef thought;
-            if (quality < 0f)
-            {
-                thought = ThoughtDef.Named("BadMusic");
-            }
-            else if (quality >= 2f)
-            {
-                thought = ThoughtDef.Named("GreatMusic");
-            }
-            else
-            {
-                thought = ThoughtDef.Named("NiceMusic");
-            };
+            ThoughtDef thought = GetThoughtDef(quality);
 
+            if (thought == null) return;
 #if DEBUG
 
             Verse.Log.Message(String.Format("Giving memory of {0} to {1} pawns", thought.stages[0].label, audience.Count()));
