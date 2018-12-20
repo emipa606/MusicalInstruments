@@ -200,7 +200,7 @@ namespace MusicalInstruments
 
             foreach (Pawn pawn in caravan.pawns)
             {
-                if (!pawn.NonHumanlikeOrWildMan() && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing))
+                if (!pawn.NonHumanlikeOrWildMan() && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) && pawn.Awake())
                     audience.Add(pawn);
             }
 #if DEBUG
@@ -219,7 +219,7 @@ namespace MusicalInstruments
     {
         static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
         {
-            if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing)) return;
+            if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) || !p.Awake()) return;
 
             if (p.needs.joy.tolerances.BoredOf(JoyKindDefOf_Music.Music)) return;
 
