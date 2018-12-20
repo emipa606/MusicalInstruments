@@ -38,6 +38,10 @@ namespace MusicalInstruments
 
         public override Job TryGiveJobWhileInBed(Pawn pawn)
         {
+#if DEBUG
+            Verse.Log.Message("TryGiveJobWhileInBed " + pawn.Label);
+#endif
+
             Room room = pawn.GetRoom();
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
 
@@ -50,6 +54,10 @@ namespace MusicalInstruments
                 return null;
             }
 
+#if DEBUG
+            Verse.Log.Message(String.Format("{0} local spots", localMusicSpots.Count));
+#endif
+
             workingSpots = localMusicSpots;
 
             // pick a random one
@@ -61,7 +69,12 @@ namespace MusicalInstruments
                 // is a performance currently in progress
                 if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(CompMusicSpot.parent))
                 {
+#if DEBUG
+                    Verse.Log.Message("Found performance");
+#endif
+
                     Job job = new Job(def.jobDef, CompMusicSpot.parent, pawn.CurrentBed());
+                    return job;
                 }
             }
 
@@ -72,7 +85,7 @@ namespace MusicalInstruments
         {
 #if DEBUG
             Verse.Log.Message(String.Format("{0} trying to listen to music", pawn.LabelShort));
-#endif      
+#endif
 
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
 
@@ -115,7 +128,7 @@ namespace MusicalInstruments
                                     {
 #if DEBUG
                                         Verse.Log.Message("Found performance to listen to");
-#endif                                        
+#endif
                                         // find a place to sit or stand, or return null if there aren't any                                  
 
 
@@ -126,7 +139,7 @@ namespace MusicalInstruments
                                         {
 #if DEBUG
                                             Verse.Log.Message("Found chair");
-#endif                                        
+#endif
                                             job = new Job(this.def.jobDef, CompMusicSpot.parent, chair);
                                             return job;
                                         }
@@ -134,7 +147,7 @@ namespace MusicalInstruments
                                         {
 #if DEBUG
                                             Verse.Log.Message("Found standing spot");
-#endif                                        
+#endif
                                             job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
                                             return job;
                                         }
@@ -142,7 +155,7 @@ namespace MusicalInstruments
                                         {
 #if DEBUG
                                             Verse.Log.Message("Failed to find chair or standing spot");
-#endif                                        
+#endif
                                             return null;
                                         }
                                     }
@@ -156,7 +169,7 @@ namespace MusicalInstruments
 
 #if DEBUG
             Verse.Log.Message("Failed to find performance");
-#endif  
+#endif
             return null;
         }
 

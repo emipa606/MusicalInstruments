@@ -68,6 +68,7 @@ namespace MusicalInstruments
 
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
                 !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
+                !pawn.Awake() ||
                 pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art)) return false;
 
             Thing heldInstrument = HeldInstrument(pawn);
@@ -182,6 +183,7 @@ namespace MusicalInstruments
             {
                 if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) &&
                     pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
+                    pawn.Awake() &&
                     !pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art))
                 {
                     Thing heldInstrument = HeldInstrument(pawn);
@@ -374,7 +376,8 @@ namespace MusicalInstruments
 
             IEnumerable<Pawn> audience = map.mapPawns.AllPawnsSpawned.Where(x => x.RaceProps.Humanlike &&
                                                                                  ((x.Faction != null && x.Faction.IsPlayer) || (x.HostFaction != null && x.HostFaction.IsPlayer)) &&
-                                                                                 x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) && 
+                                                                                 x.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&    
+                                                                                 x.Awake() &&
                                                                                  RadiusAndRoomCheck(venue, x));
             if (!audience.Any()) return;
 

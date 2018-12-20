@@ -48,6 +48,7 @@ namespace MusicalInstruments
 
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
                 !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
+                !pawn.Awake() ||
                 pawn.story.WorkTypeIsDisabled(Art))
                 return null;
 
