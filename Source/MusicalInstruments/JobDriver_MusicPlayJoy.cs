@@ -58,6 +58,16 @@ namespace MusicalInstruments
             play.AddFinishAction(delegate
             {
                 pawn.Map.GetComponent<PerformanceManager>().StopPlaying(musician, venue);
+
+                if(pawn.carryTracker.CarriedThing != null)
+                {
+                    if (!pawn.carryTracker.innerContainer.TryTransferToContainer(pawn.carryTracker.CarriedThing, pawn.inventory.innerContainer, true))
+                    {
+                        Thing thing;
+                        pawn.carryTracker.TryDropCarriedThing(pawn.Position, pawn.carryTracker.CarriedThing.stackCount, ThingPlaceMode.Near, out thing, null);
+                    }
+                }
+
             });
 
             play.socialMode = RandomSocialMode.Quiet;

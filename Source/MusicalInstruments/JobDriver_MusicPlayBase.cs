@@ -224,7 +224,7 @@ namespace MusicalInstruments
 
                 yield return GetPlayToil(musician, instrument, venue);
 
-                yield return Toils_General.PutCarriedThingInInventory();
+                //yield return Toils_General.PutCarriedThingInInventory();
             }
 
         }

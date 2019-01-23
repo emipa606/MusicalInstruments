@@ -2,6 +2,8 @@
 <ModMetaData>
 	<name>Musical Instruments</name>
 	<author>Dog Problems</author>
-	<targetVersion>1.0.2059</targetVersion>
+	<supportedVersions>
+		<li>1.0</li>
+	</supportedVersions>
 	<description>Craft a variety of musical instruments and play them for recreation. https://github.com/dogproblems/RimWorld_MusicalInstruments</description>
 </ModMetaData>
