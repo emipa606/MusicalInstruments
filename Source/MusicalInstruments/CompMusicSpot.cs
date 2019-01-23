@@ -12,9 +12,12 @@ using RimWorld;
 
 namespace MusicalInstruments
 {
+    [StaticConstructorOnStartup]
     public class CompMusicSpot : ThingComp
     {
         private bool active = true;
+
+        public static readonly Texture2D MusicSpotIcon = ContentFinder<Texture2D>.Get("UI/Icons/MusicSpot");
 
         public CompProperties_MusicSpot Props
         {
@@ -81,7 +84,7 @@ namespace MusicalInstruments
                 Command_Toggle com = new Command_Toggle();
                 com.hotKey = KeyBindingDefOf.Misc5;
                 com.defaultLabel = "Music spot";
-                com.icon = TexCommand.GatherSpotActive;
+                com.icon = MusicSpotIcon;
                 com.isActive = new Func<bool>(IsActive);
                 com.toggleAction = delegate
                 {
