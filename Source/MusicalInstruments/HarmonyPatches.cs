@@ -256,6 +256,26 @@ namespace MusicalInstruments
 
     }
 
+    [HarmonyPatch(typeof(CompUsable), "get_FloatMenuOptionLabel")]
+    class PatchFloatMenuOptionLabel
+    {
+        static bool Prefix(CompUsable __instance, ref string __result)
+        {
+            CompMusicalInstrument otherComp = __instance.parent.TryGetComp<CompMusicalInstrument>();
+
+            if(otherComp == null)
+            {
+                __result = __instance.Props.useLabel;
+            }
+            else
+            {
+                __result = String.Format(__instance.Props.useLabel, __instance.parent.LabelCap);
+            }
+
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(PawnGenerator), "GenerateGearFor", new Type[] { typeof(Pawn), typeof(PawnGenerationRequest) })]
     class PatchGenerateGearFor
     {
