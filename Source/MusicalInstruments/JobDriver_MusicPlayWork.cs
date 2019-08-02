@@ -45,7 +45,7 @@ namespace MusicalInstruments
                 {
                     ThrowMusicNotes(musician.DrawPos, this.Map);
                 }
-
+                musician.skills.Learn(SkillDefOf.Artistic, 0.1f);
             };
 
             play.handlingFacing = true;
