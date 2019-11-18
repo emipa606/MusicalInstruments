@@ -3,7 +3,7 @@
 
   <ThoughtDef>
     <defName>BadMusic</defName>
-    <durationDays>1</durationDays>
+    <durationDays>0.5</durationDays>
     <stackLimit>1</stackLimit>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
     <stages>
@@ -31,7 +31,7 @@
   
   <ThoughtDef>
     <defName>GreatMusic</defName>
-    <durationDays>1</durationDays>
+    <durationDays>1.5</durationDays>
     <stackLimit>1</stackLimit>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
     <stages>

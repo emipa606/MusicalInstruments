@@ -146,13 +146,16 @@ namespace MusicalInstruments
         }
 
 
-        private IEnumerable<Thing> AvailableMapInstruments(Pawn musician, Thing venue, bool buildingOnly = false)
+        private IEnumerable<Thing> AvailableMapInstruments(Pawn musician, Thing venue, bool buildingOnly = false, bool isWork = false)
         {
             IEnumerable<Thing> instruments = allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
                                                               .Where(x => x.TryGetComp<CompPowerTrader>() == null || x.TryGetComp<CompPowerTrader>().PowerOn);
 
             if (buildingOnly)
                 instruments = instruments.Where(x => x.TryGetComp<CompMusicalInstrument>().Props.isBuilding);
+
+            if (!isWork)
+                instruments = instruments.Where(x => (!x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || x.TryGetComp<CompMusicSpot>().AllowRecreation));
 
             if (venue != null)
                 instruments = instruments.Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusAndRoomCheck(x, venue));
@@ -417,7 +420,7 @@ namespace MusicalInstruments
 
             //                                                                          visitors only play their own instruments, unless building type
 
-            IEnumerable<Thing> mapInstruments = AvailableMapInstruments(musician, venue, (musician.Faction == null || !musician.Faction.IsPlayer));
+            IEnumerable<Thing> mapInstruments = AvailableMapInstruments(musician, venue, (musician.Faction == null || !musician.Faction.IsPlayer), isWork);
 
             
 
