@@ -3,6 +3,7 @@
 	<name>Musical Instruments</name>
 	<author>Dog Problems</author>
 	<supportedVersions>
+		<li>1.0</li>
 		<li>1.1</li>
 	</supportedVersions>
 	<description>Craft a variety of musical instruments and play them for recreation. https://github.com/dogproblems/RimWorld_MusicalInstruments</description>
