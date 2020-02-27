@@ -11,7 +11,7 @@ using Verse.AI;
 using RimWorld;
 using RimWorld.Planet;
 
-using Harmony;
+using HarmonyLib;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -23,12 +23,13 @@ namespace MusicalInstruments
     {
         static HarmonyPatches()
         {
-            HarmonyInstance harmony = HarmonyInstance.Create("com.dogproblems.rimworldmods.musicalinstruments");
+            Harmony harmony = new Harmony("com.dogproblems.rimworldmods.musicalinstruments");
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
 
+    //patch for warning if too few joy types
     [HarmonyPatch(typeof(JoyUtility), "JoyKindsOnMapTempList", new Type[] { typeof(Map) })]
     class PatchJoyKindsOnMapTempList
     {
@@ -43,6 +44,7 @@ namespace MusicalInstruments
         }
     }
 
+    //patch for listing available joy types
     [HarmonyPatch(typeof(JoyUtility), "JoyKindsOnMapString", new Type[] { typeof(Map) })]
     class PatchJoyKindsOnMapString
     {
@@ -61,6 +63,7 @@ namespace MusicalInstruments
         }
     }
 
+    //patch to keep one instrument in colonist inventory on return from caravan
     [HarmonyPatch(typeof(Pawn_InventoryTracker), "get_FirstUnloadableThing")]
     class PatchFirstUnloadableThing
     {
@@ -90,7 +93,7 @@ namespace MusicalInstruments
 
             Thing bestInstrument = null;
 
-            if(!__instance.pawn.NonHumanlikeOrWildMan() && !__instance.pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art))
+            if(!__instance.pawn.NonHumanlikeOrWildMan() && !__instance.pawn.WorkTagIsDisabled(WorkTags.Artistic))
             {
                 int artSkill = __instance.pawn.skills.GetSkill(SkillDefOf.Artistic).levelInt;
 
@@ -163,6 +166,7 @@ namespace MusicalInstruments
 
     }
 
+    //patch to enable music joy type while on caravan
     [HarmonyPatch(typeof(Caravan_NeedsTracker), "TrySatisfyJoyNeed")]
     class PatchTrySatisfyJoyNeed
     {
@@ -214,6 +218,7 @@ namespace MusicalInstruments
         }
     }
 
+    //patch to enable music joy type while on caravan
     [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", new Type[] { typeof(Pawn), typeof(List<JoyKindDef>)})]
     class PatchGetAvailableJoyKindsFor
     {
@@ -256,26 +261,27 @@ namespace MusicalInstruments
 
     }
 
-    [HarmonyPatch(typeof(CompUsable), "get_FloatMenuOptionLabel")]
-    class PatchFloatMenuOptionLabel
-    {
-        static bool Prefix(CompUsable __instance, ref string __result)
-        {
-            CompMusicalInstrument otherComp = __instance.parent.TryGetComp<CompMusicalInstrument>();
+    //[HarmonyPatch(typeof(CompUsable), "get_FloatMenuOptionLabel")]
+    //class PatchFloatMenuOptionLabel
+    //{
+    //    static bool Prefix(CompUsable __instance, Pawn pawn, ref string __result)
+    //    {
+    //        CompMusicalInstrument otherComp = __instance.parent.TryGetComp<CompMusicalInstrument>();
 
-            if(otherComp == null)
-            {
-                __result = __instance.Props.useLabel;
-            }
-            else
-            {
-                __result = String.Format(__instance.Props.useLabel, __instance.parent.LabelCap);
-            }
+    //        if(otherComp == null)
+    //        {
+    //            __result = __instance.Props.useLabel;
+    //        }
+    //        else
+    //        {
+    //            __result = String.Format(__instance.Props.useLabel, __instance.parent.LabelCap);
+    //        }
 
-            return false;
-        }
-    }
+    //        return false;
+    //    }
+    //}
 
+    //patch to allow non-colonist pawns to spawn with an instrument in their inventory, if appropriate
     [HarmonyPatch(typeof(PawnGenerator), "GenerateGearFor", new Type[] { typeof(Pawn), typeof(PawnGenerationRequest) })]
     class PatchGenerateGearFor
     {

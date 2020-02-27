@@ -21,9 +21,6 @@
       <joyKind>Music</joyKind>
     </building>
     <comps>			
-      <li Class="CompProperties_RoomIdentifier">
-				<roomStat>Impressiveness</roomStat>
-			</li>
       <li>
         <compClass>CompQuality</compClass>
       </li>

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using UnityEngine;
 
 using Verse;
-using Verse.AI;
 
 using RimWorld;
 
@@ -85,6 +82,10 @@ namespace MusicalInstruments
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
+            if (parent.Faction != Faction.OfPlayer && !respawningAfterLoad)
+            {
+                active = false;
+            }
             if (Active)
             {
                 PerformanceManager pm = parent.Map.GetComponent<PerformanceManager>();

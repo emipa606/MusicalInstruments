@@ -15,20 +15,16 @@ namespace MusicalInstruments
     class JoyGiver_MusicPlay : JoyGiver
     {
 
-
-        public static readonly WorkTypeDef Art = WorkTypeDefsUtility.WorkTypeDefsInPriorityOrder.Where(wtd => wtd.defName == "Art").SingleOrDefault();
-
         private static List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
-
 
         public override Job TryGiveJob(Pawn pawn)
         {
             return this.TryGiveJobInt(pawn, null);
         }
 
-        public override Job TryGiveJobInPartyArea(Pawn pawn, IntVec3 partySpot)
+        public override Job TryGiveJobInGatheringArea(Pawn pawn, IntVec3 gatherSpot)
         {
-            return this.TryGiveJobInt(pawn, (CompMusicSpot x) => PartyUtility.InPartyArea(x.parent.Position, partySpot, pawn.Map));
+            return this.TryGiveJobInt(pawn, (CompMusicSpot x) => GatheringsUtility.InGatheringArea(x.parent.Position, gatherSpot, pawn.Map));
         }
 
         private Job TryGiveJobInt(Pawn pawn, Predicate<CompMusicSpot> musicSpotValidator)
@@ -49,7 +45,7 @@ namespace MusicalInstruments
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
                 !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
                 !pawn.Awake() ||
-                pawn.story.WorkTypeIsDisabled(Art))
+                pawn.WorkTagIsDisabled(WorkTags.Artistic))
                 return null;
 
             // load all music spots on map into list

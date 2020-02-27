@@ -17,8 +17,6 @@ namespace MusicalInstruments
     public class WorkGiver_MusicPlay : WorkGiver_Scanner
     {
 
-        private static readonly WorkTypeDef art = WorkTypeDefsUtility.WorkTypeDefsInPriorityOrder.Where(wtd => wtd.defName == "Art").SingleOrDefault();
-
         private static List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
 
         public override ThingRequest PotentialWorkThingRequest
@@ -54,7 +52,7 @@ namespace MusicalInstruments
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
                 !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
                 !pawn.Awake() ||
-                pawn.story.WorkTypeIsDisabled(art))
+                pawn.WorkTagIsDisabled(WorkTags.Artistic))
                 return false;
 
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
@@ -113,7 +111,7 @@ namespace MusicalInstruments
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
                 !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
                 !pawn.Awake() ||
-                pawn.story.WorkTypeIsDisabled(art))
+                pawn.WorkTagIsDisabled(WorkTags.Artistic))
                 return null;
 
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();

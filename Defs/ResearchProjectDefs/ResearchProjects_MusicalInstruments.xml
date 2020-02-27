@@ -10,7 +10,7 @@
     <tags>
       <li>TribalStart</li>
     </tags>
-    <researchViewX>1</researchViewX>
+    <researchViewX>2</researchViewX>
     <researchViewY>4</researchViewY>
   </ResearchProjectDef>  
   
@@ -20,7 +20,7 @@
     <description>Create tuned string instruments at the sculptor's table.</description>
     <baseCost>750</baseCost>
     <techLevel>Medieval</techLevel>
-    <researchViewX>2</researchViewX>
+    <researchViewX>3</researchViewX>
     <researchViewY>4</researchViewY>
     <prerequisites>
       <li>PrimitiveInstruments</li>

@@ -69,7 +69,7 @@ namespace MusicalInstruments
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
                 !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
                 !pawn.Awake() ||
-                pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art)) return false;
+                pawn.WorkTagIsDisabled(WorkTags.Artistic)) return false;
 
             Thing heldInstrument = HeldInstrument(pawn);
 
@@ -187,7 +187,7 @@ namespace MusicalInstruments
                 if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) &&
                     pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
                     pawn.Awake() &&
-                    !pawn.story.WorkTypeIsDisabled(JoyGiver_MusicPlay.Art))
+                    !pawn.WorkTagIsDisabled(WorkTags.Artistic))
                 {
                     Thing heldInstrument = HeldInstrument(pawn);
                     if (heldInstrument != null)

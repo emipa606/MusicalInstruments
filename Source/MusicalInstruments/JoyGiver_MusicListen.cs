@@ -31,9 +31,9 @@ namespace MusicalInstruments
             return this.TryGiveJobInt(pawn, null);
         }
 
-        public override Job TryGiveJobInPartyArea(Pawn pawn, IntVec3 partySpot)
+        public override Job TryGiveJobInGatheringArea(Pawn pawn, IntVec3 gatheringSpot)
         {
-            return this.TryGiveJobInt(pawn, (CompMusicSpot x) => PartyUtility.InPartyArea(x.parent.Position, partySpot, pawn.Map));
+            return this.TryGiveJobInt(pawn, (CompMusicSpot x) => GatheringsUtility.InGatheringArea(x.parent.Position, gatheringSpot, pawn.Map));
         }
 
         public override Job TryGiveJobWhileInBed(Pawn pawn)

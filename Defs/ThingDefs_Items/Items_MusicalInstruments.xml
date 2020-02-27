@@ -69,7 +69,7 @@
     </stuffCategories>
     <costStuffCount>30</costStuffCount>  
     <recipeMaker>
-      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
       <workSkill>Artistic</workSkill>
       <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
       <effectWorking>Sculpt</effectWorking>
@@ -110,7 +110,7 @@
     </stuffCategories>
     <costStuffCount>5</costStuffCount>
     <recipeMaker>
-      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
       <workSkill>Artistic</workSkill>
       <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
       <effectWorking>Sculpt</effectWorking>
@@ -162,7 +162,7 @@
     </stuffCategories>
     <costStuffCount>100</costStuffCount>
     <recipeMaker>
-      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
       <workSkill>Artistic</workSkill>
       <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
       <effectWorking>Sculpt</effectWorking>
@@ -213,7 +213,7 @@
     </stuffCategories>
     <costStuffCount>50</costStuffCount>
     <recipeMaker>
-      <workSpeedStat>SculptingSpeed</workSpeedStat>
+      <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
       <workSkill>Artistic</workSkill>
       <unfinishedThingDef>UnfinishedSculpture</unfinishedThingDef>
       <effectWorking>Sculpt</effectWorking>
