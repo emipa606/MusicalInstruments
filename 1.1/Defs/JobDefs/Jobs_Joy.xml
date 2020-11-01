@@ -15,5 +15,5 @@
     <reportString>listening to music.</reportString>
     <joyDuration>2000</joyDuration>
     <joyKind>Music</joyKind>
-  </JobDef>  
+  </JobDef>
 </Defs>

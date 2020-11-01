@@ -4,5 +4,5 @@
     <defName>TakeInstrument</defName>
     <driverClass>MusicalInstruments.JobDriver_TakeInstrument</driverClass>
     <reportString>taking instrument.</reportString>
-  </JobDef> 
+  </JobDef>
 </Defs>

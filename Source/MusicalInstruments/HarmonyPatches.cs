@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using UnityEngine;
 
 using Verse;
-using Verse.AI;
 
 using RimWorld;
 using RimWorld.Planet;
@@ -36,11 +32,10 @@ namespace MusicalInstruments
         static void Prefix(Map map, ref List<JoyKindDef> ___tempKindList)
         {
             PerformanceManager pm = map.GetComponent<PerformanceManager>();
-
-            Thing exampleInstrument;
-
-            if (pm.MusicJoyKindAvailable(out exampleInstrument))
+            if (pm.MusicJoyKindAvailable(out _))
+            {
                 ___tempKindList.Add(JoyKindDefOf_Music.Music);
+            }
         }
     }
 
@@ -54,12 +49,12 @@ namespace MusicalInstruments
 
             string label = JoyKindDefOf_Music.Music.LabelCap;
 
-            Thing exampleInstrument;
 
             //yuck
-            if (!__result.Contains(label) && pm.MusicJoyKindAvailable(out exampleInstrument))
-                __result += String.Format("\n   {0} ({1})", label, exampleInstrument.def.label);
-
+            if (!__result.Contains(label) && pm.MusicJoyKindAvailable(out Thing exampleInstrument))
+            {
+                __result += string.Format("\n   {0} ({1})", label, exampleInstrument.def.label);
+            }
         }
     }
 
@@ -67,13 +62,13 @@ namespace MusicalInstruments
     [HarmonyPatch(typeof(Pawn_InventoryTracker), "get_FirstUnloadableThing")]
     class PatchFirstUnloadableThing
     {
-        private static List<ThingDefCount> tmpDrugsToKeep = new List<ThingDefCount>();
+        private static readonly List<ThingDefCount> tmpDrugsToKeep = new List<ThingDefCount>();
 
         static bool Prefix(Pawn_InventoryTracker __instance, ref ThingCount __result)
         {
             if (__instance.innerContainer.Count == 0)
             {
-                __result = default(ThingCount);
+                __result = default;
                 return false;
             }
 
@@ -102,7 +97,9 @@ namespace MusicalInstruments
                                                                 .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(artSkill));
 
                 if(heldInstruments.Any())
+                {
                     bestInstrument = heldInstruments.FirstOrDefault();
+                }
             }
 
             if (tmpDrugsToKeep.Any() || bestInstrument != null)
@@ -154,7 +151,7 @@ namespace MusicalInstruments
                     }
 
                 }
-                __result = default(ThingCount);
+                __result = default;
                 return false;
             }
             else
@@ -191,12 +188,16 @@ namespace MusicalInstruments
         public static void ApplyThoughts(Pawn listener, JoyKindDef joyKindDef)
         {
             if (joyKindDef != JoyKindDefOf_Music.Music)
+            {
                 return;
+            }
 
             ThoughtDef thought = PerformanceManager.GetThoughtDef(MusicQuality);
 
             if (thought == null)
+            {
                 return;
+            }
 
             Caravan caravan = CaravanUtility.GetCaravan(listener);
 
@@ -205,10 +206,12 @@ namespace MusicalInstruments
             foreach (Pawn pawn in caravan.pawns)
             {
                 if (!pawn.NonHumanlikeOrWildMan() && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) && pawn.Awake())
+                {
                     audience.Add(pawn);
+                }
             }
 #if DEBUG
-            Verse.Log.Message(String.Format("Giving memory of {0} to {1} pawns (caravan)", thought.stages[0].label, audience.Count()));
+            Verse.Log.Message(string.Format("Giving memory of {0} to {1} pawns (caravan)", thought.stages[0].label, audience.Count()));
 #endif        
 
             foreach (Pawn audienceMember in audience)
@@ -224,26 +227,29 @@ namespace MusicalInstruments
     {
         static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
         {
-            if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) || !p.Awake()) return;
+            if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) || !p.Awake())
+            {
+                return;
+            }
 
-            if (p.needs.joy.tolerances.BoredOf(JoyKindDefOf_Music.Music)) return;
-
-            float quality;
+            if (p.needs.joy.tolerances.BoredOf(JoyKindDefOf_Music.Music))
+            {
+                return;
+            }
 
             List<Pawn> pawnsTmp = new List<Pawn>();
             pawnsTmp.AddRange(___caravan.pawns);
 
-            Pawn musician;
 
-            while(pawnsTmp.TryRandomElement(out musician))
+            while (pawnsTmp.TryRandomElement(out Pawn musician))
             {
-                if(PerformanceManager.IsPotentialCaravanMusician(musician, out quality))
+                if (PerformanceManager.IsPotentialCaravanMusician(musician, out float quality))
                 {
                     outJoyKinds.Add(JoyKindDefOf_Music.Music);
                     PatchTrySatisfyJoyNeed.MusicQuality = quality;
 
 #if DEBUG
-                    Verse.Log.Message(String.Format("Checking caravanner {0} for music availability : yes", p.Label));
+                    Verse.Log.Message(string.Format("Checking caravanner {0} for music availability : yes", p.Label));
 #endif
                     return;
                 }
@@ -254,7 +260,7 @@ namespace MusicalInstruments
             }
 
 #if DEBUG
-            Verse.Log.Message(String.Format("Checking caravanner {0} for music availability: no", p.Label));
+            Verse.Log.Message(string.Format("Checking caravanner {0} for music availability: no", p.Label));
 #endif
 
         }
@@ -288,7 +294,7 @@ namespace MusicalInstruments
         static void Postfix(Pawn pawn, PawnGenerationRequest request)
         {
 #if DEBUG
-            Verse.Log.Message(String.Format("Trying to generate an instrument for {0}", pawn.Label));
+            Verse.Log.Message(string.Format("Trying to generate an instrument for {0}", pawn.Label));
 
 #endif
 

@@ -16,9 +16,8 @@
     <requiredCapacities>
       <li>Manipulation</li>
       <li>Hearing</li>
-    </requiredCapacities>    
+    </requiredCapacities>
   </JoyGiverDef>
-
   <JoyGiverDef>
     <defName>MusicListen</defName>
     <giverClass>MusicalInstruments.JoyGiver_MusicListen</giverClass>
@@ -34,7 +33,7 @@
     </thingDefs>
     <requiredCapacities>
       <li>Hearing</li>
-    </requiredCapacities>   
-    <canDoWhileInBed>true</canDoWhileInBed> 
-  </JoyGiverDef>  
+    </requiredCapacities>
+    <canDoWhileInBed>true</canDoWhileInBed>
+  </JoyGiverDef>
 </Defs>

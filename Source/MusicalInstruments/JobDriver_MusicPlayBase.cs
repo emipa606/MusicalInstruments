@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using UnityEngine;
 
@@ -34,28 +32,16 @@ namespace MusicalInstruments
 
         private int luck;
 
-        public int Luck { get { return luck; } }
+        public int Luck => luck;
 
         public JobDriver_MusicPlayBase() : base()
         {
             luck = Verse.Rand.Range(-3, 2);
         }
 
-        protected Thing MusicSpotParent
-        {
-            get
-            {
-                return this.job.GetTarget(MusicSpotParentInd).Thing;
-            }
-        }
+        protected Thing MusicSpotParent => job.GetTarget(MusicSpotParentInd).Thing;
 
-        protected IntVec3 ClosestMusicSpotParentCell
-        {
-            get
-            {
-                return this.MusicSpotParent.OccupiedRect().ClosestCellTo(this.pawn.Position);
-            }
-        }
+        protected IntVec3 ClosestMusicSpotParentCell => MusicSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -64,20 +50,21 @@ namespace MusicalInstruments
             LocalTargetInfo target = job.GetTarget(StandingSpotOrChairInd);
 
             // try to reserve a place to sit or stand
-            if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed)) return false;
+            if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed))
+            {
+                return false;
+            }
 
-            target = this.job.GetTarget(InstrumentInd);
+            target = job.GetTarget(InstrumentInd);
 
             // try to reserve an instrument to play
-            if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed)) return false;
-
-            return true;
+            return pawn.Reserve(target, job, 1, -1, null, errorOnFailed);
         }
 
         public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool behind, ref bool flip)
         {
-            Thing instrument = this.TargetC.Thing;
-            CompProperties_MusicalInstrument props = (CompProperties_MusicalInstrument)(instrument.TryGetComp<CompMusicalInstrument>().props);
+            Thing instrument = TargetC.Thing;
+            CompProperties_MusicalInstrument props = (CompProperties_MusicalInstrument)instrument.TryGetComp<CompMusicalInstrument>().props;
 
             Rot4 rotation = pawn.Rotation;
 
@@ -123,13 +110,16 @@ namespace MusicalInstruments
 
         protected void ThrowMusicNotes(Vector3 loc, Map map)
         {
-            if (!loc.ToIntVec3().ShouldSpawnMotesAt(map)) return;
+            if (!loc.ToIntVec3().ShouldSpawnMotesAt(map))
+            {
+                return;
+            }
 
             MoteThrown moteThrown = (MoteThrown)ThingMaker.MakeThing(ThingDef.Named("Mote_MusicNotes"));
             moteThrown.Scale = 1.0f;
             moteThrown.exactPosition = loc + new Vector3(0f, 0f, 0.5f);
             moteThrown.SetVelocity((float)Rand.Range(-10, 10), Rand.Range(0.4f, 0.6f));
-            GenSpawn.Spawn(moteThrown, loc.ToIntVec3(), map, WipeMode.Vanish);
+            _ = GenSpawn.Spawn(moteThrown, loc.ToIntVec3(), map, WipeMode.Vanish);
 
         }
 
@@ -140,15 +130,13 @@ namespace MusicalInstruments
         {
             CompProperties_MusicalInstrument propsinstrument = instrument.TryGetComp<CompMusicalInstrument>().Props;
             if (!propsinstrument.isBuilding)
+            {
                 return false;
+            }
 
             CompPowerTrader compPower = instrument.TryGetComp<CompPowerTrader>();
 
-            if (compPower == null)
-                return false;
-
-            return !compPower.PowerOn;
-
+            return compPower != null && !compPower.PowerOn;
         }
 
         // this function does three things:
@@ -158,23 +146,23 @@ namespace MusicalInstruments
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.EndOnDespawnedOrNull(MusicSpotParentInd, JobCondition.Incompletable);
+            _ = this.EndOnDespawnedOrNull(MusicSpotParentInd, JobCondition.Incompletable);
 
             //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
 
-            Pawn musician = this.pawn;
+            Pawn musician = pawn;
 
-            this.FailOnDestroyedNullOrForbidden(InstrumentInd);
+            _ = this.FailOnDestroyedNullOrForbidden(InstrumentInd);
 
-            Thing instrument = this.TargetC.Thing;
+            Thing instrument = TargetC.Thing;
             
-            Thing venue = this.TargetA.Thing;
+            Thing venue = TargetA.Thing;
 
             CompProperties_MusicalInstrument props = instrument.TryGetComp<CompMusicalInstrument>().Props;
 
             if (props.isBuilding)
             {
-                this.FailOn(() => PowerMissing(instrument));
+                _ = this.FailOn(() => PowerMissing(instrument));
 
                 // go to where instrument is
                 yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.InteractionCell)
@@ -195,14 +183,15 @@ namespace MusicalInstruments
 
                     if (heldInstruments.Any())
                     {
-                        Toil dropInstruments = new Toil();
-                        dropInstruments.initAction = delegate
+                        Toil dropInstruments = new Toil
                         {
-                            Thing result;
-
-                            foreach (Thing heldInstrument in heldInstruments)
+                            initAction = delegate
                             {
-                                pawn.inventory.innerContainer.TryDrop(heldInstrument, pawn.Position, pawn.Map, ThingPlaceMode.Near, out result);
+
+                                foreach (Thing heldInstrument in heldInstruments)
+                                {
+                                    _ = pawn.inventory.innerContainer.TryDrop(heldInstrument, pawn.Position, pawn.Map, ThingPlaceMode.Near, out Thing result);
+                                }
                             }
                         };
 

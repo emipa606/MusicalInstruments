@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using UnityEngine;
-
+﻿
 using Verse;
 using Verse.AI;
 
@@ -44,7 +38,7 @@ namespace MusicalInstruments
 
                 if (ticksLeftThisToil % 100 == 99)
                 {
-                    ThrowMusicNotes(musician.DrawPos, this.Map);
+                    ThrowMusicNotes(musician.DrawPos, Map);
                 }
 
                 JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil, 1f, null);
@@ -53,7 +47,7 @@ namespace MusicalInstruments
 
             play.handlingFacing = true;
             play.defaultCompleteMode = ToilCompleteMode.Delay;
-            play.defaultDuration = this.job.def.joyDuration;
+            play.defaultDuration = job.def.joyDuration;
 
             play.AddFinishAction(delegate
             {
@@ -63,8 +57,7 @@ namespace MusicalInstruments
                 {
                     if (!pawn.carryTracker.innerContainer.TryTransferToContainer(pawn.carryTracker.CarriedThing, pawn.inventory.innerContainer, true))
                     {
-                        Thing thing;
-                        pawn.carryTracker.TryDropCarriedThing(pawn.Position, pawn.carryTracker.CarriedThing.stackCount, ThingPlaceMode.Near, out thing, null);
+                        _ = pawn.carryTracker.TryDropCarriedThing(pawn.Position, pawn.carryTracker.CarriedThing.stackCount, ThingPlaceMode.Near, out Thing thing, null);
                     }
                 }
 

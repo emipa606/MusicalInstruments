@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{19D5AA78-1857-4D6E-A5F9-37A63520471A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MusicalInstruments</RootNamespace>
+    <AssemblyName>MusicalInstruments</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\1.2\Assemblies\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lib.Harmony.2.0.4\lib\net472\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>..\..\..\..\..\..\..\..\ModPublishing\OldRimworld\1.1\RimWorldWin64_Data\Managed\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\..\..\..\..\ModPublishing\OldRimworld\1.1\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CompMusicalInstrument.cs" />
+    <Compile Include="CompMusicSpot.cs" />
+    <Compile Include="CompProperties_MusicalInstrument.cs" />
+    <Compile Include="CompProperties_MusicSpot.cs" />
+    <Compile Include="HarmonyPatches.cs" />
+    <Compile Include="JobDefOf_MusicPlayWork.cs" />
+    <Compile Include="JobDriver_MusicListen.cs" />
+    <Compile Include="JobDriver_MusicPlayBase.cs" />
+    <Compile Include="JobDriver_MusicPlayJoy.cs" />
+    <Compile Include="JobDriver_MusicPlayWork.cs" />
+    <Compile Include="JobDriver_TakeInstrument.cs" />
+    <Compile Include="JoyGiver_MusicListen.cs" />
+    <Compile Include="JoyGiver_MusicPlay.cs" />
+    <Compile Include="JoyKindDefOf_Music.cs" />
+    <Compile Include="PatchFirstUnloadableThing.cs" />
+    <Compile Include="PatchGenerateGearFor.cs" />
+    <Compile Include="PatchGetAvailableJoyKindsFor.cs" />
+    <Compile Include="PatchJoyKindsOnMapString.cs" />
+    <Compile Include="PatchJoyKindsOnMapTempList.cs" />
+    <Compile Include="PatchTrySatisfyJoyNeed.cs" />
+    <Compile Include="Performance.cs" />
+    <Compile Include="PerformanceManager.cs" />
+    <Compile Include="Performer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorkGiver_MusicPlay.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

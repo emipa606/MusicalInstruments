@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using UnityEngine;
 
@@ -28,12 +27,12 @@ namespace MusicalInstruments
 
         public override Job TryGiveJob(Pawn pawn)
         {
-            return this.TryGiveJobInt(pawn, null);
+            return TryGiveJobInt(pawn, null);
         }
 
         public override Job TryGiveJobInGatheringArea(Pawn pawn, IntVec3 gatheringSpot)
         {
-            return this.TryGiveJobInt(pawn, (CompMusicSpot x) => GatheringsUtility.InGatheringArea(x.parent.Position, gatheringSpot, pawn.Map));
+            return TryGiveJobInt(pawn, (CompMusicSpot x) => GatheringsUtility.InGatheringArea(x.parent.Position, gatheringSpot, pawn.Map));
         }
 
         public override Job TryGiveJobWhileInBed(Pawn pawn)
@@ -55,14 +54,13 @@ namespace MusicalInstruments
             }
 
 #if DEBUG
-            Verse.Log.Message(String.Format("{0} local spots", localMusicSpots.Count));
+            Verse.Log.Message(string.Format("{0} local spots", localMusicSpots.Count));
 #endif
 
             workingSpots = localMusicSpots;
 
             // pick a random one
-            CompMusicSpot CompMusicSpot;
-            while (workingSpots.TryRandomElement(out CompMusicSpot))
+            while (workingSpots.TryRandomElement(out CompMusicSpot CompMusicSpot))
             {
                 workingSpots.Remove(CompMusicSpot);
 
@@ -84,7 +82,7 @@ namespace MusicalInstruments
         private Job TryGiveJobInt(Pawn pawn, Predicate<CompMusicSpot> musicSpotValidator)
         {
 #if DEBUG
-            Verse.Log.Message(String.Format("{0} trying to listen to music", pawn.LabelShort));
+            Verse.Log.Message(string.Format("{0} trying to listen to music", pawn.LabelShort));
 #endif
 
             PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
@@ -102,8 +100,7 @@ namespace MusicalInstruments
             }
 
             // pick a random one
-            CompMusicSpot CompMusicSpot;
-            while (workingSpots.TryRandomElement(out CompMusicSpot))
+            while (workingSpots.TryRandomElement(out CompMusicSpot CompMusicSpot))
             {
                 // remove from list
                 workingSpots.Remove(CompMusicSpot);
@@ -122,7 +119,7 @@ namespace MusicalInstruments
                                 // check passed in predicate - i.e. parties
                                 if (musicSpotValidator == null || musicSpotValidator(CompMusicSpot))
                                 {
-                                    
+
                                     // is a performance currently in progress
                                     if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(CompMusicSpot.parent))
                                     {
@@ -134,21 +131,20 @@ namespace MusicalInstruments
 
                                         Job job;
 
-                                        IntVec3 standingSpot;
                                         if (pm.TryFindChairNear(CompMusicSpot, pawn, out Thing chair))
                                         {
 #if DEBUG
                                             Verse.Log.Message("Found chair");
 #endif
-                                            job = new Job(this.def.jobDef, CompMusicSpot.parent, chair);
+                                            job = new Job(def.jobDef, CompMusicSpot.parent, chair);
                                             return job;
                                         }
-                                        else if (pm.TryFindSitSpotOnGroundNear(CompMusicSpot, pawn, out standingSpot))
+                                        else if (pm.TryFindSitSpotOnGroundNear(CompMusicSpot, pawn, out IntVec3 standingSpot))
                                         {
 #if DEBUG
                                             Verse.Log.Message("Found standing spot");
 #endif
-                                            job = new Job(this.def.jobDef, CompMusicSpot.parent, standingSpot);
+                                            job = new Job(def.jobDef, CompMusicSpot.parent, standingSpot);
                                             return job;
                                         }
                                         else
@@ -159,7 +155,7 @@ namespace MusicalInstruments
                                             return null;
                                         }
                                     }
- 
+
                                 }
                             }
                         }

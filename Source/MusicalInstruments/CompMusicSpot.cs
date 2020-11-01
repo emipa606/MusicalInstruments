@@ -18,48 +18,48 @@ namespace MusicalInstruments
         public static readonly Texture2D MusicSpotIcon = ContentFinder<Texture2D>.Get("UI/Icons/MusicSpot");
         public static readonly Texture2D AllowRecreationIcon = ContentFinder<Texture2D>.Get("UI/Icons/AllowRecreation");
 
-        public CompProperties_MusicSpot Props
-        {
-            get
-            {
-                return (CompProperties_MusicSpot)this.props;
-            }
-        }
+        public CompProperties_MusicSpot Props => (CompProperties_MusicSpot)props;
 
         public bool Active
         {
-            get
-            {   
-                return active || !Props.canBeDisabled;
-            }
+            get => active || !Props.canBeDisabled;
             set
             {
                 bool actualValue = value || !Props.canBeDisabled;
 
-                if (actualValue == active) return;
+                if (actualValue == active)
+                {
+                    return;
+                }
+
                 active = actualValue;
-                if(parent.Spawned)
+                if (parent.Spawned)
                 {
                     PerformanceManager pm = parent.Map.GetComponent<PerformanceManager>();
                     if (active)
+                    {
                         pm.RegisterActivatedMusicSpot(this);
+                    }
                     else
+                    {
                         pm.RegisterDeactivatedMusicSpot(this);
+                    }
                 }
             }
         }
 
         public bool AllowRecreation
         {
-            get
-            {
-                return allowRecreation && IsInstrument();
-            }
+            get => allowRecreation && IsInstrument();
             set
             {
                 bool actualValue = value && IsInstrument();
 
-                if (actualValue == allowRecreation) return;
+                if (actualValue == allowRecreation)
+                {
+                    return;
+                }
+
                 allowRecreation = actualValue;
             }
         }
@@ -75,8 +75,8 @@ namespace MusicalInstruments
 
         public override void PostExposeData()
         {
-            Scribe_Values.Look<bool>(ref this.active, "MusicalInstruments.MusicSpotIsActive", false, false);
-            Scribe_Values.Look<bool>(ref this.allowRecreation, "MusicalInstruments.MusicSpotAllowRecreation", false, false);
+            Scribe_Values.Look<bool>(ref active, "MusicalInstruments.MusicSpotIsActive", false, false);
+            Scribe_Values.Look<bool>(ref allowRecreation, "MusicalInstruments.MusicSpotAllowRecreation", false, false);
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
@@ -107,43 +107,35 @@ namespace MusicalInstruments
         {
             if (Props.canBeDisabled)
             {
-                Command_Toggle com = new Command_Toggle();
-                com.hotKey = KeyBindingDefOf.Misc5;
-                com.defaultLabel = "Music spot";
-                com.icon = MusicSpotIcon;
-                com.isActive = new Func<bool>(IsActive);
-                com.toggleAction = delegate
+                Command_Toggle com = new Command_Toggle
                 {
-                    Active = !Active;
+                    hotKey = KeyBindingDefOf.Misc5,
+                    defaultLabel = "Music spot",
+                    icon = MusicSpotIcon,
+                    isActive = new Func<bool>(IsActive),
+                    toggleAction = delegate
+                    {
+                        Active = !Active;
+                    }
                 };
-                if (Active)
-                {
-                    com.defaultDesc = "Active: colonists will play music here.";
-                }
-                else
-                {
-                    com.defaultDesc = "Inactive: colonists will not play music here.";
-                }
+                com.defaultDesc = Active ? "Active: colonists will play music here." : "Inactive: colonists will not play music here.";
                 yield return com;
             } else if (IsInstrument())
             {
-                Command_Toggle com = new Command_Toggle();
-                com.hotKey = KeyBindingDefOf.Misc5;
-                com.defaultLabel = "Allow recreation";
-                com.icon = AllowRecreationIcon;
-                com.isActive = new Func<bool>(RecreationAllowed);
-                com.toggleAction = delegate
+                Command_Toggle com = new Command_Toggle
                 {
-                    AllowRecreation = !AllowRecreation;
+                    hotKey = KeyBindingDefOf.Misc5,
+                    defaultLabel = "Allow recreation",
+                    icon = AllowRecreationIcon,
+                    isActive = new Func<bool>(RecreationAllowed),
+                    toggleAction = delegate
+                    {
+                        AllowRecreation = !AllowRecreation;
+                    }
                 };
-                if (AllowRecreation)
-                {
-                    com.defaultDesc = "Recreation allowed: colonists can play this instrument for any reason.";
-                }
-                else
-                {
-                    com.defaultDesc = "Recreation disallowed: colonists can only play this instrument when performing.";
-                }
+                com.defaultDesc = AllowRecreation
+                    ? "Recreation allowed: colonists can play this instrument for any reason."
+                    : "Recreation disallowed: colonists can only play this instrument when performing.";
                 yield return com;
 
 

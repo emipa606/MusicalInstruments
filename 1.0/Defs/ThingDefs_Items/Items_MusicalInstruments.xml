@@ -1,6 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-
   <ThingDef Name="MusicalInstrumentBase" Abstract="true">
     <label>musicalinstrumentbase</label>
     <thingClass>ThingWithComps</thingClass>
@@ -26,7 +25,7 @@
     <alwaysHaulable>true</alwaysHaulable>
     <smeltable>true</smeltable>
     <comps>
-      <li Class="CompProperties_Forbiddable"/>
+      <li Class="CompProperties_Forbiddable" />
       <li>
         <compClass>CompQuality</compClass>
       </li>
@@ -48,7 +47,6 @@
     </thingCategories>
     <pathCost>10</pathCost>
   </ThingDef>
-
   <ThingDef ParentName="MusicalInstrumentBase">
     <label>frame drum</label>
     <defName>FrameDrum</defName>
@@ -67,7 +65,7 @@
     <stuffCategories>
       <li>Leathery</li>
     </stuffCategories>
-    <costStuffCount>30</costStuffCount>  
+    <costStuffCount>30</costStuffCount>
     <recipeMaker>
       <workSpeedStat>SculptingSpeed</workSpeedStat>
       <workSkill>Artistic</workSkill>
@@ -90,7 +88,6 @@
       </li>
     </comps>
   </ThingDef>
-  
   <ThingDef ParentName="MusicalInstrumentBase">
     <label>ocarina</label>
     <defName>Ocarina</defName>
@@ -143,7 +140,6 @@
       </li>
     </comps>
   </ThingDef>
-  
   <ThingDef ParentName="MusicalInstrumentBase">
     <label>guitar</label>
     <defName>Guitar</defName>
@@ -194,7 +190,6 @@
       </li>
     </comps>
   </ThingDef>
-  
   <ThingDef ParentName="MusicalInstrumentBase">
     <label>violin</label>
     <defName>Violin</defName>
@@ -245,6 +240,4 @@
       </li>
     </comps>
   </ThingDef>
-
-
 </Defs>

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using UnityEngine;
 
 using Verse;
 using Verse.AI;
@@ -67,7 +63,9 @@ namespace MusicalInstruments
             {
                 //try to avoid breaking saves from old versions
                 if (Performers == null)
+                {
                     Performers = new Dictionary<int, Performer>();
+                }
             }
         }
 
@@ -87,12 +85,12 @@ namespace MusicalInstruments
                 else
                 {
                     float x = (Performers.Count - 1) / (float)(SmallEnsembleCutoff - 1);
-                    f = 1f + x * Performers.Count / 2f - x;
+                    f = 1f + (x * Performers.Count / 2f) - x;
                 }
 
 #if DEBUG
 
-                Verse.Log.Message(String.Format("s={0},f={1}", Performers.Count, f));
+                Verse.Log.Message(string.Format("s={0},f={1}", Performers.Count, f));
 
 #endif 
 
@@ -100,14 +98,19 @@ namespace MusicalInstruments
 
             }
 
-            else Quality = 0f;
-            
+            else
+            {
+                Quality = 0f;
+            }
         }
 
 
         public static float GetMusicQuality(Pawn musician, Thing instrument, int? luck = null)
         {
-            if (musician == null || instrument == null) return 0f;
+            if (musician == null || instrument == null)
+            {
+                return 0f;
+            }
 
             int artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
             int luckActual;
@@ -119,18 +122,17 @@ namespace MusicalInstruments
             else
             {
                 JobDriver driver = musician.jobs.curDriver;
-                luckActual = (driver != null && driver is JobDriver_MusicPlayBase ? ((JobDriver_MusicPlayBase)driver).Luck : 0);
+                luckActual = driver != null && driver is JobDriver_MusicPlayBase playBase ? playBase.Luck : 0;
             }
 
-            bool isInspired = musician.Inspired ? musician.Inspiration.def == InspirationDefOf.Inspired_Creativity : false;
-            QualityCategory instrumentQuality = QualityCategory.Normal;
-            instrument.TryGetQuality(out instrumentQuality);
+            bool isInspired = musician.Inspired && musician.Inspiration.def == InspirationDefOf.Inspired_Creativity;
+            _ = instrument.TryGetQuality(out QualityCategory instrumentQuality);
             float instrumentCondition = (float)instrument.HitPoints / instrument.MaxHitPoints;
             CompMusicalInstrument instrumentComp = instrument.TryGetComp<CompMusicalInstrument>();
             float easiness = instrumentComp.Props.easiness;
             float expressiveness = instrumentComp.Props.expressiveness;
 
-            float quality = (easiness + (expressiveness * ((artSkill + luckActual + (isInspired ? 0 : -3)) / 5.0f))) * ((float)instrumentQuality / 3.0f + 0.1f) * instrumentCondition;
+            float quality = (easiness + (expressiveness * ((artSkill + luckActual + (isInspired ? 0 : -3)) / 5.0f))) * (((float)instrumentQuality / 3.0f) + 0.1f) * instrumentCondition;
 
             return quality - 0.3f;
         }

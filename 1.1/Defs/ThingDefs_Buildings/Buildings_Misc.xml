@@ -1,9 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-
   <!--============================ Spots =============================-->
-
- 
   <ThingDef ParentName="BuildingBase">
     <defName>MusicSpot</defName>
     <label>music spot</label>
@@ -19,7 +16,7 @@
     </statBases>
     <rotatable>false</rotatable>
     <scatterableOnMapGen>false</scatterableOnMapGen>
-		<useHitPoints>False</useHitPoints>
+    <useHitPoints>False</useHitPoints>
     <designationCategory>Misc</designationCategory>
     <passability>Standable</passability>
     <comps>
@@ -34,5 +31,4 @@
       <ai_chillDestination>false</ai_chillDestination>
     </building>
   </ThingDef>
-    
 </Defs>

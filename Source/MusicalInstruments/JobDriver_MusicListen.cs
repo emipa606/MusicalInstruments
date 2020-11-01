@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using UnityEngine;
 
 using Verse;
 using Verse.AI;
@@ -24,14 +20,14 @@ namespace MusicalInstruments
 
         private Thing ChairOrBed => TargetB.Thing;
 
-        private bool IsInBed => TargetB.HasThing && TargetB.Thing is Building_Bed && JobInBedUtility.InBedOrRestSpotNow(pawn, TargetB);
+        private bool IsInBed => HasChairOrBed && ChairOrBed is Building_Bed && JobInBedUtility.InBedOrRestSpotNow(pawn, TargetB);
 
         private IntVec3 ClosestMusicSpotParentCell => MusicSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             Pawn pawn = base.pawn;
-            LocalTargetInfo target = base.job.GetTarget(TargetIndex.B);
+            LocalTargetInfo target = base.job.GetTarget(ChairOrSpotOrBedInd);
             Job job = base.job;
             bool errorOnFailed2 = errorOnFailed;
             if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed2))
@@ -48,24 +44,24 @@ namespace MusicalInstruments
         protected override IEnumerable<Toil> MakeNewToils()
         {
 #if DEBUG
-            Verse.Log.Message(String.Format("MakeNewToils, HasChairOrBed={0}, IsInBed={1}", HasChairOrBed, IsInBed));
+            Verse.Log.Message(string.Format("MakeNewToils, HasChairOrBed={0}, IsInBed={1}", HasChairOrBed, IsInBed));
             //Verse.Log.Message(String.Format("pawn.CurJob = {0}", pawn.CurJob == null ? "null" : pawn.CurJob.def.LabelCap ));
             //Verse.Log.Message(String.Format("pawn.getPosture = {0}", pawn.GetPosture().ToString()));
-            //Verse.Log.Message(String.Format("current bed hashcode = {0}, target hashcode = {1}", pawn.CurrentBed() == null ? 0 : pawn.CurrentBed().GetHashCode(), TargetB.HasThing ? TargetB.Thing.GetHashCode() : 0));
+            //Verse.Log.Message(String.Format("current bed hashcode = {0}, target hashcode = {1}", pawn.CurrentBed() == null ? 0 : pawn.CurrentBed().GetHashCode(), HasChairOrBed ? ChairOrBed.GetHashCode() : 0));
 #endif
 
             this.EndOnDespawnedOrNull(MusicSpotParentInd);
 
-            //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
+            //Verse.Log.Message(String.Format("Gather Spot ID = {0}", MusicSpotParent.GetHashCode()));
 
             if (HasChairOrBed)
             {
                 this.EndOnDespawnedOrNull(ChairOrSpotOrBedInd);
             }
 
-            Pawn listener = this.pawn;
+            Pawn listener = pawn;
             
-            Thing venue = this.TargetA.Thing;
+            Thing venue = MusicSpotParent;
 
 
             if (!HasChairOrBed)
@@ -109,25 +105,25 @@ namespace MusicalInstruments
             listen.tickAction = delegate
             {
                 if(!HasChairOrBed)
-                    this.pawn.rotationTracker.FaceCell(this.ClosestMusicSpotParentCell);
+                {
+                    pawn.rotationTracker.FaceCell(ClosestMusicSpotParentCell);
+                }
+
                 JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, 1f + Math.Abs(pawn.Map.GetComponent<PerformanceManager>().GetPerformanceQuality(venue)), null);
             };
 
             listen.handlingFacing = !HasChairOrBed;
             listen.defaultCompleteMode = ToilCompleteMode.Delay;
-            listen.defaultDuration = this.job.def.joyDuration;
+            listen.defaultDuration = job.def.joyDuration;
 
             listen.AddEndCondition(delegate 
             {
-                if (pawn.Map.GetComponent<PerformanceManager>().HasPerformance(venue))
-                    return JobCondition.Ongoing;
-                else
-                    return JobCondition.Incompletable;
+                return pawn.Map.GetComponent<PerformanceManager>().HasPerformance(venue) ? JobCondition.Ongoing : JobCondition.Incompletable;
             });
 
             listen.AddFinishAction(delegate
             {
-                JoyUtility.TryGainRecRoomThought(this.pawn);
+                JoyUtility.TryGainRecRoomThought(pawn);
             });
             listen.socialMode = RandomSocialMode.Quiet;
             yield return listen;

@@ -1,8 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-
   <!-- ============= Art ============= -->
-  
   <WorkGiverDef>
     <defName>MusicPlay</defName>
     <label>perform music</label>
@@ -14,7 +12,6 @@
     <requiredCapacities>
       <li>Manipulation</li>
       <li>Hearing</li>
-    </requiredCapacities>   
+    </requiredCapacities>
   </WorkGiverDef>
-  
 </Defs>

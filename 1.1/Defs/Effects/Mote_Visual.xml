@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-
   <ThingDef ParentName="MoteBase">
     <defName>Mote_MusicNotes</defName>
     <drawGUIOverlay>true</drawGUIOverlay>
@@ -14,5 +13,4 @@
       <texPath>Things/Mote/MusicNotes</texPath>
     </graphicData>
   </ThingDef>
-  
 </Defs>
