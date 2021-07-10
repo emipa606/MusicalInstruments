@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
 using Verse;
 using Verse.AI;
 
 namespace MusicalInstruments
 {
-    class JobDriver_TakeInstrument : JobDriver
+    internal class JobDriver_TakeInstrument : JobDriver
     {
         private const TargetIndex InstrumentInd = TargetIndex.A;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            Pawn pawn = this.pawn;
-                        
-            LocalTargetInfo target = job.GetTarget(InstrumentInd);
+            var pawn1 = pawn;
+
+            var target = job.GetTarget(InstrumentInd);
 
             // try to reserve an instrument to take
-            if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed))
+            if (!pawn1.Reserve(target, job, 1, -1, null, errorOnFailed))
             {
                 return false;
             }
@@ -32,12 +31,9 @@ namespace MusicalInstruments
         {
             _ = this.FailOnDestroyedOrNull(InstrumentInd);
 
-            Toil gotoThing = new Toil
+            var gotoThing = new Toil
             {
-                initAction = delegate
-                {
-                    pawn.pather.StartPath(TargetThingA, PathEndMode.ClosestTouch);
-                },
+                initAction = delegate { pawn.pather.StartPath(TargetThingA, PathEndMode.ClosestTouch); },
 
                 defaultCompleteMode = ToilCompleteMode.PatherArrival
             };
@@ -45,15 +41,17 @@ namespace MusicalInstruments
 
             yield return gotoThing;
 
-            Toil dropInstruments = new Toil
+            var dropInstruments = new Toil
             {
                 initAction = delegate
                 {
-                    List<Thing> instruments = pawn.inventory.innerContainer.Where(x => PerformanceManager.IsInstrument(x)).ToList();
+                    var instruments = pawn.inventory.innerContainer.Where(PerformanceManager.IsInstrument)
+                        .ToList();
 
-                    foreach (Thing instrument in instruments)
+                    foreach (var instrument in instruments)
                     {
-                        _ = pawn.inventory.innerContainer.TryDrop(instrument, pawn.Position, pawn.Map, ThingPlaceMode.Near, out Thing result);
+                        _ = pawn.inventory.innerContainer.TryDrop(instrument, pawn.Position, pawn.Map,
+                            ThingPlaceMode.Near, out _);
                     }
                 }
             };
@@ -62,6 +60,5 @@ namespace MusicalInstruments
 
             yield return Toils_Haul.TakeToInventory(InstrumentInd, 1);
         }
-
     }
 }

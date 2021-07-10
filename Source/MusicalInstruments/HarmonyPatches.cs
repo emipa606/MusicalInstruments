@@ -1,37 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-
-using Verse;
-
-using RimWorld;
-using RimWorld.Planet;
-
-using HarmonyLib;
 using System.Reflection;
 using System.Reflection.Emit;
-
+using HarmonyLib;
+using RimWorld;
+using RimWorld.Planet;
+using Verse;
 
 namespace MusicalInstruments
 {
     [StaticConstructorOnStartup]
-    class HarmonyPatches
+    internal class HarmonyPatches
     {
         static HarmonyPatches()
         {
-            Harmony harmony = new Harmony("com.dogproblems.rimworldmods.musicalinstruments");
+            var harmony = new Harmony("com.dogproblems.rimworldmods.musicalinstruments");
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
 
     //patch for warning if too few joy types
-    [HarmonyPatch(typeof(JoyUtility), "JoyKindsOnMapTempList", new Type[] { typeof(Map) })]
-    class PatchJoyKindsOnMapTempList
+    [HarmonyPatch(typeof(JoyUtility), "JoyKindsOnMapTempList", typeof(Map))]
+    internal class PatchJoyKindsOnMapTempList
     {
-        static void Prefix(Map map, ref List<JoyKindDef> ___tempKindList)
+        private static void Prefix(Map map, ref List<JoyKindDef> ___tempKindList)
         {
-            PerformanceManager pm = map.GetComponent<PerformanceManager>();
+            var pm = map.GetComponent<PerformanceManager>();
             if (pm.MusicJoyKindAvailable(out _))
             {
                 ___tempKindList.Add(JoyKindDefOf_Music.Music);
@@ -40,31 +35,31 @@ namespace MusicalInstruments
     }
 
     //patch for listing available joy types
-    [HarmonyPatch(typeof(JoyUtility), "JoyKindsOnMapString", new Type[] { typeof(Map) })]
-    class PatchJoyKindsOnMapString
+    [HarmonyPatch(typeof(JoyUtility), "JoyKindsOnMapString", typeof(Map))]
+    internal class PatchJoyKindsOnMapString
     {
-        static void Postfix(ref string __result, Map map)
+        private static void Postfix(ref string __result, Map map)
         {
-            PerformanceManager pm = map.GetComponent<PerformanceManager>();
+            var pm = map.GetComponent<PerformanceManager>();
 
             string label = JoyKindDefOf_Music.Music.LabelCap;
 
 
             //yuck
-            if (!__result.Contains(label) && pm.MusicJoyKindAvailable(out Thing exampleInstrument))
+            if (!__result.Contains(label) && pm.MusicJoyKindAvailable(out var exampleInstrument))
             {
-                __result += string.Format("\n   {0} ({1})", label, exampleInstrument.def.label);
+                __result += $"\n   {label} ({exampleInstrument.def.label})";
             }
         }
     }
 
     //patch to keep one instrument in colonist inventory on return from caravan
     [HarmonyPatch(typeof(Pawn_InventoryTracker), "get_FirstUnloadableThing")]
-    class PatchFirstUnloadableThing
+    internal class PatchFirstUnloadableThing
     {
         private static readonly List<ThingDefCount> tmpDrugsToKeep = new List<ThingDefCount>();
 
-        static bool Prefix(Pawn_InventoryTracker __instance, ref ThingCount __result)
+        private static bool Prefix(Pawn_InventoryTracker __instance, ref ThingCount __result)
         {
             if (__instance.innerContainer.Count == 0)
             {
@@ -74,10 +69,10 @@ namespace MusicalInstruments
 
             tmpDrugsToKeep.Clear();
 
-            if (__instance.pawn.drugs != null && __instance.pawn.drugs.CurrentPolicy != null)
+            if (__instance.pawn.drugs?.CurrentPolicy != null)
             {
-                DrugPolicy currentPolicy = __instance.pawn.drugs.CurrentPolicy;
-                for (int i = 0; i < currentPolicy.Count; i++)
+                var currentPolicy = __instance.pawn.drugs.CurrentPolicy;
+                for (var i = 0; i < currentPolicy.Count; i++)
                 {
                     if (currentPolicy[i].takeToInventory > 0)
                     {
@@ -88,15 +83,16 @@ namespace MusicalInstruments
 
             Thing bestInstrument = null;
 
-            if(!__instance.pawn.NonHumanlikeOrWildMan() && !__instance.pawn.WorkTagIsDisabled(WorkTags.Artistic))
+            if (!__instance.pawn.NonHumanlikeOrWildMan() && !__instance.pawn.WorkTagIsDisabled(WorkTags.Artistic))
             {
-                int artSkill = __instance.pawn.skills.GetSkill(SkillDefOf.Artistic).levelInt;
+                var artSkill = __instance.pawn.skills.GetSkill(SkillDefOf.Artistic).levelInt;
 
-                IEnumerable<Thing> heldInstruments = __instance.innerContainer.Where(x => PerformanceManager.IsInstrument(x))
-                                                                .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding)
-                                                                .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(artSkill));
+                IEnumerable<Thing> heldInstruments = __instance.innerContainer
+                    .Where(PerformanceManager.IsInstrument)
+                    .Where(x => !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding)
+                    .OrderByDescending(x => x.TryGetComp<CompMusicalInstrument>().WeightedSuitability(artSkill));
 
-                if(heldInstruments.Any())
+                if (heldInstruments.Any())
                 {
                     bestInstrument = heldInstruments.FirstOrDefault();
                 }
@@ -104,84 +100,96 @@ namespace MusicalInstruments
 
             if (tmpDrugsToKeep.Any() || bestInstrument != null)
             {
-                for (int j = 0; j < __instance.innerContainer.Count; j++)
+                foreach (var thing in __instance.innerContainer)
                 {
-                    if (__instance.innerContainer[j].def.IsDrug)
+                    if (thing.def.IsDrug)
                     {
-                        int num = -1;
+                        var num = -1;
 
-                        for (int k = 0; k < tmpDrugsToKeep.Count; k++)
+                        for (var k = 0; k < tmpDrugsToKeep.Count; k++)
                         {
-                            if (__instance.innerContainer[j].def == tmpDrugsToKeep[k].ThingDef)
+                            if (thing.def != tmpDrugsToKeep[k].ThingDef)
                             {
-                                num = k;
-                                break;
+                                continue;
                             }
+
+                            num = k;
+                            break;
                         }
+
                         if (num < 0)
                         {
-                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
+                            __result = new ThingCount(thing,
+                                thing.stackCount);
                             return false;
                         }
-                        if (__instance.innerContainer[j].stackCount > tmpDrugsToKeep[num].Count)
+
+                        if (thing.stackCount > tmpDrugsToKeep[num].Count)
                         {
-                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount - tmpDrugsToKeep[num].Count);
+                            __result = new ThingCount(thing,
+                                thing.stackCount - tmpDrugsToKeep[num].Count);
                             return false;
                         }
-                        tmpDrugsToKeep[num] = new ThingDefCount(tmpDrugsToKeep[num].ThingDef, tmpDrugsToKeep[num].Count - __instance.innerContainer[j].stackCount);
+
+                        tmpDrugsToKeep[num] = new ThingDefCount(tmpDrugsToKeep[num].ThingDef,
+                            tmpDrugsToKeep[num].Count - thing.stackCount);
                     }
-                    else if(PerformanceManager.IsInstrument(__instance.innerContainer[j]))
+                    else if (PerformanceManager.IsInstrument(thing))
                     {
                         if (bestInstrument == null)
                         {
-                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
+                            __result = new ThingCount(thing,
+                                thing.stackCount);
                             return false;
                         }
 
-                        if(bestInstrument.GetHashCode() != __instance.innerContainer[j].GetHashCode())
+                        if (bestInstrument.GetHashCode() == thing.GetHashCode())
                         {
-                            __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
-                            return false;
+                            continue;
                         }
+
+                        __result = new ThingCount(thing,
+                            thing.stackCount);
+                        return false;
                     }
                     else
                     {
-                        __result = new ThingCount(__instance.innerContainer[j], __instance.innerContainer[j].stackCount);
+                        __result = new ThingCount(thing,
+                            thing.stackCount);
                         return false;
                     }
-
                 }
+
                 __result = default;
                 return false;
             }
-            else
-            {
-                __result = new ThingCount(__instance.innerContainer[0], __instance.innerContainer[0].stackCount);
-                return false;
-            }
-        }
 
+            __result = new ThingCount(__instance.innerContainer[0], __instance.innerContainer[0].stackCount);
+            return false;
+        }
     }
 
     //patch to enable music joy type while on caravan
     [HarmonyPatch(typeof(Caravan_NeedsTracker), "TrySatisfyJoyNeed")]
-    class PatchTrySatisfyJoyNeed
+    internal class PatchTrySatisfyJoyNeed
     {
         public static float MusicQuality { get; set; }
 
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            foreach (CodeInstruction instruction in instructions)
+            foreach (var instruction in instructions)
             {
                 yield return instruction;
-                if (instruction.opcode == OpCodes.Callvirt && instruction.operand.ToString().Contains("GainJoy"))
+                if (instruction.opcode != OpCodes.Callvirt || !instruction.operand.ToString().Contains("GainJoy"))
                 {
-                    // do something
-                    yield return new CodeInstruction(OpCodes.Ldarg_1);
-                    yield return new CodeInstruction(OpCodes.Ldloc_2);
-                    yield return new CodeInstruction(OpCodes.Call, typeof(PatchTrySatisfyJoyNeed).GetMethod("ApplyThoughts"));
-
+                    continue;
                 }
+
+                // do something
+                yield return new CodeInstruction(OpCodes.Ldarg_1);
+                yield return new CodeInstruction(OpCodes.Ldloc_2);
+                yield return new CodeInstruction(OpCodes.Call,
+                    typeof(PatchTrySatisfyJoyNeed).GetMethod("ApplyThoughts"));
             }
         }
 
@@ -192,29 +200,30 @@ namespace MusicalInstruments
                 return;
             }
 
-            ThoughtDef thought = PerformanceManager.GetThoughtDef(MusicQuality);
+            var thought = PerformanceManager.GetThoughtDef(MusicQuality);
 
             if (thought == null)
             {
                 return;
             }
 
-            Caravan caravan = CaravanUtility.GetCaravan(listener);
+            var caravan = listener.GetCaravan();
 
-            List<Pawn> audience = new List<Pawn>();
+            var audience = new List<Pawn>();
 
-            foreach (Pawn pawn in caravan.pawns)
+            foreach (var pawn in caravan.pawns)
             {
-                if (!pawn.NonHumanlikeOrWildMan() && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) && pawn.Awake())
+                if (!pawn.NonHumanlikeOrWildMan() && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
+                    pawn.Awake())
                 {
                     audience.Add(pawn);
                 }
             }
 #if DEBUG
             Verse.Log.Message(string.Format("Giving memory of {0} to {1} pawns (caravan)", thought.stages[0].label, audience.Count()));
-#endif        
+#endif
 
-            foreach (Pawn audienceMember in audience)
+            foreach (var audienceMember in audience)
             {
                 audienceMember.needs.mood.thoughts.memories.TryGainMemory(thought);
             }
@@ -222,10 +231,10 @@ namespace MusicalInstruments
     }
 
     //patch to enable music joy type while on caravan
-    [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", new Type[] { typeof(Pawn), typeof(List<JoyKindDef>)})]
-    class PatchGetAvailableJoyKindsFor
+    [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", typeof(Pawn), typeof(List<JoyKindDef>))]
+    internal class PatchGetAvailableJoyKindsFor
     {
-        static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
+        private static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
         {
             if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) || !p.Awake())
             {
@@ -237,13 +246,13 @@ namespace MusicalInstruments
                 return;
             }
 
-            List<Pawn> pawnsTmp = new List<Pawn>();
+            var pawnsTmp = new List<Pawn>();
             pawnsTmp.AddRange(___caravan.pawns);
 
 
-            while (pawnsTmp.TryRandomElement(out Pawn musician))
+            while (pawnsTmp.TryRandomElement(out var musician))
             {
-                if (PerformanceManager.IsPotentialCaravanMusician(musician, out float quality))
+                if (PerformanceManager.IsPotentialCaravanMusician(musician, out var quality))
                 {
                     outJoyKinds.Add(JoyKindDefOf_Music.Music);
                     PatchTrySatisfyJoyNeed.MusicQuality = quality;
@@ -253,18 +262,14 @@ namespace MusicalInstruments
 #endif
                     return;
                 }
-                else
-                {
-                    pawnsTmp.Remove(musician);
-                }
+
+                pawnsTmp.Remove(musician);
             }
 
 #if DEBUG
             Verse.Log.Message(string.Format("Checking caravanner {0} for music availability: no", p.Label));
 #endif
-
         }
-
     }
 
     //[HarmonyPatch(typeof(CompUsable), "get_FloatMenuOptionLabel")]
@@ -288,17 +293,17 @@ namespace MusicalInstruments
     //}
 
     //patch to allow non-colonist pawns to spawn with an instrument in their inventory, if appropriate
-    [HarmonyPatch(typeof(PawnGenerator), "GenerateGearFor", new Type[] { typeof(Pawn), typeof(PawnGenerationRequest) })]
-    class PatchGenerateGearFor
+    [HarmonyPatch(typeof(PawnGenerator), "GenerateGearFor", typeof(Pawn), typeof(PawnGenerationRequest))]
+    internal class PatchGenerateGearFor
     {
-        static void Postfix(Pawn pawn, PawnGenerationRequest request)
+        private static void Postfix(Pawn pawn, PawnGenerationRequest request)
         {
 #if DEBUG
             Verse.Log.Message(string.Format("Trying to generate an instrument for {0}", pawn.Label));
 
 #endif
 
-            if(Current.ProgramState != ProgramState.Playing)
+            if (Current.ProgramState != ProgramState.Playing)
             {
 #if DEBUG
                 Verse.Log.Message("World generation phase, exit");
@@ -314,7 +319,7 @@ namespace MusicalInstruments
                 return;
             }
 
-            if(pawn.Faction == null)
+            if (pawn.Faction == null)
             {
 #if DEBUG
                 Verse.Log.Message("null faction, exit");
@@ -322,7 +327,7 @@ namespace MusicalInstruments
                 return;
             }
 
-            if(pawn.Faction.IsPlayer)
+            if (pawn.Faction.IsPlayer)
             {
 #if DEBUG
                 Verse.Log.Message("player faction, exit");
@@ -330,7 +335,7 @@ namespace MusicalInstruments
                 return;
             }
 
-            if(pawn.Faction.PlayerRelationKind == FactionRelationKind.Hostile)
+            if (pawn.Faction.PlayerRelationKind == FactionRelationKind.Hostile)
             {
 #if DEBUG
                 Verse.Log.Message("hostile faction, exit");
@@ -341,33 +346,34 @@ namespace MusicalInstruments
 #if DEBUG
             Verse.Log.Message("continuing...");
 #endif
-            int artLevel = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
-            TechLevel techLevel = request.Faction == null ? TechLevel.Neolithic : request.Faction.def.techLevel;
+            var artLevel = pawn.skills.GetSkill(SkillDefOf.Artistic).Level;
+            var techLevel = request.Faction?.def.techLevel ?? TechLevel.Neolithic;
             ThingDef instrumentDef;
             ThingDef stuffDef;
-                       
-            if (artLevel > 12 || (artLevel > 8 && Verse.Rand.Chance(.75f)))
-            {
 
-                if (TryGetHardInstrument(techLevel, out instrumentDef, out stuffDef))
+            if (artLevel > 12 || artLevel > 8 && Rand.Chance(.75f))
+            {
+                if (!TryGetHardInstrument(techLevel, out instrumentDef, out stuffDef))
                 {
-                    Thing instrument = ThingMaker.MakeThing(instrumentDef, stuffDef);
-                    pawn.inventory.TryAddItemNotForSale(instrument);
+                    return;
                 }
+
+                var instrument = ThingMaker.MakeThing(instrumentDef, stuffDef);
+                pawn.inventory.TryAddItemNotForSale(instrument);
             }
-            else if (artLevel > 4 && Verse.Rand.Chance(.75f))
+            else if (artLevel > 4 && Rand.Chance(.75f))
             {
-                if (TryGetEasyInstrument(techLevel, out instrumentDef, out stuffDef))
+                if (!TryGetEasyInstrument(techLevel, out instrumentDef, out stuffDef))
                 {
-                    Thing instrument = ThingMaker.MakeThing(instrumentDef, stuffDef);
-                    pawn.inventory.TryAddItemNotForSale(instrument);
+                    return;
                 }
 
-            }               
-
+                var instrument = ThingMaker.MakeThing(instrumentDef, stuffDef);
+                pawn.inventory.TryAddItemNotForSale(instrument);
+            }
         }
 
-        static bool TryGetEasyInstrument(TechLevel techLevel, out ThingDef instrumentDef, out ThingDef stuffDef)
+        private static bool TryGetEasyInstrument(TechLevel techLevel, out ThingDef instrumentDef, out ThingDef stuffDef)
         {
             ThingDef frameDrum = null;
             ThingDef guitar = null;
@@ -378,23 +384,53 @@ namespace MusicalInstruments
             instrumentDef = null;
             stuffDef = null;
 
-            bool neolithic = techLevel <= TechLevel.Neolithic;
-            bool spacer = techLevel >= TechLevel.Spacer;
+            var neolithic = techLevel <= TechLevel.Neolithic;
+            var spacer = techLevel >= TechLevel.Spacer;
 
-            try { frameDrum = ThingDef.Named("FrameDrum"); }
-            catch { }
+            try
+            {
+                frameDrum = ThingDef.Named("FrameDrum");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { guitar = ThingDef.Named("Guitar"); }
-            catch { }
+            try
+            {
+                guitar = ThingDef.Named("Guitar");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { lightLeather = ThingDef.Named("Leather_Light"); }
-            catch { }
+            try
+            {
+                lightLeather = ThingDef.Named("Leather_Light");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { wood = ThingDef.Named("WoodLog"); }
-            catch { }
+            try
+            {
+                wood = ThingDef.Named("WoodLog");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { plasteel = ThingDef.Named("Plasteel"); }
-            catch { }
+            try
+            {
+                plasteel = ThingDef.Named("Plasteel");
+            }
+            catch
+            {
+                // ignored
+            }
 
             if (guitar != null && !neolithic)
             {
@@ -404,7 +440,8 @@ namespace MusicalInstruments
                     stuffDef = plasteel;
                     return true;
                 }
-                else if (wood != null)
+
+                if (wood != null)
                 {
                     instrumentDef = guitar;
                     stuffDef = wood;
@@ -412,17 +449,17 @@ namespace MusicalInstruments
                 }
             }
 
-            if (frameDrum != null && lightLeather != null)
+            if (frameDrum == null || lightLeather == null)
             {
-                instrumentDef = frameDrum;
-                stuffDef = lightLeather;
-                return true;
+                return false;
             }
 
-            return false;
+            instrumentDef = frameDrum;
+            stuffDef = lightLeather;
+            return true;
         }
 
-        static bool TryGetHardInstrument(TechLevel techLevel, out ThingDef instrumentDef, out ThingDef stuffDef)
+        private static bool TryGetHardInstrument(TechLevel techLevel, out ThingDef instrumentDef, out ThingDef stuffDef)
         {
             ThingDef ocarina = null;
             ThingDef violin = null;
@@ -433,23 +470,53 @@ namespace MusicalInstruments
             instrumentDef = null;
             stuffDef = null;
 
-            bool neolithic = techLevel <= TechLevel.Neolithic;
-            bool spacer = techLevel >= TechLevel.Spacer;
+            var neolithic = techLevel <= TechLevel.Neolithic;
+            var spacer = techLevel >= TechLevel.Spacer;
 
-            try { ocarina = ThingDef.Named("Ocarina"); }
-            catch { }
+            try
+            {
+                ocarina = ThingDef.Named("Ocarina");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { violin = ThingDef.Named("Violin"); }
-            catch { }
+            try
+            {
+                violin = ThingDef.Named("Violin");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { jade = ThingDef.Named("Jade"); }
-            catch { }
+            try
+            {
+                jade = ThingDef.Named("Jade");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { wood = ThingDef.Named("WoodLog"); }
-            catch { }
+            try
+            {
+                wood = ThingDef.Named("WoodLog");
+            }
+            catch
+            {
+                // ignored
+            }
 
-            try { plasteel = ThingDef.Named("Plasteel"); }
-            catch { }
+            try
+            {
+                plasteel = ThingDef.Named("Plasteel");
+            }
+            catch
+            {
+                // ignored
+            }
 
             if (violin != null && !neolithic)
             {
@@ -459,7 +526,8 @@ namespace MusicalInstruments
                     stuffDef = plasteel;
                     return true;
                 }
-                else if (wood != null)
+
+                if (wood != null)
                 {
                     instrumentDef = violin;
                     stuffDef = wood;
@@ -467,15 +535,14 @@ namespace MusicalInstruments
                 }
             }
 
-            if (ocarina != null && jade != null)
+            if (ocarina == null || jade == null)
             {
-                instrumentDef = ocarina;
-                stuffDef = jade;
-                return true;
+                return false;
             }
 
-            return false;
+            instrumentDef = ocarina;
+            stuffDef = jade;
+            return true;
         }
-
     }
 }

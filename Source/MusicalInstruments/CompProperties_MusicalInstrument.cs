@@ -8,15 +8,19 @@ namespace MusicalInstruments
 
         public float expressiveness = 0f;
 
-        public float xOffset = 0f;
-
-        public float zOffset = 0f;
-
-        public float xOffsetFacing = 0f;
-
         public bool isBuilding = false;
 
         public bool isWindInstrument = false;
+
+        public bool vertical;
+
+        public float xOffset = 0f;
+
+        public float xOffsetFacing = 0f;
+
+        public float zOffset = 0f;
+
+        public float zOffsetFacing = 0f;
 
         public CompProperties_MusicalInstrument()
         {

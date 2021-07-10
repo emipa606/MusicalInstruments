@@ -1,33 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using RimWorld;
 using Verse;
 using Verse.AI;
-using RimWorld;
 
 namespace MusicalInstruments
 {
-
-
     public class WorkGiver_MusicPlay : WorkGiver_Scanner
     {
-
         private static readonly List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
 
         public override ThingRequest PotentialWorkThingRequest =>
-                //Verse.Log.Message("PotentialWorkThingRequest");
-                //Unsatisfactory... need to narrow this down as I can't figure out how to get it to only use PotentialWorkThingsGlobal
-                ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial);
+            //Verse.Log.Message("PotentialWorkThingRequest");
+            //Unsatisfactory... need to narrow this down as I can't figure out how to get it to only use PotentialWorkThingsGlobal
+            ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial);
 
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
-            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+            var pm = pawn.Map.GetComponent<PerformanceManager>();
 
             if (!pm.CanPlayForWorkNow(pawn))
             {
                 return null;
             }
 
-            IEnumerable<Thing> things = pm.ListActiveMusicSpots().Select(x => (Thing)x.parent);
+            var things = pm.ListActiveMusicSpots().Select(x => (Thing) x.parent);
 
             //we also need to check for availibilty of an instrument here
             if (PerformanceManager.HeldInstrument(pawn) == null)
@@ -50,16 +47,16 @@ namespace MusicalInstruments
                 return false;
             }
 
-            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+            var pm = pawn.Map.GetComponent<PerformanceManager>();
 
             if (!pm.CanPlayForWorkNow(pawn))
             {
                 return false;
             }
 
-            CompMusicSpot compMusicSpot = t.TryGetComp<CompMusicSpot>();
-            CompMusicalInstrument instrumentComp = t.TryGetComp<CompMusicalInstrument>();
-            CompPowerTrader powerComp = t.TryGetComp<CompPowerTrader>();
+            var compMusicSpot = t.TryGetComp<CompMusicSpot>();
+            var instrumentComp = t.TryGetComp<CompMusicalInstrument>();
+            var powerComp = t.TryGetComp<CompPowerTrader>();
 
             if (compMusicSpot == null)
             {
@@ -71,33 +68,29 @@ namespace MusicalInstruments
                 return false;
             }
 
-            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot, pawn, out IntVec3 standingSpot))
+            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot, pawn, out _))
             {
                 return false;
             }
 
 
-            LocalTargetInfo chairOrSpot = null;
-
             if (forced &&
-                instrumentComp != null &&
                 instrumentComp.Props.isBuilding &&
                 pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.None) &&
                 (powerComp == null || powerComp.PowerOn))
             {
-                if (!pm.TryFindStandingSpotOrChair(compMusicSpot, pawn, t, out chairOrSpot))
+                if (!pm.TryFindStandingSpotOrChair(compMusicSpot, pawn, t, out _))
                 {
                     return false;
                 }
             }
-            else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out Thing instrument, true))
+            else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out var instrument, true))
             {
-
 #if DEBUG
                 Verse.Log.Message(string.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
 #endif
 
-                if (!pm.TryFindStandingSpotOrChair(compMusicSpot, pawn, instrument, out chairOrSpot))
+                if (!pm.TryFindStandingSpotOrChair(compMusicSpot, pawn, instrument, out _))
                 {
                     return false;
                 }
@@ -122,14 +115,14 @@ namespace MusicalInstruments
                 return null;
             }
 
-            PerformanceManager pm = pawn.Map.GetComponent<PerformanceManager>();
+            var pm = pawn.Map.GetComponent<PerformanceManager>();
 
             if (!pm.CanPlayForWorkNow(pawn))
             {
                 return null;
             }
 
-            CompMusicSpot compMusicSpot = thing.TryGetComp<CompMusicSpot>();
+            var compMusicSpot = thing.TryGetComp<CompMusicSpot>();
 
             if (compMusicSpot == null)
             {
@@ -141,22 +134,19 @@ namespace MusicalInstruments
                 return null;
             }
 
-            Job job;
-
-            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot, pawn, out IntVec3 standingSpot))
+            if (!pm.TryFindSitSpotOnGroundNear(compMusicSpot, pawn, out _))
             {
                 return null;
             }
 
-            job = new Job(JobDefOf_MusicPlayWork.MusicPlayWork, compMusicSpot.parent); //, standingSpot);
+            var job = new Job(JobDefOf_MusicPlayWork.MusicPlayWork, compMusicSpot.parent);
 
 
+            var musicSpotComp = thing.TryGetComp<CompMusicSpot>();
+            var instrumentComp = thing.TryGetComp<CompMusicalInstrument>();
+            var powerComp = thing.TryGetComp<CompPowerTrader>();
 
-            CompMusicSpot musicSpotComp = thing.TryGetComp<CompMusicSpot>();
-            CompMusicalInstrument instrumentComp = thing.TryGetComp<CompMusicalInstrument>();
-            CompPowerTrader powerComp = thing.TryGetComp<CompPowerTrader>();
-
-            LocalTargetInfo chairOrSpot = null;
+            LocalTargetInfo chairOrSpot;
 
             if (forced &&
                 instrumentComp != null &&
@@ -172,9 +162,8 @@ namespace MusicalInstruments
                 job.targetB = chairOrSpot;
                 job.targetC = thing;
             }
-            else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out Thing instrument, true))
+            else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out var instrument, true))
             {
-
 #if DEBUG
                 Verse.Log.Message(string.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
 #endif
@@ -196,13 +185,9 @@ namespace MusicalInstruments
             }
 
 
-
-
             job.count = 1;
 
             return job;
         }
-
-
     }
 }

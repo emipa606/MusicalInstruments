@@ -1,31 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using Verse;
-
+﻿using System.Collections.Generic;
 using RimWorld;
+using UnityEngine;
+using Verse;
 
 namespace MusicalInstruments
 {
     [StaticConstructorOnStartup]
     public class CompMusicSpot : ThingComp
     {
+        public static readonly Texture2D MusicSpotIcon = ContentFinder<Texture2D>.Get("UI/Icons/MusicSpot");
+        public static readonly Texture2D AllowRecreationIcon = ContentFinder<Texture2D>.Get("UI/Icons/AllowRecreation");
         private bool active = true;
         private bool allowRecreation = true;
 
-        public static readonly Texture2D MusicSpotIcon = ContentFinder<Texture2D>.Get("UI/Icons/MusicSpot");
-        public static readonly Texture2D AllowRecreationIcon = ContentFinder<Texture2D>.Get("UI/Icons/AllowRecreation");
-
-        public CompProperties_MusicSpot Props => (CompProperties_MusicSpot)props;
+        public CompProperties_MusicSpot Props => (CompProperties_MusicSpot) props;
 
         public bool Active
         {
             get => active || !Props.canBeDisabled;
             set
             {
-                bool actualValue = value || !Props.canBeDisabled;
+                var actualValue = value || !Props.canBeDisabled;
 
                 if (actualValue == active)
                 {
@@ -33,17 +28,19 @@ namespace MusicalInstruments
                 }
 
                 active = actualValue;
-                if (parent.Spawned)
+                if (!parent.Spawned)
                 {
-                    PerformanceManager pm = parent.Map.GetComponent<PerformanceManager>();
-                    if (active)
-                    {
-                        pm.RegisterActivatedMusicSpot(this);
-                    }
-                    else
-                    {
-                        pm.RegisterDeactivatedMusicSpot(this);
-                    }
+                    return;
+                }
+
+                var pm = parent.Map.GetComponent<PerformanceManager>();
+                if (active)
+                {
+                    pm.RegisterActivatedMusicSpot(this);
+                }
+                else
+                {
+                    pm.RegisterDeactivatedMusicSpot(this);
                 }
             }
         }
@@ -53,20 +50,21 @@ namespace MusicalInstruments
             get => allowRecreation && IsInstrument();
             set
             {
-                bool actualValue = value && IsInstrument();
-
-                if (actualValue == allowRecreation)
-                {
-                    return;
-                }
+                var actualValue = value && IsInstrument();
 
                 allowRecreation = actualValue;
             }
         }
 
-        public bool IsActive() { return Active; }
+        public bool IsActive()
+        {
+            return Active;
+        }
 
-        public bool RecreationAllowed() { return AllowRecreation; }
+        public bool RecreationAllowed()
+        {
+            return AllowRecreation;
+        }
 
         public bool IsInstrument()
         {
@@ -75,8 +73,8 @@ namespace MusicalInstruments
 
         public override void PostExposeData()
         {
-            Scribe_Values.Look<bool>(ref active, "MusicalInstruments.MusicSpotIsActive", false, false);
-            Scribe_Values.Look<bool>(ref allowRecreation, "MusicalInstruments.MusicSpotAllowRecreation", false, false);
+            Scribe_Values.Look(ref active, "MusicalInstruments.MusicSpotIsActive");
+            Scribe_Values.Look(ref allowRecreation, "MusicalInstruments.MusicSpotAllowRecreation");
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
@@ -86,61 +84,60 @@ namespace MusicalInstruments
             {
                 active = false;
             }
-            if (Active)
+
+            if (!Active)
             {
-                PerformanceManager pm = parent.Map.GetComponent<PerformanceManager>();
-                pm.RegisterActivatedMusicSpot(this);
+                return;
             }
+
+            var pm = parent.Map.GetComponent<PerformanceManager>();
+            pm.RegisterActivatedMusicSpot(this);
         }
 
         public override void PostDeSpawn(Map map)
         {
             base.PostDeSpawn(map);
-            if (Active)
+            if (!Active)
             {
-                PerformanceManager pm = map.GetComponent<PerformanceManager>();
-                pm.RegisterDeactivatedMusicSpot(this);
+                return;
             }
+
+            var pm = map.GetComponent<PerformanceManager>();
+            pm.RegisterDeactivatedMusicSpot(this);
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (Props.canBeDisabled)
             {
-                Command_Toggle com = new Command_Toggle
+                var com = new Command_Toggle
                 {
                     hotKey = KeyBindingDefOf.Misc5,
                     defaultLabel = "Music spot",
                     icon = MusicSpotIcon,
-                    isActive = new Func<bool>(IsActive),
-                    toggleAction = delegate
-                    {
-                        Active = !Active;
-                    }
+                    isActive = IsActive,
+                    toggleAction = delegate { Active = !Active; },
+                    defaultDesc = Active
+                        ? "Active: colonists will play music here."
+                        : "Inactive: colonists will not play music here."
                 };
-                com.defaultDesc = Active ? "Active: colonists will play music here." : "Inactive: colonists will not play music here.";
                 yield return com;
-            } else if (IsInstrument())
+            }
+            else if (IsInstrument())
             {
-                Command_Toggle com = new Command_Toggle
+                var com = new Command_Toggle
                 {
                     hotKey = KeyBindingDefOf.Misc5,
                     defaultLabel = "Allow recreation",
                     icon = AllowRecreationIcon,
-                    isActive = new Func<bool>(RecreationAllowed),
-                    toggleAction = delegate
-                    {
-                        AllowRecreation = !AllowRecreation;
-                    }
+                    isActive = RecreationAllowed,
+                    toggleAction = delegate { AllowRecreation = !AllowRecreation; },
+                    defaultDesc = AllowRecreation
+                        ? "Recreation allowed: colonists can play this instrument for any reason."
+                        : "Recreation disallowed: colonists can only play this instrument when performing."
                 };
-                com.defaultDesc = AllowRecreation
-                    ? "Recreation allowed: colonists can play this instrument for any reason."
-                    : "Recreation disallowed: colonists can only play this instrument when performing.";
                 yield return com;
-
-
             }
         }
-
     }
 }

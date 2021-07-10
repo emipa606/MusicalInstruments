@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using RimWorld;
 using Verse;
 using Verse.AI;
 
-using RimWorld;
-
 namespace MusicalInstruments
 {
-    class JobDriver_MusicListen : JobDriver
+    internal class JobDriver_MusicListen : JobDriver
     {
         private const TargetIndex MusicSpotParentInd = TargetIndex.A;
 
@@ -20,17 +18,18 @@ namespace MusicalInstruments
 
         private Thing ChairOrBed => TargetB.Thing;
 
-        private bool IsInBed => HasChairOrBed && ChairOrBed is Building_Bed && JobInBedUtility.InBedOrRestSpotNow(pawn, TargetB);
+        private bool IsInBed => HasChairOrBed && ChairOrBed is Building_Bed &&
+                                JobInBedUtility.InBedOrRestSpotNow(pawn, TargetB);
 
         private IntVec3 ClosestMusicSpotParentCell => MusicSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            Pawn pawn = base.pawn;
-            LocalTargetInfo target = base.job.GetTarget(ChairOrSpotOrBedInd);
-            Job job = base.job;
-            bool errorOnFailed2 = errorOnFailed;
-            if (!pawn.Reserve(target, job, 1, -1, null, errorOnFailed2))
+            var pawn1 = pawn;
+            var target = job.GetTarget(ChairOrSpotOrBedInd);
+            var job1 = job;
+            var errorOnFailed2 = errorOnFailed;
+            if (!pawn1.Reserve(target, job1, 1, -1, null, errorOnFailed2))
             {
 #if DEBUG
                 Verse.Log.Message("Couldn't reserve spot " + pawn.Label);
@@ -59,9 +58,9 @@ namespace MusicalInstruments
                 this.EndOnDespawnedOrNull(ChairOrSpotOrBedInd);
             }
 
-            Pawn listener = pawn;
-            
-            Thing venue = MusicSpotParent;
+            var listener = pawn;
+
+            var venue = MusicSpotParent;
 
 
             if (!HasChairOrBed)
@@ -83,48 +82,45 @@ namespace MusicalInstruments
 #if DEBUG
                 Verse.Log.Message("goto bed");
 #endif
-                yield return Toils_Bed.ClaimBedIfNonMedical(ChairOrSpotOrBedInd, TargetIndex.None);
+                yield return Toils_Bed.ClaimBedIfNonMedical(ChairOrSpotOrBedInd);
                 yield return Toils_Bed.GotoBed(ChairOrSpotOrBedInd);
             }
 
             // custom toil.
             Toil listen;
 
-            if(IsInBed)
+            if (IsInBed)
             {
                 this.KeepLyingDown(ChairOrSpotOrBedInd);
-                listen = Toils_LayDown.LayDown(ChairOrSpotOrBedInd, true, false, true, true);
+                listen = Toils_LayDown.LayDown(ChairOrSpotOrBedInd, true, false);
                 listen.AddFailCondition(() => !listen.actor.Awake());
             }
             else
             {
                 listen = new Toil();
             }
-            
+
 
             listen.tickAction = delegate
             {
-                if(!HasChairOrBed)
+                if (!HasChairOrBed)
                 {
                     pawn.rotationTracker.FaceCell(ClosestMusicSpotParentCell);
                 }
 
-                JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil, 1f + Math.Abs(pawn.Map.GetComponent<PerformanceManager>().GetPerformanceQuality(venue)), null);
+                JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil,
+                    1f + Math.Abs(pawn.Map.GetComponent<PerformanceManager>().GetPerformanceQuality(venue)));
             };
 
             listen.handlingFacing = !HasChairOrBed;
             listen.defaultCompleteMode = ToilCompleteMode.Delay;
             listen.defaultDuration = job.def.joyDuration;
 
-            listen.AddEndCondition(delegate 
-            {
-                return pawn.Map.GetComponent<PerformanceManager>().HasPerformance(venue) ? JobCondition.Ongoing : JobCondition.Incompletable;
-            });
+            listen.AddEndCondition(() => pawn.Map.GetComponent<PerformanceManager>().HasPerformance(venue)
+                ? JobCondition.Ongoing
+                : JobCondition.Incompletable);
 
-            listen.AddFinishAction(delegate
-            {
-                JoyUtility.TryGainRecRoomThought(pawn);
-            });
+            listen.AddFinishAction(delegate { JoyUtility.TryGainRecRoomThought(pawn); });
             listen.socialMode = RandomSocialMode.Quiet;
             yield return listen;
         }
