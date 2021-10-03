@@ -1,5 +1,8 @@
 # Changelog for MusicalInstruments
 
+1.0.4.0 - Fixed the musical workbench, thanks мєкση for the help!
+
+
 1.0.3.0 - Mod updated for 1.3 and passed autotests
 
 
