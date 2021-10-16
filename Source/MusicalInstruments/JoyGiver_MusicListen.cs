@@ -27,7 +27,7 @@ namespace MusicalInstruments
             return TryGiveJobInt(pawn, null);
         }
 
-        public override Job TryGiveJobInGatheringArea(Pawn pawn, IntVec3 gatheringSpot)
+        public override Job TryGiveJobInGatheringArea(Pawn pawn, IntVec3 gatheringSpot, float maxRadius = -1f)
         {
             return TryGiveJobInt(pawn,
                 x => GatheringsUtility.InGatheringArea(x.parent.Position, gatheringSpot, pawn.Map));

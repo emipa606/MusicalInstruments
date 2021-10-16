@@ -10,10 +10,10 @@ namespace MusicalInstruments
     {
         private static readonly List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
 
-        public override ThingRequest PotentialWorkThingRequest =>
-            //Verse.Log.Message("PotentialWorkThingRequest");
-            //Unsatisfactory... need to narrow this down as I can't figure out how to get it to only use PotentialWorkThingsGlobal
-            ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial);
+        //public override ThingRequest PotentialWorkThingRequest =>
+        //Verse.Log.Message("PotentialWorkThingRequest");
+        //Unsatisfactory... need to narrow this down as I can't figure out how to get it to only use PotentialWorkThingsGlobal
+        //ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial);
 
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
@@ -24,7 +24,7 @@ namespace MusicalInstruments
                 return null;
             }
 
-            var things = pm.ListActiveMusicSpots().Select(x => (Thing) x.parent);
+            var things = pm.ListActiveMusicSpots().Select(x => (Thing)x.parent);
 
             //we also need to check for availibilty of an instrument here
             if (PerformanceManager.HeldInstrument(pawn) == null)

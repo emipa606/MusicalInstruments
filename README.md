@@ -7,6 +7,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=1549446374
 
 - Refactored code
 - Removed redundant Harmony.dll
+- Fixed the musical workbench, thanks мєкση for the help!
 
 ![Image](https://i.imgur.com/pufA0kM.png)
 
