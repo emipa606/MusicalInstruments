@@ -1,5 +1,8 @@
 # Changelog for MusicalInstruments
 
+1.0.6.0 - Fixed the musical workbench for 1.1 and 1.2 as well
+
+
 1.0.5.0 - Should no longer do PotentialWorkThingRequest for all artificial buildings as the undefined base-property does the job anyway
 
 
