@@ -5,230 +5,229 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 
-namespace MusicalInstruments
+namespace MusicalInstruments;
+
+public abstract class JobDriver_MusicPlayBase : JobDriver
 {
-    public abstract class JobDriver_MusicPlayBase : JobDriver
+    //[TweakValue("MusicalInstruments.XOffset", -0.5f, 0.5f)]
+    //private static float InstrumentXOffset = .0f;
+
+    //[TweakValue("MusicalInstruments.ZOffset", -0.5f, 0.5f)]
+    //private static float InstrumentZOffset = .0f;
+
+    //[TweakValue("MusicalInstruments.Behind", 0f, 100f)]
+    //private static bool Behind = false;
+
+    //[TweakValue("MusicalInstruments.Flip", 0f, 100f)]
+    //private static bool Flip = false;
+
+    protected const TargetIndex MusicSpotParentInd = TargetIndex.A;
+
+    protected const TargetIndex StandingSpotOrChairInd = TargetIndex.B;
+
+    protected const TargetIndex InstrumentInd = TargetIndex.C;
+
+    private int luck;
+
+    public JobDriver_MusicPlayBase()
     {
-        //[TweakValue("MusicalInstruments.XOffset", -0.5f, 0.5f)]
-        //private static float InstrumentXOffset = .0f;
+        luck = Rand.Range(-3, 2);
+    }
 
-        //[TweakValue("MusicalInstruments.ZOffset", -0.5f, 0.5f)]
-        //private static float InstrumentZOffset = .0f;
+    public int Luck => luck;
 
-        //[TweakValue("MusicalInstruments.Behind", 0f, 100f)]
-        //private static bool Behind = false;
+    protected Thing MusicSpotParent => job.GetTarget(MusicSpotParentInd).Thing;
 
-        //[TweakValue("MusicalInstruments.Flip", 0f, 100f)]
-        //private static bool Flip = false;
+    protected IntVec3 ClosestMusicSpotParentCell => MusicSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
 
-        protected const TargetIndex MusicSpotParentInd = TargetIndex.A;
+    public override bool TryMakePreToilReservations(bool errorOnFailed)
+    {
+        var pawn1 = pawn;
 
-        protected const TargetIndex StandingSpotOrChairInd = TargetIndex.B;
+        var target = job.GetTarget(StandingSpotOrChairInd);
 
-        protected const TargetIndex InstrumentInd = TargetIndex.C;
-
-        private int luck;
-
-        public JobDriver_MusicPlayBase()
+        // try to reserve a place to sit or stand
+        if (!pawn1.Reserve(target, job, 1, -1, null, errorOnFailed))
         {
-            luck = Rand.Range(-3, 2);
+            return false;
         }
 
-        public int Luck => luck;
+        target = job.GetTarget(InstrumentInd);
 
-        protected Thing MusicSpotParent => job.GetTarget(MusicSpotParentInd).Thing;
+        // try to reserve an instrument to play
+        return pawn1.Reserve(target, job, 1, -1, null, errorOnFailed);
+    }
 
-        protected IntVec3 ClosestMusicSpotParentCell => MusicSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
+    public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool behind, ref bool flip)
+    {
+        var instrument = TargetC.Thing;
+        var props = (CompProperties_MusicalInstrument)instrument.TryGetComp<CompMusicalInstrument>().props;
 
-        public override bool TryMakePreToilReservations(bool errorOnFailed)
+        var rotation = pawn.Rotation;
+
+        if (rotation == Rot4.North)
         {
-            var pawn1 = pawn;
-
-            var target = job.GetTarget(StandingSpotOrChairInd);
-
-            // try to reserve a place to sit or stand
-            if (!pawn1.Reserve(target, job, 1, -1, null, errorOnFailed))
-            {
-                return false;
-            }
-
-            target = job.GetTarget(InstrumentInd);
-
-            // try to reserve an instrument to play
-            return pawn1.Reserve(target, job, 1, -1, null, errorOnFailed);
-        }
-
-        public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool behind, ref bool flip)
-        {
-            var instrument = TargetC.Thing;
-            var props = (CompProperties_MusicalInstrument) instrument.TryGetComp<CompMusicalInstrument>().props;
-
-            var rotation = pawn.Rotation;
-
-            if (rotation == Rot4.North)
-            {
-                behind = true;
-
-                if (!pawn.pather.Moving)
-                {
-                    drawPos += new Vector3(0f - props.xOffsetFacing, 0f, props.zOffsetFacing);
-                }
-
-                return true;
-            }
-
-            if (rotation == Rot4.East)
-            {
-                if (pawn.pather.Moving)
-                {
-                    return true;
-                }
-
-                drawPos += new Vector3(props.xOffset, 0f, props.zOffset);
-                return true;
-            }
-
-            if (rotation == Rot4.South)
-            {
-                if (pawn.pather.Moving)
-                {
-                    return true;
-                }
-
-                flip = !props.vertical;
-
-                drawPos += new Vector3(props.xOffsetFacing, 0f, props.zOffsetFacing);
-                return true;
-            }
-
-            if (rotation != Rot4.West)
-            {
-                return false;
-            }
+            behind = true;
 
             if (!pawn.pather.Moving)
             {
-                drawPos += new Vector3(0f - props.xOffset, 0f, props.zOffset);
+                drawPos += new Vector3(0f - props.xOffsetFacing, 0f, props.zOffsetFacing);
             }
-
-            flip = !props.vertical;
-
 
             return true;
         }
 
-        protected void ThrowMusicNotes(Vector3 loc, Map map)
+        if (rotation == Rot4.East)
         {
-            if (!loc.ToIntVec3().ShouldSpawnMotesAt(map))
+            if (pawn.pather.Moving)
             {
-                return;
+                return true;
             }
 
-            var moteThrown = (MoteThrown) ThingMaker.MakeThing(ThingDef.Named("Mote_MusicNotes"));
-            moteThrown.Scale = 1.0f;
-            moteThrown.exactPosition = loc + new Vector3(0f, 0f, 0.5f);
-            moteThrown.SetVelocity(Rand.Range(-10, 10), Rand.Range(0.4f, 0.6f));
-            _ = GenSpawn.Spawn(moteThrown, loc.ToIntVec3(), map);
+            drawPos += new Vector3(props.xOffset, 0f, props.zOffset);
+            return true;
         }
 
-
-        protected abstract Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue);
-
-        protected bool PowerMissing(Thing instrument)
+        if (rotation == Rot4.South)
         {
-            var propsinstrument = instrument.TryGetComp<CompMusicalInstrument>().Props;
-            if (!propsinstrument.isBuilding)
+            if (pawn.pather.Moving)
             {
-                return false;
+                return true;
             }
 
-            var compPower = instrument.TryGetComp<CompPowerTrader>();
+            flip = !props.vertical;
 
-            return compPower != null && !compPower.PowerOn;
+            drawPos += new Vector3(props.xOffsetFacing, 0f, props.zOffsetFacing);
+            return true;
         }
 
-        // this function does three things:
-        // it adds generic delegate functions to globalFailConditions (inherited from IJobEndable) via `This.EndOn...` extensions
-        // it also yield returns a collection of toils: some generic, some custom
-        // it also interacts with the JoyUtility static class so the pawns get joy
-
-        protected override IEnumerable<Toil> MakeNewToils()
+        if (rotation != Rot4.West)
         {
-            _ = this.EndOnDespawnedOrNull(MusicSpotParentInd);
+            return false;
+        }
 
-            //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
+        if (!pawn.pather.Moving)
+        {
+            drawPos += new Vector3(0f - props.xOffset, 0f, props.zOffset);
+        }
 
-            var musician = pawn;
+        flip = !props.vertical;
 
-            _ = this.FailOnDestroyedNullOrForbidden(InstrumentInd);
 
-            var instrument = TargetC.Thing;
+        return true;
+    }
 
-            var venue = TargetA.Thing;
+    protected void ThrowMusicNotes(Vector3 loc, Map map)
+    {
+        if (!loc.ToIntVec3().ShouldSpawnMotesAt(map))
+        {
+            return;
+        }
 
-            var props = instrument.TryGetComp<CompMusicalInstrument>().Props;
+        var moteThrown = (MoteThrown)ThingMaker.MakeThing(ThingDef.Named("Mote_MusicNotes"));
+        moteThrown.Scale = 1.0f;
+        moteThrown.exactPosition = loc + new Vector3(0f, 0f, 0.5f);
+        moteThrown.SetVelocity(Rand.Range(-10, 10), Rand.Range(0.4f, 0.6f));
+        _ = GenSpawn.Spawn(moteThrown, loc.ToIntVec3(), map);
+    }
 
-            if (props.isBuilding)
+
+    protected abstract Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue);
+
+    protected bool PowerMissing(Thing instrument)
+    {
+        var propsinstrument = instrument.TryGetComp<CompMusicalInstrument>().Props;
+        if (!propsinstrument.isBuilding)
+        {
+            return false;
+        }
+
+        var compPower = instrument.TryGetComp<CompPowerTrader>();
+
+        return compPower is { PowerOn: false };
+    }
+
+    // this function does three things:
+    // it adds generic delegate functions to globalFailConditions (inherited from IJobEndable) via `This.EndOn...` extensions
+    // it also yield returns a collection of toils: some generic, some custom
+    // it also interacts with the JoyUtility static class so the pawns get joy
+
+    protected override IEnumerable<Toil> MakeNewToils()
+    {
+        _ = this.EndOnDespawnedOrNull(MusicSpotParentInd);
+
+        //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
+
+        var musician = pawn;
+
+        _ = this.FailOnDestroyedNullOrForbidden(InstrumentInd);
+
+        var instrument = TargetC.Thing;
+
+        var venue = TargetA.Thing;
+
+        var props = instrument.TryGetComp<CompMusicalInstrument>().Props;
+
+        if (props.isBuilding)
+        {
+            _ = this.FailOn(() => PowerMissing(instrument));
+
+            // go to where instrument is
+            yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.InteractionCell)
+                .FailOnSomeonePhysicallyInteracting(InstrumentInd);
+
+            yield return GetPlayToil(musician, instrument, venue);
+        }
+        else
+        {
+            if (instrument.ParentHolder != musician.inventory)
             {
-                _ = this.FailOn(() => PowerMissing(instrument));
-
                 // go to where instrument is
-                yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.InteractionCell)
+                yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.OnCell)
                     .FailOnSomeonePhysicallyInteracting(InstrumentInd);
 
-                yield return GetPlayToil(musician, instrument, venue);
+                //drop other instruments if any
+                var heldInstruments = pawn.inventory.innerContainer.Where(PerformanceManager.IsInstrument)
+                    .ToList();
+
+                if (heldInstruments.Any())
+                {
+                    var dropInstruments = new Toil
+                    {
+                        initAction = delegate
+                        {
+                            foreach (var heldInstrument in heldInstruments)
+                            {
+                                _ = pawn.inventory.innerContainer.TryDrop(heldInstrument, pawn.Position, pawn.Map,
+                                    ThingPlaceMode.Near, out _);
+                            }
+                        }
+                    };
+
+                    yield return dropInstruments;
+                }
+
+                // pick up instrument
+                yield return Toils_Haul.StartCarryThing(InstrumentInd);
             }
             else
             {
-                if (instrument.ParentHolder != musician.inventory)
-                {
-                    // go to where instrument is
-                    yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.OnCell)
-                        .FailOnSomeonePhysicallyInteracting(InstrumentInd);
-
-                    //drop other instruments if any
-                    var heldInstruments = pawn.inventory.innerContainer.Where(PerformanceManager.IsInstrument)
-                        .ToList();
-
-                    if (heldInstruments.Any())
-                    {
-                        var dropInstruments = new Toil
-                        {
-                            initAction = delegate
-                            {
-                                foreach (var heldInstrument in heldInstruments)
-                                {
-                                    _ = pawn.inventory.innerContainer.TryDrop(heldInstrument, pawn.Position, pawn.Map,
-                                        ThingPlaceMode.Near, out _);
-                                }
-                            }
-                        };
-
-                        yield return dropInstruments;
-                    }
-
-                    // pick up instrument
-                    yield return Toils_Haul.StartCarryThing(InstrumentInd);
-                }
-                else
-                {
-                    //get instrument out ready to play
-                    yield return Toils_Misc.TakeItemFromInventoryToCarrier(musician, InstrumentInd);
-                }
-
-                // go to the sitting / standing spot
-                yield return Toils_Goto.GotoCell(StandingSpotOrChairInd, PathEndMode.OnCell);
-
-                yield return GetPlayToil(musician, instrument, venue);
-
-                //yield return Toils_General.PutCarriedThingInInventory();
+                //get instrument out ready to play
+                yield return Toils_Misc.TakeItemFromInventoryToCarrier(musician, InstrumentInd);
             }
-        }
 
-        public override void ExposeData()
-        {
-            base.ExposeData();
-            Scribe_Values.Look(ref luck, "MusicalInstruments.Luck");
+            // go to the sitting / standing spot
+            yield return Toils_Goto.GotoCell(StandingSpotOrChairInd, PathEndMode.OnCell);
+
+            yield return GetPlayToil(musician, instrument, venue);
+
+            //yield return Toils_General.PutCarriedThingInInventory();
         }
+    }
+
+    public override void ExposeData()
+    {
+        base.ExposeData();
+        Scribe_Values.Look(ref luck, "MusicalInstruments.Luck");
     }
 }

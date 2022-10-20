@@ -1,15 +1,14 @@
 ﻿using RimWorld;
 
-namespace MusicalInstruments
-{
-    [DefOf]
-    public static class JoyKindDefOf_Music
-    {
-        public static JoyKindDef Music;
+namespace MusicalInstruments;
 
-        static JoyKindDefOf_Music()
-        {
-            DefOfHelper.EnsureInitializedInCtor(typeof(JoyKindDefOf_Music));
-        }
+[DefOf]
+public static class JoyKindDefOf_Music
+{
+    public static JoyKindDef Music;
+
+    static JoyKindDefOf_Music()
+    {
+        DefOfHelper.EnsureInitializedInCtor(typeof(JoyKindDefOf_Music));
     }
 }

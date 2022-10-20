@@ -8,6 +8,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=1549446374
 - Refactored code
 - Removed redundant Harmony.dll
 - Fixed the musical workbench, thanks мєкση for the help!
+- Added burn unwanted instrument recipe
 
 ![Image](https://i.imgur.com/pufA0kM.png)
 
@@ -54,6 +55,7 @@ a: Just post a comment describing the problem, and I'll try to fix it. The more 
 -  For best support, please use the Discord-channel for error-reporting.
 -  Do not report errors by making a discussion-thread, I get no notification of that.
 -  If you have the solution for a problem, please post it to the GitHub repository.
+
 
 
 

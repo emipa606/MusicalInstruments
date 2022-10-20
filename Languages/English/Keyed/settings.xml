@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <MuIn.MusicSpot>Music spot</MuIn.MusicSpot>
+  <MuIn.MusicSpot.Active>Active: colonists will play music here.</MuIn.MusicSpot.Active>
+  <MuIn.MusicSpot.Inactive>Inactive: colonists will not play music here.</MuIn.MusicSpot.Inactive>
+  <MuIn.AllowRec>Allow recreation</MuIn.AllowRec>
+  <MuIn.AllowRec.Active>Recreation allowed: colonists can play this instrument for any reason.</MuIn.AllowRec.Active>
+  <MuIn.AllowRec.Inactive>Recreation disallowed: colonists can only play this instrument when performing.</MuIn.AllowRec.Inactive>
+</LanguageData>

@@ -1,16 +1,15 @@
 ﻿using Verse;
 
-namespace MusicalInstruments
+namespace MusicalInstruments;
+
+public class CompMusicalInstrument : ThingComp
 {
-    public class CompMusicalInstrument : ThingComp
+    public CompProperties_MusicalInstrument Props => (CompProperties_MusicalInstrument)props;
+
+    public float WeightedSuitability(int musicianSkill)
     {
-        public CompProperties_MusicalInstrument Props => (CompProperties_MusicalInstrument) props;
+        var f = musicianSkill / 20f;
 
-        public float WeightedSuitability(int musicianSkill)
-        {
-            var f = musicianSkill / 20f;
-
-            return (Props.easiness * (1 - f)) + (Props.expressiveness * f);
-        }
+        return (Props.easiness * (1 - f)) + (Props.expressiveness * f);
     }
 }
