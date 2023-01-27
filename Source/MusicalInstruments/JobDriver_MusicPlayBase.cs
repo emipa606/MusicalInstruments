@@ -9,18 +9,6 @@ namespace MusicalInstruments;
 
 public abstract class JobDriver_MusicPlayBase : JobDriver
 {
-    //[TweakValue("MusicalInstruments.XOffset", -0.5f, 0.5f)]
-    //private static float InstrumentXOffset = .0f;
-
-    //[TweakValue("MusicalInstruments.ZOffset", -0.5f, 0.5f)]
-    //private static float InstrumentZOffset = .0f;
-
-    //[TweakValue("MusicalInstruments.Behind", 0f, 100f)]
-    //private static bool Behind = false;
-
-    //[TweakValue("MusicalInstruments.Flip", 0f, 100f)]
-    //private static bool Flip = false;
-
     protected const TargetIndex MusicSpotParentInd = TargetIndex.A;
 
     protected const TargetIndex StandingSpotOrChairInd = TargetIndex.B;

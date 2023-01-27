@@ -14,7 +14,6 @@ public class PerformanceManager : MapComponent
     private const float GatherRadius = 3.9f;
     // static
 
-    [TweakValue("MusicalInstruments.MinTicksBetweenWorkPerfomances", 0, 60000)]
     private static readonly int MinTicksBetweenWorkPerfomances = 30000;
 
     private static readonly List<ThingDef> allInstrumentDefs =
