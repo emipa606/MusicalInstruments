@@ -83,7 +83,7 @@
     </recipeMaker>
   </ThingDef>
   <ThingDef Name="StringInstrumentBase" ParentName="HeldMusicalInstrumentBase" Abstract="True">
-    <stuffCategories>
+    <stuffCategories Inherit="False">
       <li>Woody</li>
     </stuffCategories>
     <recipeMaker>

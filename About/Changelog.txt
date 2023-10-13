@@ -1,5 +1,8 @@
 # Changelog for MusicalInstruments
 
+1.4.3 - Fixed the stuff-categories for stringed instruments
+
+
 1.4.2 - Removed tweakvalue property
 
 
