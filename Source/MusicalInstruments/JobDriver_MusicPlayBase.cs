@@ -46,7 +46,7 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
         return pawn1.Reserve(target, job, 1, -1, null, errorOnFailed);
     }
 
-    public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool behind, ref bool flip)
+    public override bool ModifyCarriedThingDrawPos(ref Vector3 drawPos, ref bool flip)
     {
         var instrument = TargetC.Thing;
         var props = (CompProperties_MusicalInstrument)instrument.TryGetComp<CompMusicalInstrument>().props;
@@ -55,8 +55,6 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
 
         if (rotation == Rot4.North)
         {
-            behind = true;
-
             if (!pawn.pather.Moving)
             {
                 drawPos += new Vector3(0f - props.xOffsetFacing, 0f, props.zOffsetFacing);
@@ -137,7 +135,7 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
 
     // this function does three things:
     // it adds generic delegate functions to globalFailConditions (inherited from IJobEndable) via `This.EndOn...` extensions
-    // it also yield returns a collection of toils: some generic, some custom
+    // it also yields returns a collection of toils: some generic, some custom
     // it also interacts with the JoyUtility static class so the pawns get joy
 
     protected override IEnumerable<Toil> MakeNewToils()

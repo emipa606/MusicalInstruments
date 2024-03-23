@@ -5,18 +5,6 @@ using Verse;
 
 namespace MusicalInstruments;
 
-public class Performer : IExposable
-{
-    public Thing Instrument;
-    public Pawn Musician;
-
-    public void ExposeData()
-    {
-        Scribe_References.Look(ref Musician, "MusicalInstruments.Musician");
-        Scribe_References.Look(ref Instrument, "MusicalInstruments.Instrument");
-    }
-}
-
 public class Performance : IExposable
 {
     private const int SmallEnsembleCutoff = 6;
@@ -35,8 +23,8 @@ public class Performance : IExposable
         Performers = null;
         Quality = 0f;
 
-        WorkingKeysPerformers = new List<int>();
-        WorkingValuesPerformers = new List<Performer>();
+        WorkingKeysPerformers = [];
+        WorkingValuesPerformers = [];
     }
 
     public Performance(Thing venue)
@@ -45,8 +33,8 @@ public class Performance : IExposable
         Performers = new Dictionary<int, Performer>();
         Quality = 0f;
 
-        WorkingKeysPerformers = new List<int>();
-        WorkingValuesPerformers = new List<Performer>();
+        WorkingKeysPerformers = [];
+        WorkingValuesPerformers = [];
     }
 
     public void ExposeData()
@@ -91,7 +79,7 @@ public class Performance : IExposable
             }
 
 #if DEBUG
-                Verse.Log.Message(string.Format("s={0},f={1}", Performers.Count, f));
+                Verse.Log.Message($"s={Performers.Count},f={f}");
 
 #endif
 

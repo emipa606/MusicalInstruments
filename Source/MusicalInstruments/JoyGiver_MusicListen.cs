@@ -20,7 +20,7 @@ internal class JoyGiver_MusicListen : JoyGiver
             select c).ToList();
 
 
-    private static List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
+    private static List<CompMusicSpot> workingSpots = [];
 
     public override Job TryGiveJob(Pawn pawn)
     {
@@ -52,7 +52,7 @@ internal class JoyGiver_MusicListen : JoyGiver
         }
 
 #if DEBUG
-            Verse.Log.Message(string.Format("{0} local spots", localMusicSpots.Count));
+            Verse.Log.Message($"{localMusicSpots.Count} local spots");
 #endif
 
         workingSpots = localMusicSpots;
@@ -81,7 +81,7 @@ internal class JoyGiver_MusicListen : JoyGiver
     private Job TryGiveJobInt(Pawn pawn, Predicate<CompMusicSpot> musicSpotValidator)
     {
 #if DEBUG
-            Verse.Log.Message(string.Format("{0} trying to listen to music", pawn.LabelShort));
+            Verse.Log.Message($"{pawn.LabelShort} trying to listen to music");
 #endif
 
         var pm = pawn.Map.GetComponent<PerformanceManager>();

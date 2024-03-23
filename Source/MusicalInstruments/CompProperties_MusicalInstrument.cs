@@ -4,23 +4,23 @@ namespace MusicalInstruments;
 
 public class CompProperties_MusicalInstrument : CompProperties
 {
-    public float easiness = 0f;
+    public readonly float easiness = 0f;
 
-    public float expressiveness = 0f;
+    public readonly float expressiveness = 0f;
 
-    public bool isBuilding = false;
+    public readonly bool isBuilding = false;
+
+    public readonly float xOffset = 0f;
+
+    public readonly float xOffsetFacing = 0f;
+
+    public readonly float zOffset = 0f;
+
+    public readonly float zOffsetFacing = 0f;
 
     public bool isWindInstrument = false;
 
     public bool vertical;
-
-    public float xOffset = 0f;
-
-    public float xOffsetFacing = 0f;
-
-    public float zOffset = 0f;
-
-    public float zOffsetFacing = 0f;
 
     public CompProperties_MusicalInstrument()
     {

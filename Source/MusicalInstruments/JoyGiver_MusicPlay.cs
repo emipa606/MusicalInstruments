@@ -8,7 +8,7 @@ namespace MusicalInstruments;
 
 internal class JoyGiver_MusicPlay : JoyGiver
 {
-    private static readonly List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
+    private static readonly List<CompMusicSpot> workingSpots = [];
 
     public override Job TryGiveJob(Pawn pawn)
     {

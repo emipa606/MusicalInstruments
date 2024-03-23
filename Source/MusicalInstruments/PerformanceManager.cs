@@ -7,7 +7,7 @@ using Verse.AI;
 
 namespace MusicalInstruments;
 
-public class PerformanceManager : MapComponent
+public class PerformanceManager(Map map) : MapComponent(map)
 {
     private const float Radius = 9f;
 
@@ -27,19 +27,13 @@ public class PerformanceManager : MapComponent
             select c).ToList();
 
     private readonly List<CompMusicSpot>
-        ActiveMusicSpots; //don't need to serialize this as the CompMusicSpot automatically registers/deregisters itself
+        ActiveMusicSpots =
+            []; //don't need to serialize this as the CompMusicSpot automatically registers/deregisters itself
 
     // non-static
 
-    private Dictionary<int, Performance> Performances;
-    private Dictionary<int, int> WorkPerformanceTimestamps;
-
-    public PerformanceManager(Map map) : base(map)
-    {
-        Performances = new Dictionary<int, Performance>();
-        WorkPerformanceTimestamps = new Dictionary<int, int>();
-        ActiveMusicSpots = new List<CompMusicSpot>();
-    }
+    private Dictionary<int, Performance> Performances = new Dictionary<int, Performance>();
+    private Dictionary<int, int> WorkPerformanceTimestamps = new Dictionary<int, int>();
 
 
     private static string LogMusician(Pawn musician, Thing instrument)
@@ -258,12 +252,12 @@ public class PerformanceManager : MapComponent
     public bool CanPlayForWorkNow(Pawn musician)
     {
         var hash = musician.GetHashCode();
-        if (!WorkPerformanceTimestamps.ContainsKey(hash))
+        if (!WorkPerformanceTimestamps.TryGetValue(hash, out var timestamp))
         {
             return true;
         }
 
-        var ticksSince = Find.TickManager.TicksGame - WorkPerformanceTimestamps[hash];
+        var ticksSince = Find.TickManager.TicksGame - timestamp;
         return ticksSince >= MinTicksBetweenWorkPerfomances;
     }
 
@@ -309,18 +303,20 @@ public class PerformanceManager : MapComponent
         }
 
 #if DEBUG
-            Verse.Log.Message(string.Format("Musicians: {0}", string.Join(", ", Performances[venueHash].Performers.Select(x => LogMusician(x.Value.Musician, x.Value.Instrument)).ToArray())));
-            Verse.Log.Message(string.Format("Quality: {0}", Performances[venueHash].Quality));
+            Verse.Log.Message(
+                $"Musicians: {string.Join(", ", Performances[venueHash].Performers.Select(x => LogMusician(x.Value.Musician, x.Value.Instrument)).ToArray())}");
+            Verse.Log.Message($"Quality: {Performances[venueHash].Quality}");
 #endif
     }
 
     public void StopPlaying(Pawn musician, Thing venue)
     {
-        var unused = venue.GetHashCode();
+        _ = venue.GetHashCode();
         var musicianHash = musician.GetHashCode();
 
 #if DEBUG
-            Verse.Log.Message(string.Format("StopPlaying: Musician: {0}, Venue: {1}. {2} performances currently", musician.LabelShort, venue.LabelShort, Performances.Count));
+            Verse.Log.Message(
+                $"StopPlaying: Musician: {musician.LabelShort}, Venue: {venue.LabelShort}. {Performances.Count} performances currently");
 #endif
 
         //            if (Performances.ContainsKey(venueHash))
@@ -370,7 +366,7 @@ public class PerformanceManager : MapComponent
             .ToDictionary(x => x.Key, x => x.Value);
 
 #if DEBUG
-            Verse.Log.Message(string.Format("Done, now ({0}) performances on map.", Performances.Count));
+            Verse.Log.Message($"Done, now ({Performances.Count}) performances on map.");
 #endif
 
         //       }
@@ -387,11 +383,11 @@ public class PerformanceManager : MapComponent
     {
         var hash = venue.GetHashCode();
 
-        return !Performances.ContainsKey(hash)
+        return !Performances.TryGetValue(hash, out var performance)
             ?
             //Verse.Log.Error(String.Format("Gather spot #{0} has no performance.", hash));
             0f
-            : Performances[hash].Quality;
+            : performance.Quality;
     }
 
     public override void MapComponentTick()
@@ -411,12 +407,12 @@ public class PerformanceManager : MapComponent
     {
         var hash = venue.GetHashCode();
 
-        if (!Performances.ContainsKey(hash))
+        if (!Performances.TryGetValue(hash, out var performance))
         {
             return;
         }
 
-        var quality = Performances[hash].Quality;
+        var quality = performance.Quality;
 
         if (quality is >= 0f and < .5f)
         {
@@ -442,7 +438,7 @@ public class PerformanceManager : MapComponent
             return;
         }
 #if DEBUG
-            Verse.Log.Message(string.Format("Giving memory of {0} to {1} pawns", thought.stages[0].label, audience.Count()));
+            Verse.Log.Message($"Giving memory of {thought.stages[0].label} to {audience.Count()} pawns");
 
 #endif
 
@@ -474,7 +470,7 @@ public class PerformanceManager : MapComponent
         //                                                                          visitors only play their own instruments, unless building type
 
         var mapInstruments = AvailableMapInstruments(musician, venue,
-            musician.Faction == null || !musician.Faction.IsPlayer, isWork);
+            musician.Faction is not { IsPlayer: true }, isWork);
 
 
         if (!mapInstruments.Any())

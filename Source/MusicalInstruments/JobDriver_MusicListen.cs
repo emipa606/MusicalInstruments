@@ -34,10 +34,10 @@ internal class JobDriver_MusicListen : JobDriver
     protected override IEnumerable<Toil> MakeNewToils()
     {
 #if DEBUG
-            Verse.Log.Message(string.Format("MakeNewToils, HasChairOrBed={0}, IsInBed={1}", HasChairOrBed, IsInBed));
-            //Verse.Log.Message(String.Format("pawn.CurJob = {0}", pawn.CurJob == null ? "null" : pawn.CurJob.def.LabelCap ));
-            //Verse.Log.Message(String.Format("pawn.getPosture = {0}", pawn.GetPosture().ToString()));
-            //Verse.Log.Message(String.Format("current bed hashcode = {0}, target hashcode = {1}", pawn.CurrentBed() == null ? 0 : pawn.CurrentBed().GetHashCode(), HasChairOrBed ? ChairOrBed.GetHashCode() : 0));
+        Log.Message($"MakeNewToils, HasChairOrBed={HasChairOrBed}, IsInBed={IsInBed}");
+        //Verse.Log.Message(String.Format("pawn.CurJob = {0}", pawn.CurJob == null ? "null" : pawn.CurJob.def.LabelCap ));
+        //Verse.Log.Message(String.Format("pawn.getPosture = {0}", pawn.GetPosture().ToString()));
+        //Verse.Log.Message(String.Format("current bed hashcode = {0}, target hashcode = {1}", pawn.CurrentBed() == null ? 0 : pawn.CurrentBed().GetHashCode(), HasChairOrBed ? ChairOrBed.GetHashCode() : 0));
 #endif
 
         this.EndOnDespawnedOrNull(MusicSpotParentInd);
@@ -57,21 +57,21 @@ internal class JobDriver_MusicListen : JobDriver
         if (!HasChairOrBed)
         {
 #if DEBUG
-                Verse.Log.Message("goto cell");
+            Log.Message("goto cell");
 #endif
             yield return Toils_Goto.GotoCell(ChairOrSpotOrBedInd, PathEndMode.OnCell);
         }
         else if (!IsInBed)
         {
 #if DEBUG
-                Verse.Log.Message("goto chair");
+            Log.Message("goto chair");
 #endif
             yield return Toils_Goto.GotoThing(ChairOrSpotOrBedInd, PathEndMode.OnCell);
         }
         else
         {
 #if DEBUG
-                Verse.Log.Message("goto bed");
+            Log.Message("goto bed");
 #endif
             yield return Toils_Bed.ClaimBedIfNonMedical(ChairOrSpotOrBedInd);
             yield return Toils_Bed.GotoBed(ChairOrSpotOrBedInd);

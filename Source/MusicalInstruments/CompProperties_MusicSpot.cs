@@ -4,7 +4,7 @@ namespace MusicalInstruments;
 
 public class CompProperties_MusicSpot : CompProperties
 {
-    public bool canBeDisabled = true;
+    public readonly bool canBeDisabled = true;
 
     public CompProperties_MusicSpot()
     {

@@ -21,7 +21,7 @@ internal class JobDriver_TakeInstrument : JobDriver
             return false;
         }
 
-        //lets try this
+        //let's try this
         job.count = 1;
 
         return true;

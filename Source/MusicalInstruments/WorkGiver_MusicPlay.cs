@@ -8,7 +8,7 @@ namespace MusicalInstruments;
 
 public class WorkGiver_MusicPlay : WorkGiver_Scanner
 {
-    private static readonly List<CompMusicSpot> workingSpots = new List<CompMusicSpot>();
+    private static readonly List<CompMusicSpot> workingSpots = [];
 
     //public override ThingRequest PotentialWorkThingRequest =>
     //Verse.Log.Message("PotentialWorkThingRequest");
@@ -87,7 +87,7 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out var instrument, true))
         {
 #if DEBUG
-                Verse.Log.Message(string.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
+                Verse.Log.Message($"{pawn.LabelShort} chose to play {instrument.LabelShort}");
 #endif
 
             if (!pm.TryFindStandingSpotOrChair(compMusicSpot, pawn, instrument, out _))
@@ -165,7 +165,7 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out var instrument, true))
         {
 #if DEBUG
-                Verse.Log.Message(string.Format("{0} chose to play {1}", pawn.LabelShort, instrument.LabelShort));
+                Verse.Log.Message($"{pawn.LabelShort} chose to play {instrument.LabelShort}");
 #endif
 
             if (!pm.TryFindStandingSpotOrChair(musicSpotComp, pawn, instrument, out chairOrSpot))
@@ -179,7 +179,7 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         else
         {
 #if DEBUG
-                Verse.Log.Message(string.Format("{0} couldn't find an instrument", pawn.LabelShort));
+                Verse.Log.Message($"{pawn.LabelShort} couldn't find an instrument");
 #endif
             return null;
         }
