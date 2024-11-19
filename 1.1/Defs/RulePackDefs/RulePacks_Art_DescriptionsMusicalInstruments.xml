@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <RulePackDef>
     <defName>ArtDescription_MusicalInstrument</defName>
     <rulePack>
       <rulesStrings>
-        <li>physical_description_root-&gt;This instrument is engraved with a [depiction] of [image]. [desc_sentence_group]</li>
-        <li>physical_description_root-&gt;This instrument bears a [depiction] of [image]. [desc_sentence_group]</li>
-        <li>physical_description_root-&gt;An engraving on this instrument [depicts] [image]. [desc_sentence_group]</li>
+        <li>physical_description_root->This instrument is engraved with a [depiction] of [image]. [desc_sentence_group]</li>
+        <li>physical_description_root->This instrument bears a [depiction] of [image]. [desc_sentence_group]</li>
+        <li>physical_description_root->An engraving on this instrument [depicts] [image]. [desc_sentence_group]</li>
       </rulesStrings>
     </rulePack>
   </RulePackDef>

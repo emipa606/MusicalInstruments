@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Patch>
   <Operation Class="PatchOperationConditional">
     <xpath>/Defs/ThingDef[defName="BisonHorn_Westerado"]</xpath>
@@ -6,7 +6,7 @@
     <match Class="PatchOperationAdd">
       <xpath>/Defs</xpath>
       <value>
-        <ThingDef ParentName="HornMusicalInstrumentBase">
+        <ThingDef ParentName="PrimitiveHornInstrumentBase">
           <label>bison blowing horn</label>
           <defName>BisonBlowingHorn</defName>
           <description>A horn of a Bison, sculpted into a musical horn.</description>
@@ -43,7 +43,7 @@
     <match Class="PatchOperationAdd">
       <xpath>/Defs</xpath>
       <value>
-        <ThingDef ParentName="HornMusicalInstrumentBase">
+        <ThingDef ParentName="PrimitiveHornInstrumentBase">
           <label>ibex blowing horn</label>
           <defName>IbexBlowingHorn</defName>
           <description>A horn of an Ibex, sculpted into a musical horn.</description>
@@ -79,7 +79,7 @@
     <match Class="PatchOperationAdd">
       <xpath>/Defs</xpath>
       <value>
-        <ThingDef ParentName="HornMusicalInstrumentBase">
+        <ThingDef ParentName="PrimitiveHornInstrumentBase">
           <label>gazelle blowing horn</label>
           <defName>GazelleBlowingHorn</defName>
           <description>A horn of an Gazelle, sculpted into a musical horn.</description>
