@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN: frame drum -->
+  <FrameDrum.label>frame drum</FrameDrum.label>
+  <!-- EN: A simple rhythmic percussion instrument made from leather stretched over a wooden frame. -->
+  <FrameDrum.description>A simple rhythmic percussion instrument made from leather stretched over a wooden frame.</FrameDrum.description>
+  <!-- EN: Take to inventory -->
+  <FrameDrum.comps.CompUsable.useLabel>Take to inventory</FrameDrum.comps.CompUsable.useLabel>
+  <!-- EN: ocarina -->
+  <Ocarina.label>ocarina</Ocarina.label>
+  <!-- EN: A simple wind instrument with a haunting tone, carved from a single piece of material. -->
+  <Ocarina.description>A simple wind instrument with a haunting tone, carved from a single piece of material.</Ocarina.description>
+  <!-- EN: Take to inventory -->
+  <Ocarina.comps.CompUsable.useLabel>Take to inventory</Ocarina.comps.CompUsable.useLabel>
+</LanguageData>

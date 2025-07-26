@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN: burn musical instrument -->
+  <BurnMusicalInstrument.label>burn musical instrument</BurnMusicalInstrument.label>
+  <!-- EN: Use heat to destroy unwanted musical instruments. -->
+  <BurnMusicalInstrument.description>Use heat to destroy unwanted musical instruments.</BurnMusicalInstrument.description>
+  <!-- EN: Burning instrument. -->
+  <BurnMusicalInstrument.jobString>Burning instrument.</BurnMusicalInstrument.jobString>
+</LanguageData>

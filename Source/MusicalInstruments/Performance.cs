@@ -50,10 +50,7 @@ public class Performance : IExposable
         }
 
         //try to avoid breaking saves from old versions
-        if (Performers == null)
-        {
-            Performers = new Dictionary<int, Performer>();
-        }
+        Performers ??= new Dictionary<int, Performer>();
     }
 
     public void CalculateQuality()

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN: electric instruments -->
+  <ElectricInstruments.label>electric instruments</ElectricInstruments.label>
+  <!-- EN: Construct electrically amplified instruments. -->
+  <ElectricInstruments.description>Construct electrically amplified instruments.</ElectricInstruments.description>
+  <!-- EN: primitive instruments -->
+  <PrimitiveInstruments.label>primitive instruments</PrimitiveInstruments.label>
+  <!-- EN: Create basic wind and percussion instruments at the sculptor's table. -->
+  <PrimitiveInstruments.description>Create basic wind and percussion instruments at the sculptor's table.</PrimitiveInstruments.description>
+  <!-- EN: stringed instruments -->
+  <StringedInstruments.label>stringed instruments</StringedInstruments.label>
+  <!-- EN: Create tuned string instruments at the sculptor's table. -->
+  <StringedInstruments.description>Create tuned string instruments at the sculptor's table.</StringedInstruments.description>
+</LanguageData>

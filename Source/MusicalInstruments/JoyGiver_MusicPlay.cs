@@ -100,7 +100,7 @@ internal class JoyGiver_MusicPlay : JoyGiver
             }
             // find a place to sit or stand, or return null if there aren't any
 
-            if (!pm.TryFindStandingSpotOrChair(CompMusicSpot, pawn, instrument,
+            if (!PerformanceManager.TryFindStandingSpotOrChair(CompMusicSpot, pawn, instrument,
                     out var chairOrSpot))
             {
                 continue;

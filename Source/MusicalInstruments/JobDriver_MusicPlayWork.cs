@@ -18,12 +18,12 @@ public class JobDriver_MusicPlayWork : JobDriver_MusicPlayBase
             pawn.Map.GetComponent<PerformanceManager>().StartPlaying(musician, instrument, venue, true);
         };
 
-        play.tickAction = delegate
+        play.tickIntervalAction = delegate(int delta)
         {
             if (props.isBuilding)
             {
                 pawn.rotationTracker.FaceTarget(TargetC);
-                pawn.GainComfortFromCellIfPossible();
+                pawn.GainComfortFromCellIfPossible(delta);
             }
             else
             {

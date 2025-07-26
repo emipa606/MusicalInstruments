@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN: balalaika -->
+  <Balalaika.label>balalaika</Balalaika.label>
+  <!-- EN: A plucked musical instrument, usually having a triangular body and three strings -->
+  <Balalaika.description>A plucked musical instrument, usually having a triangular body and three strings</Balalaika.description>
+  <!-- EN: Take to inventory -->
+  <Balalaika.comps.CompUsable.useLabel>Take to inventory</Balalaika.comps.CompUsable.useLabel>
+  <!-- EN: banjo -->
+  <Banjo.label>banjo</Banjo.label>
+  <!-- EN: A banjo is a musical instrument that looks like a guitar with a circular body, a long neck, and four or more strings. -->
+  <Banjo.description>A banjo is a musical instrument that looks like a guitar with a circular body, a long neck, and four or more strings.</Banjo.description>
+  <!-- EN: Take to inventory -->
+  <Banjo.comps.CompUsable.useLabel>Take to inventory</Banjo.comps.CompUsable.useLabel>
+  <!-- EN: bass guitar -->
+  <BassGuitar.label>bass guitar</BassGuitar.label>
+  <!-- EN: A guitar that has the same pitch and tuning as a double bass, usually electrically amplified -->
+  <BassGuitar.description>A guitar that has the same pitch and tuning as a double bass, usually electrically amplified</BassGuitar.description>
+  <!-- EN: Take to inventory -->
+  <BassGuitar.comps.CompUsable.useLabel>Take to inventory</BassGuitar.comps.CompUsable.useLabel>
+  <!-- EN: cello -->
+  <Cello.label>cello</Cello.label>
+  <!-- EN: A cello is a musical instrument with four strings that looks like a large violin. -->
+  <Cello.description>A cello is a musical instrument with four strings that looks like a large violin.</Cello.description>
+  <!-- EN: Take to inventory -->
+  <Cello.comps.CompUsable.useLabel>Take to inventory</Cello.comps.CompUsable.useLabel>
+  <!-- EN: contrabass -->
+  <Contrabass.label>contrabass</Contrabass.label>
+  <!-- EN: A contrabass is the largest instrument in the violin family. -->
+  <Contrabass.description>A contrabass is the largest instrument in the violin family.</Contrabass.description>
+  <!-- EN: Take to inventory -->
+  <Contrabass.comps.CompUsable.useLabel>Take to inventory</Contrabass.comps.CompUsable.useLabel>
+  <!-- EN: guitar -->
+  <Guitar.label>guitar</Guitar.label>
+  <!-- EN: A six-stringed instrument played by picking or strumming. Great for entertaining groups around a campfire. -->
+  <Guitar.description>A six-stringed instrument played by picking or strumming. Great for entertaining groups around a campfire.</Guitar.description>
+  <!-- EN: Take to inventory -->
+  <Guitar.comps.CompUsable.useLabel>Take to inventory</Guitar.comps.CompUsable.useLabel>
+  <!-- EN: violin -->
+  <Violin.label>violin</Violin.label>
+  <!-- EN: A four-stringed instrument played with a bow, synonymous with the virtuosos of Old Earth. -->
+  <Violin.description>A four-stringed instrument played with a bow, synonymous with the virtuosos of Old Earth.</Violin.description>
+  <!-- EN: Take to inventory -->
+  <Violin.comps.CompUsable.useLabel>Take to inventory</Violin.comps.CompUsable.useLabel>
+</LanguageData>

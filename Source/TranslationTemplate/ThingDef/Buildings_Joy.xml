@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN: electronic organ -->
+  <ElectronicOrgan.label>electronic organ</ElectronicOrgan.label>
+  <!-- EN: A keyboard instrument that generates sound using analog electronics. Often seen in midworld churches and concert halls. -->
+  <ElectronicOrgan.description>A keyboard instrument that generates sound using analog electronics. Often seen in midworld churches and concert halls.</ElectronicOrgan.description>
+  <!-- EN: marimba -->
+  <Marimba.label>marimba</Marimba.label>
+  <!-- EN: A tuned percussion instrument, played by striking wooden bars with mallets. -->
+  <Marimba.description>A tuned percussion instrument, played by striking wooden bars with mallets.</Marimba.description>
+</LanguageData>

@@ -8,17 +8,17 @@ namespace MusicalInstruments;
 [StaticConstructorOnStartup]
 public class CompMusicSpot : ThingComp
 {
-    public static readonly Texture2D MusicSpotIcon = ContentFinder<Texture2D>.Get("UI/Icons/MusicSpot");
-    public static readonly Texture2D AllowRecreationIcon = ContentFinder<Texture2D>.Get("UI/Icons/AllowRecreation");
+    private static readonly Texture2D MusicSpotIcon = ContentFinder<Texture2D>.Get("UI/Icons/MusicSpot");
+    private static readonly Texture2D AllowRecreationIcon = ContentFinder<Texture2D>.Get("UI/Icons/AllowRecreation");
     private bool active = true;
     private bool allowRecreation = true;
 
-    public CompProperties_MusicSpot Props => (CompProperties_MusicSpot)props;
+    private CompProperties_MusicSpot Props => (CompProperties_MusicSpot)props;
 
     public bool Active
     {
         get => active || !Props.canBeDisabled;
-        set
+        private set
         {
             var actualValue = value || !Props.canBeDisabled;
 
@@ -48,7 +48,7 @@ public class CompMusicSpot : ThingComp
     public bool AllowRecreation
     {
         get => allowRecreation && IsInstrument();
-        set
+        private set
         {
             var actualValue = value && IsInstrument();
 
@@ -56,17 +56,17 @@ public class CompMusicSpot : ThingComp
         }
     }
 
-    public bool IsActive()
+    private bool IsActive()
     {
         return Active;
     }
 
-    public bool RecreationAllowed()
+    private bool RecreationAllowed()
     {
         return AllowRecreation;
     }
 
-    public bool IsInstrument()
+    private bool IsInstrument()
     {
         return !(Props.canBeDisabled || parent.def.defName == "MusicSpot");
     }
@@ -94,9 +94,9 @@ public class CompMusicSpot : ThingComp
         pm.RegisterActivatedMusicSpot(this);
     }
 
-    public override void PostDeSpawn(Map map)
+    public override void PostDeSpawn(Map map, DestroyMode mode = DestroyMode.Vanish)
     {
-        base.PostDeSpawn(map);
+        base.PostDeSpawn(map, mode);
         if (!Active)
         {
             return;

@@ -92,14 +92,14 @@ internal class JobDriver_MusicListen : JobDriver
         }
 
 
-        listen.tickAction = delegate
+        listen.tickIntervalAction = delegate(int delta)
         {
             if (!HasChairOrBed)
             {
                 pawn.rotationTracker.FaceCell(ClosestMusicSpotParentCell);
             }
 
-            JoyUtility.JoyTickCheckEnd(listener, JoyTickFullJoyAction.GoToNextToil,
+            JoyUtility.JoyTickCheckEnd(listener, delta, JoyTickFullJoyAction.GoToNextToil,
                 1f + Math.Abs(pawn.Map.GetComponent<PerformanceManager>().GetPerformanceQuality(venue)));
         };
 

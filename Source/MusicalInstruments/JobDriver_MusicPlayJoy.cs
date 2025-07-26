@@ -19,12 +19,12 @@ public class JobDriver_MusicPlayJoy : JobDriver_MusicPlayBase
         };
 
 
-        play.tickAction = delegate
+        play.tickIntervalAction = delegate(int delta)
         {
             if (props.isBuilding)
             {
                 pawn.rotationTracker.FaceTarget(TargetC);
-                pawn.GainComfortFromCellIfPossible();
+                pawn.GainComfortFromCellIfPossible(delta);
             }
             else
             {
@@ -36,7 +36,7 @@ public class JobDriver_MusicPlayJoy : JobDriver_MusicPlayBase
                 ThrowMusicNotes(musician.DrawPos, Map);
             }
 
-            JoyUtility.JoyTickCheckEnd(musician, JoyTickFullJoyAction.GoToNextToil);
+            JoyUtility.JoyTickCheckEnd(musician, delta, JoyTickFullJoyAction.GoToNextToil);
         };
 
         play.handlingFacing = true;

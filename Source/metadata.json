@@ -2,10 +2,17 @@
   "Continued": true,
   "CanAdd": "0",
   "CanRemove": "2",
-  "PreviewVersion": "1.5",
+  "PreviewVersion": "1.6",
   "SocialImageSet": true,
   "SearchTags": [
     " recreation",
     " instruments"
-  ]
+  ],
+  "Patches": true,
+  "Defs": true,
+  "Assemblies": true,
+  "LinesOfCode": 73634,
+  "LinesOfXML": 40651,
+  "CodeBaseSize": 80,
+  "LastXmlCleaning": "2025-07-26T19:43:59.6858278+02:00"
 }

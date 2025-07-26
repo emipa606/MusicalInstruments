@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN: perform music -->
+  <MusicPlay.label>perform music</MusicPlay.label>
+  <!-- EN: performing at -->
+  <MusicPlay.gerund>performing at</MusicPlay.gerund>
+  <!-- EN: perform -->
+  <MusicPlay.verb>perform</MusicPlay.verb>
+  <!-- EN: craft musical instrument -->
+  <TableMusicalInstruments.label>craft musical instrument</TableMusicalInstruments.label>
+  <!-- EN: crafting at -->
+  <TableMusicalInstruments.gerund>crafting at</TableMusicalInstruments.gerund>
+  <!-- EN: craft -->
+  <TableMusicalInstruments.verb>craft</TableMusicalInstruments.verb>
+</LanguageData>

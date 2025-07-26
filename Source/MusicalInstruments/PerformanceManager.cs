@@ -32,8 +32,8 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
     // non-static
 
-    private Dictionary<int, Performance> Performances = new Dictionary<int, Performance>();
-    private Dictionary<int, int> WorkPerformanceTimestamps = new Dictionary<int, int>();
+    private Dictionary<int, Performance> Performances = new();
+    private Dictionary<int, int> WorkPerformanceTimestamps = new();
 
 
     private static string LogMusician(Pawn musician, Thing instrument)
@@ -94,7 +94,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
         return true;
     }
 
-    public static bool RadiusAndRoomCheck(Thing thing1, Thing thing2)
+    private static bool RadiusAndRoomCheck(Thing thing1, Thing thing2)
     {
         if (thing1 == null || thing2 == null)
         {
@@ -131,15 +131,9 @@ public class PerformanceManager(Map map) : MapComponent(map)
         }
 
         //try to avoid breaking saves from old versions
-        if (Performances == null)
-        {
-            Performances = new Dictionary<int, Performance>();
-        }
+        Performances ??= new Dictionary<int, Performance>();
 
-        if (WorkPerformanceTimestamps == null)
-        {
-            WorkPerformanceTimestamps = new Dictionary<int, int>();
-        }
+        WorkPerformanceTimestamps ??= new Dictionary<int, int>();
     }
 
 
@@ -403,7 +397,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
         }
     }
 
-    public void ApplyThoughts(Thing venue)
+    private void ApplyThoughts(Thing venue)
     {
         var hash = venue.GetHashCode();
 
@@ -508,7 +502,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
         return true;
     }
 
-    public bool TryFindStandingSpotOrChair(CompMusicSpot musicSpot, Pawn musician, Thing instrument,
+    public static bool TryFindStandingSpotOrChair(CompMusicSpot musicSpot, Pawn musician, Thing instrument,
         out LocalTargetInfo target)
     {
         IntVec3 standingSpot;
@@ -597,7 +591,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
         return false;
     }
 
-    public bool TryFindChairAt(CompMusicalInstrument instrument, Pawn sitter, out Thing chair)
+    private bool TryFindChairAt(CompMusicalInstrument instrument, Pawn sitter, out Thing chair)
     {
         chair = null;
 
@@ -617,7 +611,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
         return true;
     }
 
-    public bool TryFindSpotAt(CompMusicalInstrument instrument, Pawn sitter, out IntVec3 result)
+    private bool TryFindSpotAt(CompMusicalInstrument instrument, Pawn sitter, out IntVec3 result)
     {
         result = IntVec3.Invalid;
 

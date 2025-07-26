@@ -10,11 +10,6 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
 {
     private static readonly List<CompMusicSpot> workingSpots = [];
 
-    //public override ThingRequest PotentialWorkThingRequest =>
-    //Verse.Log.Message("PotentialWorkThingRequest");
-    //Unsatisfactory... need to narrow this down as I can't figure out how to get it to only use PotentialWorkThingsGlobal
-    //ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial);
-
     public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
     {
         var pm = pawn.Map.GetComponent<PerformanceManager>();
@@ -31,8 +26,6 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         {
             things = things.Where(x => pm.AnyAvailableMapInstruments(pawn, x));
         }
-
-        //Verse.Log.Message(String.Format("PotentialWorkThingsGlobal for {0}: {1} things", pawn.Label, things.Count()));
 
         return things;
     }
@@ -79,18 +72,14 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
             pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.None) &&
             (powerComp == null || powerComp.PowerOn))
         {
-            if (!pm.TryFindStandingSpotOrChair(compMusicSpot, pawn, t, out _))
+            if (!PerformanceManager.TryFindStandingSpotOrChair(compMusicSpot, pawn, t, out _))
             {
                 return false;
             }
         }
         else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out var instrument, true))
         {
-#if DEBUG
-                Verse.Log.Message($"{pawn.LabelShort} chose to play {instrument.LabelShort}");
-#endif
-
-            if (!pm.TryFindStandingSpotOrChair(compMusicSpot, pawn, instrument, out _))
+            if (!PerformanceManager.TryFindStandingSpotOrChair(compMusicSpot, pawn, instrument, out _))
             {
                 return false;
             }
@@ -105,8 +94,6 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
 
     public override Job JobOnThing(Pawn pawn, Thing thing, bool forced = false)
     {
-        //Verse.Log.Message(String.Format("Trying to play at {0}", thing.Label));
-
         if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
             !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
             !pawn.Awake() ||
@@ -154,7 +141,7 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
             pawn.CanReserveAndReach(thing, PathEndMode.Touch, Danger.None) &&
             (powerComp == null || powerComp.PowerOn))
         {
-            if (!pm.TryFindStandingSpotOrChair(musicSpotComp, pawn, thing, out chairOrSpot))
+            if (!PerformanceManager.TryFindStandingSpotOrChair(musicSpotComp, pawn, thing, out chairOrSpot))
             {
                 return null;
             }
@@ -164,11 +151,7 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         }
         else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out var instrument, true))
         {
-#if DEBUG
-                Verse.Log.Message($"{pawn.LabelShort} chose to play {instrument.LabelShort}");
-#endif
-
-            if (!pm.TryFindStandingSpotOrChair(musicSpotComp, pawn, instrument, out chairOrSpot))
+            if (!PerformanceManager.TryFindStandingSpotOrChair(musicSpotComp, pawn, instrument, out chairOrSpot))
             {
                 return null;
             }
@@ -178,9 +161,6 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         }
         else
         {
-#if DEBUG
-                Verse.Log.Message($"{pawn.LabelShort} couldn't find an instrument");
-#endif
             return null;
         }
 

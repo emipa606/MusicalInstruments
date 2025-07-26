@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN: listening to music. -->
+  <MusicListen.reportString>listening to music.</MusicListen.reportString>
+  <!-- EN: playing music. -->
+  <MusicPlayJoy.reportString>playing music.</MusicPlayJoy.reportString>
+</LanguageData>

@@ -9,22 +9,22 @@ namespace MusicalInstruments;
 
 public abstract class JobDriver_MusicPlayBase : JobDriver
 {
-    protected const TargetIndex MusicSpotParentInd = TargetIndex.A;
+    private const TargetIndex MusicSpotParentInd = TargetIndex.A;
 
-    protected const TargetIndex StandingSpotOrChairInd = TargetIndex.B;
+    private const TargetIndex StandingSpotOrChairInd = TargetIndex.B;
 
-    protected const TargetIndex InstrumentInd = TargetIndex.C;
+    private const TargetIndex InstrumentInd = TargetIndex.C;
 
     private int luck;
 
-    public JobDriver_MusicPlayBase()
+    protected JobDriver_MusicPlayBase()
     {
         luck = Rand.Range(-3, 2);
     }
 
     public int Luck => luck;
 
-    protected Thing MusicSpotParent => job.GetTarget(MusicSpotParentInd).Thing;
+    private Thing MusicSpotParent => job.GetTarget(MusicSpotParentInd).Thing;
 
     protected IntVec3 ClosestMusicSpotParentCell => MusicSpotParent.OccupiedRect().ClosestCellTo(pawn.Position);
 
@@ -120,7 +120,7 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
 
     protected abstract Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue);
 
-    protected bool PowerMissing(Thing instrument)
+    private bool PowerMissing(Thing instrument)
     {
         var propsinstrument = instrument.TryGetComp<CompMusicalInstrument>().Props;
         if (!propsinstrument.isBuilding)
@@ -161,8 +161,6 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
             // go to where instrument is
             yield return Toils_Goto.GotoThing(InstrumentInd, PathEndMode.InteractionCell)
                 .FailOnSomeonePhysicallyInteracting(InstrumentInd);
-
-            yield return GetPlayToil(musician, instrument, venue);
         }
         else
         {
@@ -205,10 +203,10 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
             // go to the sitting / standing spot
             yield return Toils_Goto.GotoCell(StandingSpotOrChairInd, PathEndMode.OnCell);
 
-            yield return GetPlayToil(musician, instrument, venue);
-
             //yield return Toils_General.PutCarriedThingInInventory();
         }
+
+        yield return GetPlayToil(musician, instrument, venue);
     }
 
     public override void ExposeData()

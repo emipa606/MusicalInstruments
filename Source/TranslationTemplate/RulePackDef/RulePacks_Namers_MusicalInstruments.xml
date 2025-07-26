@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- EN:
+    <li>r_art_name->[ConceptBadass]</li>
+    <li>r_art_name->The [AnimalBadass]</li>
+    <li>r_art_name->[AdjectiveBadass] [AnimalBadass]</li>
+    <li>r_art_name->[ColorBadass] [AnimalBadass]</li>
+    <li>r_art_name->[ConceptBadass] [ColorBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [ConceptBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [AnimalBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [PersonBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [PersonAlly]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [PersonFamily]</li>
+    <li>r_art_name(p=3)->[ConceptBadass] of [ANYPAWN_nameIndef]</li>
+    <li>r_art_name(p=3)->[ColorBadass] [ANYPAWN_nameIndef]</li>
+  -->
+  <NamerArtMusicalInstrument.rulePack.rulesStrings>
+    <li>r_art_name->[ConceptBadass]</li>
+    <li>r_art_name->The [AnimalBadass]</li>
+    <li>r_art_name->[AdjectiveBadass] [AnimalBadass]</li>
+    <li>r_art_name->[ColorBadass] [AnimalBadass]</li>
+    <li>r_art_name->[ConceptBadass] [ColorBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [ConceptBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [AnimalBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [PersonBadass]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [PersonAlly]</li>
+    <li>r_art_name(p=3)->[ANYPAWN_nameIndef]'s [PersonFamily]</li>
+    <li>r_art_name(p=3)->[ConceptBadass] of [ANYPAWN_nameIndef]</li>
+    <li>r_art_name(p=3)->[ColorBadass] [ANYPAWN_nameIndef]</li>
+  </NamerArtMusicalInstrument.rulePack.rulesStrings>
+</LanguageData>

@@ -1,0 +1,86 @@
+ManifestFileVersion: 0
+CRC: 1291790891
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 0eb10a072065074dedfe8c9d67dfc724
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 2612ac43db082a73502ee80f2eceb73f
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 0eb10a072065074dedfe8c9d67dfc724
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Marimba_north.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/BisonBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Kamanche.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/JacobBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Lyre.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/AddaxBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_west.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/ArgaliBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/LyreGuitar.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/LonghornBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Mote/MusicNotes.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/CigarBoxGuitar.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Balalaika.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/Ocarina.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/FrameDrum.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/BassGuitar_north.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Contrabass.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Banjo.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_south.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_northm.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/BanthaBlowingHorn_west.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Rebec.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/UI/Icons/AllowRecreation.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Organ_south.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/RackaBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Marimba_south.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Ukulele.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_north.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/IbexBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/ArapawaBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Strumbolina.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_east.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Cello.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Oud.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/BongoBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/GemsbokBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/GazelleBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/BighornBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Mandolin.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Gusli.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Liuqin.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/BassGuitar_south.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/MetalGuitar.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Violin.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Marimba_west.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_westm.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/LeadGuitar.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Organ_north.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Organ_west.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Domra.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/BanthaBlowingHorn_east.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/MouflonBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Sitar.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_eastm.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Marimba_east.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/AnkoleBlowingHorn.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Erhu.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/BassGuitar_east.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Yueqin.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/BanthaBlowingHorn_south.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/UI/Icons/MusicSpot.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/Primitive/BanthaBlowingHorn_north.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Sarangi.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/Organ_east.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/BassGuitar_west.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Building/MusicBench_southm.png
+- Assets/Data/Mlie.MusicalInstruments/Textures/Things/Items/String/Guitar.png
+Dependencies: []
