@@ -6,6 +6,8 @@ namespace MusicalInstruments;
 
 public class JobDriver_MusicPlayWork : JobDriver_MusicPlayBase
 {
+    private int tickInterval;
+
     protected override Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue)
     {
         // custom toil.
@@ -20,6 +22,7 @@ public class JobDriver_MusicPlayWork : JobDriver_MusicPlayBase
 
         play.tickIntervalAction = delegate(int delta)
         {
+            tickInterval += delta;
             if (props.isBuilding)
             {
                 pawn.rotationTracker.FaceTarget(TargetC);
@@ -30,12 +33,13 @@ public class JobDriver_MusicPlayWork : JobDriver_MusicPlayBase
                 pawn.rotationTracker.FaceCell(ClosestMusicSpotParentCell);
             }
 
-            if (ticksLeftThisToil % 100 == 99)
+            if (tickInterval > 100)
             {
                 ThrowMusicNotes(musician.DrawPos, Map);
+                tickInterval = 0;
             }
 
-            musician.skills.Learn(SkillDefOf.Artistic, 0.1f);
+            musician.skills.Learn(SkillDefOf.Artistic, 0.1f * delta);
         };
 
         play.handlingFacing = true;
