@@ -51,6 +51,7 @@
       </shadowData>
     </graphicData>
     <castEdgeShadows>false</castEdgeShadows>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToBuild>20000</WorkToBuild>
       <MaxHitPoints>50</MaxHitPoints>
@@ -71,6 +72,9 @@
         <expressiveness>0.6</expressiveness>
         <isBuilding>true</isBuilding>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Marimba_Play</soundPlayInstrument>
+      </li>
     </comps>
     <constructEffect>ConstructWood</constructEffect>
     <constructionSkillPrerequisite>6</constructionSkillPrerequisite>
@@ -88,6 +92,7 @@
       <graphicClass>Graphic_Multi</graphicClass>
       <drawSize>(2.2,1.1)</drawSize>
     </graphicData>
+    <tickerType>Normal</tickerType>
     <staticSunShadowHeight>0.20</staticSunShadowHeight>
     <castEdgeShadows>true</castEdgeShadows>
     <statBases>
@@ -117,6 +122,9 @@
         <easiness>0.4</easiness>
         <expressiveness>0.8</expressiveness>
         <isBuilding>true</isBuilding>
+      </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_ElectronicOrgan_Play</soundPlayInstrument>
       </li>
     </comps>
     <constructEffect>ConstructMetal</constructEffect>

@@ -10,9 +10,10 @@
   ],
   "Patches": true,
   "Defs": true,
+  "OnDemandBundleUpdate": true,
   "Assemblies": true,
-  "LinesOfCode": 73820,
-  "LinesOfXML": 40651,
+  "LinesOfCode": 73681,
+  "LinesOfXML": 49935,
   "CodeBaseSize": 80,
-  "LastXmlCleaning": "2025-07-30T20:39:56.9757576+02:00"
+  "LastXmlCleaning": "2025-08-25T21:17:03.9767329+02:00"
 }

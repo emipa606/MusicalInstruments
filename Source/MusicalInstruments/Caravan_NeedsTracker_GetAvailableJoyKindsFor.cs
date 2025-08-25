@@ -31,18 +31,10 @@ internal class Caravan_NeedsTracker_GetAvailableJoyKindsFor
             {
                 outJoyKinds.Add(JoyKindDefOf_Music.Music);
                 Caravan_NeedsTracker_TrySatisfyJoyNeed.MusicQuality = quality;
-
-#if DEBUG
-                Log.Message($"Checking caravanner {p.Label} for music availability : yes");
-#endif
                 return;
             }
 
             pawnsTmp.Remove(musician);
         }
-
-#if DEBUG
-        Log.Message($"Checking caravanner {p.Label} for music availability: no");
-#endif
     }
 }

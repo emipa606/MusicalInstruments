@@ -8,6 +8,7 @@
       <texPath>Things/Items/Primitive/FrameDrum</texPath>
     </graphicData>
     <techLevel>Neolithic</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>9000</WorkToMake>
       <Mass>3</Mass>
@@ -29,6 +30,9 @@
         <xOffsetFacing>0.0</xOffsetFacing>
         <zOffsetFacing>-0.2</zOffsetFacing>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_FrameDrum_Play</soundPlayInstrument>
+      </li>
     </comps>
   </ThingDef>
   <ThingDef ParentName="PrimitiveInstrumentBase">
@@ -39,6 +43,7 @@
       <texPath>Things/Items/Primitive/Ocarina</texPath>
     </graphicData>
     <techLevel>Neolithic</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>15000</WorkToMake>
       <Mass>0.5</Mass>
@@ -59,6 +64,9 @@
         <xOffsetFacing>-0.2</xOffsetFacing>
         <zOffsetFacing>0.1</zOffsetFacing>
         <isWindInstrument>true</isWindInstrument>
+      </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Ocarina_Play</soundPlayInstrument>
       </li>
     </comps>
   </ThingDef>

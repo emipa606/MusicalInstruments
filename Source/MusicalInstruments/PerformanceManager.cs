@@ -19,28 +19,21 @@ public class PerformanceManager(Map map) : MapComponent(map)
     private static readonly List<ThingDef> allInstrumentDefs =
         ThingCategoryDef.Named("MusicalInstruments").childThingDefs;
 
-    private static readonly int NumRadiusCells = GenRadial.NumCellsInRadius(GatherRadius);
+    private static readonly int numRadiusCells = GenRadial.NumCellsInRadius(GatherRadius);
 
     private static readonly List<IntVec3> RadialPatternMiddleOutward =
-        (from c in GenRadial.RadialPattern.Take(NumRadiusCells)
+        (from c in GenRadial.RadialPattern.Take(numRadiusCells)
             orderby Mathf.Abs((c - IntVec3.Zero).LengthHorizontal - 1.95f)
             select c).ToList();
 
     private readonly List<CompMusicSpot>
-        ActiveMusicSpots =
+        activeMusicSpots =
             []; //don't need to serialize this as the CompMusicSpot automatically registers/deregisters itself
 
     // non-static
 
-    private Dictionary<int, Performance> Performances = new();
-    private Dictionary<int, int> WorkPerformanceTimestamps = new();
-
-
-    private static string LogMusician(Pawn musician, Thing instrument)
-    {
-        return
-            $"{musician.LabelShort}({musician.skills.GetSkill(SkillDefOf.Artistic).Level} skill) on {instrument.LabelShort}";
-    }
+    private Dictionary<int, Performance> performances = new();
+    private Dictionary<int, int> workPerformanceTimestamps = new();
 
     public static bool IsInstrument(Thing thing)
     {
@@ -94,7 +87,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
         return true;
     }
 
-    private static bool RadiusAndRoomCheck(Thing thing1, Thing thing2)
+    private static bool radiusAndRoomCheck(Thing thing1, Thing thing2)
     {
         if (thing1 == null || thing2 == null)
         {
@@ -121,8 +114,8 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
     public override void ExposeData()
     {
-        Scribe_Collections.Look(ref Performances, "MusicalInstruments.Performances", LookMode.Value, LookMode.Deep);
-        Scribe_Collections.Look(ref WorkPerformanceTimestamps, "MusicalInstruments.WorkPerformanceTimestamps",
+        Scribe_Collections.Look(ref performances, "MusicalInstruments.Performances", LookMode.Value, LookMode.Deep);
+        Scribe_Collections.Look(ref workPerformanceTimestamps, "MusicalInstruments.WorkPerformanceTimestamps",
             LookMode.Value, LookMode.Value);
 
         if (Scribe.mode != LoadSaveMode.ResolvingCrossRefs)
@@ -131,13 +124,13 @@ public class PerformanceManager(Map map) : MapComponent(map)
         }
 
         //try to avoid breaking saves from old versions
-        Performances ??= new Dictionary<int, Performance>();
+        performances ??= new Dictionary<int, Performance>();
 
-        WorkPerformanceTimestamps ??= new Dictionary<int, int>();
+        workPerformanceTimestamps ??= new Dictionary<int, int>();
     }
 
 
-    private IEnumerable<Thing> AvailableMapInstruments(Pawn musician, Thing venue, bool buildingOnly = false,
+    private IEnumerable<Thing> availableMapInstruments(Pawn musician, Thing venue, bool buildingOnly = false,
         bool isWork = false)
     {
         var instruments = allInstrumentDefs.SelectMany(x => map.listerThings.ThingsOfDef(x))
@@ -158,7 +151,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
         if (venue != null)
         {
             instruments = instruments.Where(x =>
-                !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || RadiusAndRoomCheck(x, venue));
+                !x.TryGetComp<CompMusicalInstrument>().Props.isBuilding || radiusAndRoomCheck(x, venue));
         }
 
         if (musician != null)
@@ -177,12 +170,12 @@ public class PerformanceManager(Map map) : MapComponent(map)
     public bool MusicJoyKindAvailable(out Thing exampleInstrument)
     {
         exampleInstrument = null;
-        if (!ActiveMusicSpots.Any())
+        if (!activeMusicSpots.Any())
         {
             return false;
         }
 
-        var allInstruments = AvailableMapInstruments(null, null);
+        var allInstruments = availableMapInstruments(null, null);
 
         if (allInstruments.Any())
         {
@@ -215,38 +208,34 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
     public bool AnyAvailableMapInstruments(Pawn musician, Thing venue)
     {
-        return AvailableMapInstruments(musician, venue).Any();
+        return availableMapInstruments(musician, venue).Any();
     }
 
     public List<CompMusicSpot> ListActiveMusicSpots()
     {
-        return ActiveMusicSpots;
+        return activeMusicSpots;
     }
 
     public void RegisterActivatedMusicSpot(CompMusicSpot spot)
     {
-        if (!ActiveMusicSpots.Contains(spot))
+        if (!activeMusicSpots.Contains(spot))
         {
-            ActiveMusicSpots.Add(spot);
+            activeMusicSpots.Add(spot);
         }
-
-        //Verse.Log.Message(String.Format("{0} activated, count={1}", spot.parent.Label, ActiveMusicSpots.Count));
     }
 
     public void RegisterDeactivatedMusicSpot(CompMusicSpot spot)
     {
-        if (ActiveMusicSpots.Contains(spot))
+        if (activeMusicSpots.Contains(spot))
         {
-            _ = ActiveMusicSpots.Remove(spot);
+            _ = activeMusicSpots.Remove(spot);
         }
-
-        //Verse.Log.Message(String.Format("{0} deactivated, count={1}", spot.parent.Label, ActiveMusicSpots.Count));
     }
 
     public bool CanPlayForWorkNow(Pawn musician)
     {
         var hash = musician.GetHashCode();
-        if (!WorkPerformanceTimestamps.TryGetValue(hash, out var timestamp))
+        if (!workPerformanceTimestamps.TryGetValue(hash, out var timestamp))
         {
             return true;
         }
@@ -259,9 +248,9 @@ public class PerformanceManager(Map map) : MapComponent(map)
     {
         var venueHash = venue.GetHashCode();
 
-        foreach (var otherVenueHash in Performances.Keys)
+        foreach (var otherVenueHash in performances.Keys)
         {
-            if (!RadiusAndRoomCheck(Performances[otherVenueHash].Venue, venue))
+            if (!radiusAndRoomCheck(performances[otherVenueHash].Venue, venue))
             {
                 continue;
             }
@@ -270,114 +259,81 @@ public class PerformanceManager(Map map) : MapComponent(map)
             break;
         }
 
-        if (!Performances.ContainsKey(venueHash))
+        if (!performances.ContainsKey(venueHash))
         {
-            Performances[venueHash] = new Performance(venue);
+            performances[venueHash] = new Performance(venue);
         }
 
         var musicianHash = musician.GetHashCode();
 
-        if (Performances[venueHash].Performers.ContainsKey(musicianHash))
+        if (performances[venueHash].Performers.ContainsKey(musicianHash))
         {
             return;
         }
 
-        Performances[venueHash].Performers[musicianHash] =
+        performances[venueHash].Performers[musicianHash] =
             new Performer { Musician = musician, Instrument = instrument };
-        Performances[venueHash].CalculateQuality();
+        performances[venueHash].CalculateQuality();
 
-        if (Performances[venueHash].Quality >= 2f)
+        if (performances[venueHash].Quality >= 2f)
         {
             TaleRecorder.RecordTale(TaleDef.Named("PlayedMusic"), musician, instrument.def);
         }
 
         if (isWork)
         {
-            WorkPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
+            workPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
         }
 
-#if DEBUG
-            Verse.Log.Message(
-                $"Musicians: {string.Join(", ", Performances[venueHash].Performers.Select(x => LogMusician(x.Value.Musician, x.Value.Instrument)).ToArray())}");
-            Verse.Log.Message($"Quality: {Performances[venueHash].Quality}");
-#endif
+        if (instrument.TryGetComp<Comp_PlayingMusic>() is { } comp)
+        {
+            comp.StartPlaying(musician);
+        }
     }
 
     public void StopPlaying(Pawn musician, Thing venue)
     {
+        Comp_PlayingMusic.Notebook.TryGetValue(musician, out var comp);
+        comp?.StopPlaying(musician);
+
         _ = venue.GetHashCode();
         var musicianHash = musician.GetHashCode();
 
-#if DEBUG
-            Verse.Log.Message(
-                $"StopPlaying: Musician: {musician.LabelShort}, Venue: {venue.LabelShort}. {Performances.Count} performances currently");
-#endif
-
-        //            if (Performances.ContainsKey(venueHash))
-        //            {
-        //                if (Performances[venueHash].Performers.ContainsKey(musicianHash))
-        //                {
-        //                    Performances[venueHash].Performers.Remove(musicianHash);
-
-        //                    if (!Performances[venueHash].Performers.Any())
-        //                        Performances.Remove(venueHash);
-        //                    else
-        //                        Performances[venueHash].CalculateQuality();
-        //                }
-
-        //#if DEBUG
-        //                Verse.Log.Message(String.Format("Done, now ({0}) performances on map.", Performances.Count));
-        //#endif
-
-        //            }
-        //            else
-        //            {
-
-        //#if DEBUG
-        //                Verse.Log.Message("StopPlaying continuing for all performances on map...");
-        //#endif
-
         var ongoingPerformanceHashes = new List<int>();
 
-        foreach (var otherVenueHash in Performances.Keys)
+        foreach (var otherVenueHash in performances.Keys)
         {
-            if (!Performances[otherVenueHash].Performers.Keys.Contains(musicianHash))
+            if (!performances[otherVenueHash].Performers.Keys.Contains(musicianHash))
             {
                 continue;
             }
 
-            Performances[otherVenueHash].Performers.Remove(musicianHash);
-            if (!Performances[otherVenueHash].Performers.Any())
+            performances[otherVenueHash].Performers.Remove(musicianHash);
+            if (!performances[otherVenueHash].Performers.Any())
             {
                 continue;
             }
 
-            Performances[otherVenueHash].CalculateQuality();
+            performances[otherVenueHash].CalculateQuality();
             ongoingPerformanceHashes.Add(otherVenueHash);
         }
 
-        Performances = Performances.Where(x => ongoingPerformanceHashes.Contains(x.Key))
+        performances = performances.Where(x => ongoingPerformanceHashes.Contains(x.Key))
             .ToDictionary(x => x.Key, x => x.Value);
-
-#if DEBUG
-            Verse.Log.Message($"Done, now ({Performances.Count}) performances on map.");
-#endif
-
-        //       }
     }
 
     public bool HasPerformance(Thing venue)
     {
         var hash = venue.GetHashCode();
 
-        return Performances.ContainsKey(hash) && Performances[hash].Performers.Any();
+        return performances.ContainsKey(hash) && performances[hash].Performers.Any();
     }
 
     public float GetPerformanceQuality(Thing venue)
     {
         var hash = venue.GetHashCode();
 
-        return !Performances.TryGetValue(hash, out var performance)
+        return !performances.TryGetValue(hash, out var performance)
             ?
             //Verse.Log.Error(String.Format("Gather spot #{0} has no performance.", hash));
             0f
@@ -391,9 +347,9 @@ public class PerformanceManager(Map map) : MapComponent(map)
             return;
         }
 
-        foreach (var hash in Performances.Keys)
+        foreach (var hash in performances.Keys)
         {
-            ApplyThoughts(Performances[hash].Venue);
+            ApplyThoughts(performances[hash].Venue);
         }
     }
 
@@ -401,7 +357,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
     {
         var hash = venue.GetHashCode();
 
-        if (!Performances.TryGetValue(hash, out var performance))
+        if (!performances.TryGetValue(hash, out var performance))
         {
             return;
         }
@@ -419,7 +375,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
                                                                x.health.capacities.CapableOf(PawnCapacityDefOf
                                                                    .Hearing) &&
                                                                x.Awake() &&
-                                                               RadiusAndRoomCheck(venue, x));
+                                                               radiusAndRoomCheck(venue, x));
         if (!audience.Any())
         {
             return;
@@ -463,7 +419,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
         //                                                                          visitors only play their own instruments, unless building type
 
-        var mapInstruments = AvailableMapInstruments(musician, venue,
+        var mapInstruments = availableMapInstruments(musician, venue,
             musician.Faction is not { IsPlayer: true }, isWork);
 
 
@@ -545,7 +501,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
         for (var i = 0; i < 30; i++)
         {
-            var intVec = center + GenRadial.RadialPattern[Rand.Range(1, NumRadiusCells)];
+            var intVec = center + GenRadial.RadialPattern[Rand.Range(1, numRadiusCells)];
             if (!sitter.CanReserveAndReach(intVec, PathEndMode.OnCell, Danger.None) ||
                 intVec.GetEdifice(map) != null || !GenSight.LineOfSight(center, intVec, map, true))
             {

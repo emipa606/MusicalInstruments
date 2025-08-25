@@ -75,11 +75,6 @@ public class Performance : IExposable
                 }
             }
 
-#if DEBUG
-                Verse.Log.Message($"s={Performers.Count},f={f}");
-
-#endif
-
             Quality = Performers.Select(x => GetMusicQuality(x.Value.Musician, x.Value.Instrument)).Sum() / f;
         }
 

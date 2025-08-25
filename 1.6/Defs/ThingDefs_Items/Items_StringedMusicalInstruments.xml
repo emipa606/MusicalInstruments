@@ -8,6 +8,7 @@
       <texPath>Things/Items/String/Guitar</texPath>
     </graphicData>
     <techLevel>Medieval</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>15000</WorkToMake>
       <Mass>6</Mass>
@@ -23,6 +24,9 @@
         <xOffsetFacing>0.0</xOffsetFacing>
         <zOffsetFacing>-0.2</zOffsetFacing>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Guitar_Play</soundPlayInstrument>
+      </li>
     </comps>
   </ThingDef>
   <ThingDef ParentName="StringInstrumentBase">
@@ -33,6 +37,7 @@
       <texPath>Things/Items/String/BassGuitar</texPath>
     </graphicData>
     <techLevel>Industrial</techLevel>
+    <tickerType>Normal</tickerType>
     <researchPrerequisites>
       <li>Electricity</li>
     </researchPrerequisites>
@@ -54,6 +59,9 @@
         <xOffsetFacing>0.0</xOffsetFacing>
         <zOffsetFacing>-0.2</zOffsetFacing>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_BassGuitar_Play</soundPlayInstrument>
+      </li>
     </comps>
   </ThingDef>
   <ThingDef ParentName="StringInstrumentBase">
@@ -64,6 +72,7 @@
       <texPath>Things/Items/String/Banjo</texPath>
     </graphicData>
     <techLevel>Medieval</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>12000</WorkToMake>
       <Mass>3</Mass>
@@ -79,6 +88,9 @@
         <xOffsetFacing>0.0</xOffsetFacing>
         <zOffsetFacing>-0.2</zOffsetFacing>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Banjo_Play</soundPlayInstrument>
+      </li>
     </comps>
   </ThingDef>
   <ThingDef ParentName="StringInstrumentBase">
@@ -89,6 +101,7 @@
       <texPath>Things/Items/String/Balalaika</texPath>
     </graphicData>
     <techLevel>Medieval</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>11000</WorkToMake>
       <Mass>3</Mass>
@@ -104,6 +117,9 @@
         <xOffsetFacing>0.0</xOffsetFacing>
         <zOffsetFacing>-0.2</zOffsetFacing>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Balalaika_Play</soundPlayInstrument>
+      </li>
     </comps>
   </ThingDef>
   <ThingDef ParentName="StringInstrumentBase">
@@ -114,6 +130,7 @@
       <texPath>Things/Items/String/Violin</texPath>
     </graphicData>
     <techLevel>Medieval</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>30000</WorkToMake>
       <Mass>3</Mass>
@@ -128,6 +145,9 @@
         <zOffset>0</zOffset>
         <xOffsetFacing>-0.3</xOffsetFacing>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Violin_Play</soundPlayInstrument>
+      </li>
     </comps>
   </ThingDef>
   <ThingDef ParentName="StringInstrumentBase">
@@ -139,6 +159,7 @@
       <flipExtraRotation>0</flipExtraRotation>
     </graphicData>
     <techLevel>Medieval</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>32000</WorkToMake>
       <Mass>5</Mass>
@@ -155,6 +176,9 @@
         <zOffsetFacing>-0.1</zOffsetFacing>
         <vertical>true</vertical>
       </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Cello_Play</soundPlayInstrument>
+      </li>
     </comps>
   </ThingDef>
   <ThingDef ParentName="StringInstrumentBase">
@@ -166,6 +190,7 @@
       <flipExtraRotation>0</flipExtraRotation>
     </graphicData>
     <techLevel>Medieval</techLevel>
+    <tickerType>Normal</tickerType>
     <statBases>
       <WorkToMake>35000</WorkToMake>
       <Mass>8</Mass>
@@ -181,6 +206,9 @@
         <xOffsetFacing>-0.2</xOffsetFacing>
         <zOffsetFacing>0.1</zOffsetFacing>
         <vertical>true</vertical>
+      </li>
+      <li Class="MusicalInstruments.CompProp_PlayingMusic">
+        <soundPlayInstrument>MIC_Contrabass_Play</soundPlayInstrument>
       </li>
     </comps>
   </ThingDef>
