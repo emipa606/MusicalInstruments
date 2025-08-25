@@ -1,5 +1,8 @@
 # Changelog for MusicalInstruments
 
+1.6.3 - Missed royalty check
+
+
 1.6.2 - Included the music-patch by Pos 5
 
 

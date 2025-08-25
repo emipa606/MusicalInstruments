@@ -9,7 +9,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=1549446374
 - Removed redundant Harmony.dll
 - Fixed the musical workbench, thanks мєкση for the help!
 - Added burn unwanted instrument recipe
-- To have the instruments play actual music use [this](https://steamcommunity.com/sharedfiles/filedetails/?id=3134829573) mod by Pos 5
+- ~~To have the instruments play actual music use [this](https://steamcommunity.com/sharedfiles/filedetails/?id=3134829573) mod by Pos 5~~ Now included in the mod
 
 ![Image](https://i.imgur.com/pufA0kM.png)
 	
