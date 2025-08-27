@@ -7,4 +7,6 @@
   <MuIn.AllowRec>Разрешить отдых</MuIn.AllowRec>
   <MuIn.AllowRec.Active>Разрешенное развлечение: колонисты могут играть на этом инструменте по любому поводу.</MuIn.AllowRec.Active>
   <MuIn.AllowRec.Inactive>Отдых запрещен: колонисты могут играть на этом инструменте только во время выступления.</MuIn.AllowRec.Inactive>
+  <MuIn.Setting.PlayMusic>Инструменты играют настоящую музыку (требуют роялти)</MuIn.Setting.PlayMusic>
+  <MuIn.Setting.ModVersion>Установленная версия мода: {0}</MuIn.Setting.ModVersion>
 </LanguageData>

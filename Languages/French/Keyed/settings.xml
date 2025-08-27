@@ -7,4 +7,6 @@
   <MuIn.AllowRec>Permettre la récréation</MuIn.AllowRec>
   <MuIn.AllowRec.Active>Loisirs autorisés : les colons peuvent jouer de cet instrument pour n'importe quelle raison.</MuIn.AllowRec.Active>
   <MuIn.AllowRec.Inactive>Récréation interdite : les colons ne peuvent jouer de cet instrument que lors d'une représentation.</MuIn.AllowRec.Inactive>
+  <MuIn.Setting.PlayMusic>Les instruments jouent de la musique (nécessitent des droits d'auteur)</MuIn.Setting.PlayMusic>
+  <MuIn.Setting.ModVersion>Version installée du mod : {0}</MuIn.Setting.ModVersion>
 </LanguageData>

@@ -1,5 +1,9 @@
 # Changelog for MusicalInstruments
 
+1.6.4 - Added mod-setting for the the playing of music
+Used DeepL to update translations for ChineseSimplified, French, German, Russian
+
+
 1.6.3 - Missed royalty check
 
 

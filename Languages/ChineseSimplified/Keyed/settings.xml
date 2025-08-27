@@ -7,4 +7,6 @@
   <MuIn.AllowRec>允许休闲娱乐</MuIn.AllowRec>
   <MuIn.AllowRec.Active>允许的娱乐活动：殖民者可以出于任何原因演奏这种乐器。</MuIn.AllowRec.Active>
   <MuIn.AllowRec.Inactive>不允许娱乐：殖民者只能在表演时演奏这种乐器。</MuIn.AllowRec.Inactive>
+  <MuIn.Setting.PlayMusic>乐器演奏实际音乐（需要版税）</MuIn.Setting.PlayMusic>
+  <MuIn.Setting.ModVersion>已安装 MOD 版本：{0}</MuIn.Setting.ModVersion>
 </LanguageData>

@@ -285,7 +285,8 @@ public class PerformanceManager(Map map) : MapComponent(map)
             workPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
         }
 
-        if (ModLister.RoyaltyInstalled && instrument.TryGetComp<Comp_PlayingMusic>() is { } comp)
+        if (ModLister.RoyaltyInstalled && MusicalInstrumentsMod.instance.Settings.PlayMusic &&
+            instrument.TryGetComp<Comp_PlayingMusic>() is { } comp)
         {
             comp.StartPlaying(musician);
         }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <MuIn.MusicSpot>Music spot</MuIn.MusicSpot>
+  <MuIn.Setting.PlayMusic>Instruments play actual music (require Royalty)</MuIn.Setting.PlayMusic>
+  <MuIn.Setting.ModVersion>Installed mod-version: {0}</MuIn.Setting.ModVersion>
   <MuIn.MusicSpot.Active>Active: colonists will play music here.</MuIn.MusicSpot.Active>
   <MuIn.MusicSpot.Inactive>Inactive: colonists will not play music here.</MuIn.MusicSpot.Inactive>
   <MuIn.AllowRec>Allow recreation</MuIn.AllowRec>

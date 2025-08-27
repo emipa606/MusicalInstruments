@@ -7,4 +7,6 @@
   <MuIn.AllowRec>Erholung zulassen</MuIn.AllowRec>
   <MuIn.AllowRec.Active>Erlaubte Freizeitbeschäftigung: Kolonisten können dieses Instrument zu jedem Zweck spielen.</MuIn.AllowRec.Active>
   <MuIn.AllowRec.Inactive>Freizeit nicht erlaubt: Kolonisten können dieses Instrument nur bei Auftritten spielen.</MuIn.AllowRec.Inactive>
+  <MuIn.Setting.PlayMusic>Instrumente spielen aktuelle Musik (Lizenzgebühren erforderlich)</MuIn.Setting.PlayMusic>
+  <MuIn.Setting.ModVersion>Installierte Mod-Version: {0}</MuIn.Setting.ModVersion>
 </LanguageData>
