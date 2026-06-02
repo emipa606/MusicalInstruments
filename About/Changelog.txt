@@ -1,5 +1,8 @@
 # Changelog for MusicalInstruments
 
+1.6.5 - Fixed pawns stuck playing after loading a save
+
+
 1.6.4 - Added mod-setting for the the playing of music
 Used DeepL to update translations for ChineseSimplified, French, German, Russian
 

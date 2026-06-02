@@ -33,11 +33,22 @@ public class PerformanceManager(Map map) : MapComponent(map)
     // non-static
 
     private Dictionary<int, Performance> performances = new();
+    private bool postLoadMusicJobCleanupPending;
     private Dictionary<int, int> workPerformanceTimestamps = new();
 
     public static bool IsInstrument(Thing thing)
     {
         return allInstrumentDefs.Contains(thing.def);
+    }
+
+    private static int GetVenueKey(Thing venue)
+    {
+        return venue.thingIDNumber;
+    }
+
+    private static int GetMusicianKey(Pawn musician)
+    {
+        return musician.thingIDNumber;
     }
 
     public static Thing HeldInstrument(Pawn musician)
@@ -125,8 +136,11 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
         //try to avoid breaking saves from old versions
         performances ??= new Dictionary<int, Performance>();
-
         workPerformanceTimestamps ??= new Dictionary<int, int>();
+
+        performances = [];
+        workPerformanceTimestamps = [];
+        postLoadMusicJobCleanupPending = true;
     }
 
 
@@ -234,8 +248,8 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
     public bool CanPlayForWorkNow(Pawn musician)
     {
-        var hash = musician.GetHashCode();
-        if (!workPerformanceTimestamps.TryGetValue(hash, out var timestamp))
+        var key = GetMusicianKey(musician);
+        if (!workPerformanceTimestamps.TryGetValue(key, out var timestamp))
         {
             return true;
         }
@@ -246,43 +260,43 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
     public void StartPlaying(Pawn musician, Thing instrument, Thing venue, bool isWork)
     {
-        var venueHash = venue.GetHashCode();
+        var venueKey = GetVenueKey(venue);
 
-        foreach (var otherVenueHash in performances.Keys)
+        foreach (var otherVenueKey in performances.Keys)
         {
-            if (!radiusAndRoomCheck(performances[otherVenueHash].Venue, venue))
+            if (!radiusAndRoomCheck(performances[otherVenueKey].Venue, venue))
             {
                 continue;
             }
 
-            venueHash = otherVenueHash;
+            venueKey = otherVenueKey;
             break;
         }
 
-        if (!performances.ContainsKey(venueHash))
+        if (!performances.ContainsKey(venueKey))
         {
-            performances[venueHash] = new Performance(venue);
+            performances[venueKey] = new Performance(venue);
         }
 
-        var musicianHash = musician.GetHashCode();
+        var musicianKey = GetMusicianKey(musician);
 
-        if (performances[venueHash].Performers.ContainsKey(musicianHash))
+        if (performances[venueKey].Performers.ContainsKey(musicianKey))
         {
             return;
         }
 
-        performances[venueHash].Performers[musicianHash] =
+        performances[venueKey].Performers[musicianKey] =
             new Performer { Musician = musician, Instrument = instrument };
-        performances[venueHash].CalculateQuality();
+        performances[venueKey].CalculateQuality();
 
-        if (performances[venueHash].Quality >= 2f)
+        if (performances[venueKey].Quality >= 2f)
         {
             TaleRecorder.RecordTale(TaleDef.Named("PlayedMusic"), musician, instrument.def);
         }
 
         if (isWork)
         {
-            workPerformanceTimestamps[musician.GetHashCode()] = Find.TickManager.TicksGame;
+            workPerformanceTimestamps[musicianKey] = Find.TickManager.TicksGame;
         }
 
         if (ModLister.RoyaltyInstalled && MusicalInstrumentsMod.instance.Settings.PlayMusic &&
@@ -297,52 +311,62 @@ public class PerformanceManager(Map map) : MapComponent(map)
         Comp_PlayingMusic.Notebook.TryGetValue(musician, out var comp);
         comp?.StopPlaying(musician);
 
-        _ = venue.GetHashCode();
-        var musicianHash = musician.GetHashCode();
+        var musicianKey = GetMusicianKey(musician);
 
-        var ongoingPerformanceHashes = new List<int>();
+        var ongoingPerformanceKeys = new List<int>();
 
-        foreach (var otherVenueHash in performances.Keys)
+        foreach (var otherVenueKey in performances.Keys)
         {
-            if (!performances[otherVenueHash].Performers.Keys.Contains(musicianHash))
+            if (!performances[otherVenueKey].Performers.Remove(musicianKey))
             {
                 continue;
             }
 
-            performances[otherVenueHash].Performers.Remove(musicianHash);
-            if (!performances[otherVenueHash].Performers.Any())
+            if (!performances[otherVenueKey].Performers.Any())
             {
                 continue;
             }
 
-            performances[otherVenueHash].CalculateQuality();
-            ongoingPerformanceHashes.Add(otherVenueHash);
+            performances[otherVenueKey].CalculateQuality();
+            ongoingPerformanceKeys.Add(otherVenueKey);
         }
 
-        performances = performances.Where(x => ongoingPerformanceHashes.Contains(x.Key))
+        performances = performances.Where(x => ongoingPerformanceKeys.Contains(x.Key))
             .ToDictionary(x => x.Key, x => x.Value);
     }
 
     public bool HasPerformance(Thing venue)
     {
-        var hash = venue.GetHashCode();
+        var key = GetVenueKey(venue);
 
-        return performances.ContainsKey(hash) && performances[hash].Performers.Any();
+        return performances.ContainsKey(key) && performances[key].Performers.Any();
+    }
+
+    public bool HasPerformer(Pawn musician)
+    {
+        var key = GetMusicianKey(musician);
+        return performances.Values.Any(x => x.Performers.ContainsKey(key));
     }
 
     public float GetPerformanceQuality(Thing venue)
     {
-        var hash = venue.GetHashCode();
+        var key = GetVenueKey(venue);
 
-        return !performances.TryGetValue(hash, out var performance)
+        return !performances.TryGetValue(key, out var performance)
             ?
-            //Verse.Log.Error(String.Format("Gather spot #{0} has no performance.", hash));
+            //Verse.Log.Error(String.Format("Gather spot #{0} has no performance.", key));
             0f
             : performance.Quality;
     }
 
     public override void MapComponentTick()
     {
+        if (postLoadMusicJobCleanupPending)
+        {
+            CleanupResumedMusicJobsAfterLoad();
+            postLoadMusicJobCleanupPending = false;
+        }
+
         if (Find.TickManager.TicksGame % 100 != 99)
         {
             return;
@@ -354,11 +378,32 @@ public class PerformanceManager(Map map) : MapComponent(map)
         }
     }
 
+    private void CleanupResumedMusicJobsAfterLoad()
+    {
+        var joyDef = DefDatabase<JobDef>.GetNamedSilentFail("MusicPlayJoy");
+
+        foreach (var pawn in map.mapPawns.AllPawnsSpawned)
+        {
+            var curJob = pawn.jobs?.curJob;
+            if (curJob == null)
+            {
+                continue;
+            }
+
+            if (curJob.def != JobDefOf_MusicPlayWork.MusicPlayWork && curJob.def != joyDef)
+            {
+                continue;
+            }
+
+            pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+        }
+    }
+
     private void ApplyThoughts(Thing venue)
     {
-        var hash = venue.GetHashCode();
+        var key = GetVenueKey(venue);
 
-        if (!performances.TryGetValue(hash, out var performance))
+        if (!performances.TryGetValue(key, out var performance))
         {
             return;
         }

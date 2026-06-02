@@ -1,6 +1,6 @@
 # [Musical Instruments (Continued)](https://steamcommunity.com/sharedfiles/filedetails/?id=2274558815)
 
-![Image](https://i.imgur.com/buuPQel.png)
+![Image](https://img.litet.net/logos/Info.png)
 
 Update of Dog Problems mod
 https://steamcommunity.com/sharedfiles/filedetails/?id=1549446374
@@ -11,9 +11,9 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=1549446374
 - Added burn unwanted instrument recipe
 - ~~To have the instruments play actual music use [this](https://steamcommunity.com/sharedfiles/filedetails/?id=3134829573) mod by Pos 5~~ Now included in the mod
 
-![Image](https://i.imgur.com/pufA0kM.png)
+![Image](https://img.litet.net/logos/Notice.png)
 	
-![Image](https://i.imgur.com/Z4GOv8H.png)
+![Image](https://img.litet.net/logos/OriginalDescription.png)
 
 Craft a variety of musical instruments and play them for recreation. 
 
@@ -45,13 +45,13 @@ a: This could be for a number of reasons...
 q: I think I found a bug, what should I do?
 a: Just post a comment describing the problem, and I'll try to fix it. The more useful information you can provide, the more likely I am to be able to resolve the issue. Useful information includes: what you were trying to do at the time, what you expected to happen, what actually happened, any error messages from the dev mode console, any other mods you have installed.
 
-![Image](https://i.imgur.com/PwoNOj4.png)
+![Image](https://img.litet.net/logos/ReportingIssues.png)
 
 
 
 -  See if the the error persists if you just have this mod and its requirements active.
 -  If not, try adding your other mods until it happens again.
--  Post your error-log using the [Log Uploader](https://steamcommunity.com/sharedfiles/filedetails/?id=2873415404) or the standalone [Uploader](https://steamcommunity.com/sharedfiles/filedetails/?id=2873415404) and command Ctrl+F12
+-  Always post your log using the [Log Uploader](https://steamcommunity.com/sharedfiles/filedetails/?id=2873415404)
 -  For best support, please use the Discord-channel for error-reporting.
 -  Do not report errors by making a discussion-thread, I get no notification of that.
 -  If you have the solution for a problem, please post it to the GitHub repository.
@@ -59,4 +59,4 @@ a: Just post a comment describing the problem, and I'll try to fix it. The more 
 
  
 
-[![Image](https://img.shields.io/github/v/release/emipa606/MusicalInstruments?label=latest%20version&style=plastic&color=9f1111&labelColor=black)](https://steamcommunity.com/sharedfiles/filedetails/changelog/2274558815) | tags:  recreation,  instruments
+[![Image](https://img.shields.io/github/v/release/emipa606/MusicalInstruments?label=latest%20version&style=plastic&color=9f1111&labelColor=black)](https://steamcommunity.com/sharedfiles/filedetails/changelog/2274558815) | tags: recreation, instruments

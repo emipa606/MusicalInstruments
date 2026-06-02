@@ -15,14 +15,24 @@ internal class Comp_PlayingMusic : ThingComp
 
     public void StartPlaying(Pawn player)
     {
+        if (Notebook.TryGetValue(player, out var otherComp) && otherComp != this)
+        {
+            otherComp.currentPlayer = null;
+            otherComp.soundPlaying = null;
+        }
+
         currentPlayer = player;
-        Notebook.Add(player, this);
+        Notebook[player] = this;
     }
 
     public void StopPlaying(Pawn pawn)
     {
         currentPlayer = null;
-        Notebook.Remove(pawn);
+
+        if (Notebook.TryGetValue(pawn, out var comp) && comp == this)
+        {
+            Notebook.Remove(pawn);
+        }
     }
 
     public override void CompTick()

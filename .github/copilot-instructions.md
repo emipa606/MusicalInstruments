@@ -1,55 +1,49 @@
-# GitHub Copilot Instructions for RimWorld Modding Project: Musical Instruments (Continued)
+# GitHub Copilot Instructions for Musical Instruments (Continued) Mod Development
 
 ## Mod Overview and Purpose
 
-The "Musical Instruments (Continued)" mod enhances the RimWorld experience by allowing players to craft and play a variety of musical instruments, contributing to pawns' recreation and artistic training. This mod is an update of the original mod by Dog Problems with code refactoring and integration improvements, such as removing redundant Harmony DLLs and fixing issues with the musical workbench.
+The **Musical Instruments (Continued)** mod enhances the RimWorld experience by allowing players to craft and play a variety of musical instruments for recreation and skill development. Originally developed by Dog Problems and now updated, the mod aims to integrate music as both a recreational and skill-enhancing element for pawns, adding depth and enjoyment to gameplay.
 
 ## Key Features and Systems
 
-- **Craft and Play Instruments:** Employ pawns with artistic skills to craft and play musical instruments, enhancing their recreation and artistic abilities.
-- **Diverse Instrument Types:** Instruments range from primitive to advanced, each affecting performance differently based on the musician's skill.
-- **Integration with Existing Systems:** Instruments are crafted at the sculptor's bench and constructed as buildings, while the quality of the instrument affects performance.
-- **Research and Trading:** Research projects unlock the crafting of instruments, which can also be acquired through trade.
-- **Work and Recreation Balance:** Playing instruments can be assigned as work or for recreation, with each context affecting skill gain differently.
+- **Musical Workbench**: Craft small and large instruments. Small instruments are crafted at a sculptor's bench, while large instruments are built as buildings.
+- **Instrument Performance**: Instruments play actual music when coupled with the mod by Pos 5, now included.
+- **Burn Unwanted Instruments**: Adds a recipe to dispose of unwanted instruments.
+- **Performance Quality**: Influenced by the pawn's artistic skill, manipulation, consciousness, instrument quality, and condition.
+- **Music Spots**: Designate tables, campfires, or dedicated spots as music gathering points where instruments can be played.
+- **Skill Gain**: Playing music develops artistic skills. Work play grants full skill experience, while joy play grants reduced experience.
 
 ## Coding Patterns and Conventions
 
-- **Class Naming:** Classes follow a naming convention that reflects their functionality and scope. Internal classes are prefixed with `internal`, while core functionalities are encapsulated in public classes.
-- **Method Visibility:** Methods within classes are scoped appropriately to maintain encapsulation, with private methods handling internal logic.
-- **OOP Principles:** Emphasis on object-oriented programming, with classes like `CompMusicalInstrument` and `CompMusicSpot` extending `ThingComp`.
+- **Class Organization**: Classes are organized based on their functionality, such as `Comp_PlayingMusic`, `CompMusicalInstrument`, and `PerformanceManager`.
+- **Access Modifiers**: Following best practices, classes are marked `internal` when they do not need to be exposed outside the assembly, improving encapsulation.
+- **Method Naming**: Uses descriptive method names like `StartPlaying`, `StopPlaying`, `CalculateQuality`, and `ExposeData` to clearly convey functionality.
+- **XML Integration**: Integrates data through XML for defining instruments, jobs, and joy kinds to maintain separation between data and logic.
 
 ## XML Integration
 
-- XML files define the core game elements like job definitions and instruments, facilitating integration with RimWorld's existing systems.
-- Ensure XML tags are correctly nested and reference IDs and DefNames consistent with the C# implementations for seamless integration.
+The mod integrates XML to define game assets such as instruments, job definitions, and joy activities. Ensure XML files are structured properly to avoid data parsing errors. Copilot can assist in writing or converting C# code into XML-compatible structures.
 
 ## Harmony Patching
 
-- Patches are implemented using Harmony to augment existing game behavior without altering the base game code.
-- Avoid redundant patches by ensuring patches target only necessary methods and implement efficient transpilers where applicable.
-- The removal of `Harmony.dll` indicates optimization, relying on HarmonyModLoader instead.
+With the removal of the redundant `Harmony.dll`, the mod employs Harmony patches within the `HarmonyPatches` class to intercept and modify base game behavior without directly altering the game's source code. This approach allows compatibility with updates and other mods. When working on patches:
+- Use `HarmonyPatch` attributes judiciously.
+- Test patches thoroughly to ensure they do not introduce bugs or conflicts with other mods.
 
 ## Suggestions for Copilot
 
-1. **Predictive Factor for Methods:**
-   - Use prior patterns to predict method signatures, especially for properties like `WeightedSuitability` in `CompMusicalInstrument`.
-   
-2. **Class Definitions and Inheritance:**
-   - Suggest class structures and inheritance models for new features based on existing patterns found in the mod.
+- **Method Stubbing**: Leverage Copilot to quickly generate method stubs based on existing patterns. This can accelerate setting up new features or expansions.
+- **Refactoring Aid**: Use Copilot to suggest improvements or refactoring of existing code for better readability and performance.
+- **XML and C# Integration**: Utilize Copilot to help generate XML code directly from C# requirements, ensuring consistency between logic and data.
+- **Error Handling**: Prompt Copilot to include informative error handling that logs useful information for debugging.
+- **Suggestions for Harmony Patches**: Request Copilot to assist in creating succinct and effective Harmony patch methods.
 
-3. **XML Integration Hints:**
-   - When adding new instruments or jobs, provide Copilot suggestions for XML tag structures based on existing definitions.
+Ensure Copilot is used effectively to maintain coding standards and improve development efficiency, while manually verifying generated code for accuracy and logical soundness.
 
-4. **Refactoring and Optimization:**
-   - Offer refactoring suggestions for existing methods to improve performance or readability, following the DRY principle.
-
-5. **Harmony Transpiling Suggestions:**
-   - Recommend appropriate transpiling patterns to efficiently modify game behavior where needed.
-
-6. **Exception Handling:**
-   - Infer potential exceptions in method scopes and suggest error handling and logging mechanisms, especially for methods interacting with game components like `PerformanceManager`.
-
-7. **Debugging and Development Aids:**
-   - Propose mechanisms for debugging during development, utilizing RimWorld's dev mode console for tracing issues and logging.
-
-By adhering to these instructions and leveraging Copilot's capabilities, developers can maintain and extend this mod with consistent, high-quality code integration and feature enhancements.
+## Project Solution Guidelines
+- Relevant mod XML files are included as Solution Items under the solution folder named XML, these can be read and modified from within the solution.
+- Use these in-solution XML files as the primary files for reference and modification.
+- The `.github/copilot-instructions.md` file is included in the solution under the `.github` solution folder, so it should be read/modified from within the solution instead of using paths outside the solution. Update this file once only, as it and the parent-path solution reference point to the same file in this workspace.
+- When making functional changes in this mod, ensure the documented features stay in sync with implementation; use the in-solution `.github` copy as the primary file.
+- In the solution is also a project called Assembly-CSharp, containing a read-only version of the decompiled game source, for reference and debugging purposes.
+- For any new documentation, update this copilot-instructions.md file rather than creating separate documentation files.

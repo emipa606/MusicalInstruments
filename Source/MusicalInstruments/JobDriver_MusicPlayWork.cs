@@ -7,6 +7,7 @@ namespace MusicalInstruments;
 public class JobDriver_MusicPlayWork : JobDriver_MusicPlayBase
 {
     private int tickInterval;
+    private int playTicksElapsed;
 
     protected override Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue)
     {
@@ -22,6 +23,19 @@ public class JobDriver_MusicPlayWork : JobDriver_MusicPlayBase
 
         play.tickIntervalAction = delegate(int delta)
         {
+            var pm = pawn.Map.GetComponent<PerformanceManager>();
+            if (!pm.HasPerformer(musician))
+            {
+                pm.StartPlaying(musician, instrument, venue, true);
+            }
+
+            playTicksElapsed += delta;
+            if (playTicksElapsed >= 4000)
+            {
+                EndJobWith(JobCondition.Succeeded);
+                return;
+            }
+
             tickInterval += delta;
             if (props.isBuilding)
             {

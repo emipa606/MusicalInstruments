@@ -6,4 +6,63 @@
     <BuildType Name="Release" />
   </Configurations>
   <Project Path="MusicalInstruments/MusicalInstruments.csproj" />
+  <Folder Name="/XML/1.6/Defs/JobDefs/">
+    <File Path="../1.6/Defs/JobDefs/Jobs_Joy.xml" />
+    <File Path="../1.6/Defs/JobDefs/Jobs_Misc.xml" />
+    <File Path="../1.6/Defs/JobDefs/Jobs_Work.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/ResearchProjectDefs/">
+    <File Path="../1.6/Defs/ResearchProjectDefs/ResearchProjects_MusicalInstruments.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/ThingDefs_Items/">
+    <File Path="../1.6/Defs/ThingDefs_Items/Items_MusicalInstrumentBases.xml" />
+    <File Path="../1.6/Defs/ThingDefs_Items/Items_PrimitiveMusicalInstruments.xml" />
+    <File Path="../1.6/Defs/ThingDefs_Items/Items_StringedMusicalInstruments.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/WorkGiverDefs/">
+    <File Path="../1.6/Defs/WorkGiverDefs/WorkGivers.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/Effects/">
+    <File Path="../1.6/Defs/Effects/Mote_Visual.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/Joy/">
+    <File Path="../1.6/Defs/Joy/JoyGivers.xml" />
+    <File Path="../1.6/Defs/Joy/JoyKinds.xml" />
+  </Folder>
+  <Folder Name="/XML/About/">
+    <File Path="../About/about.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/TaleDefs/">
+    <File Path="../1.6/Defs/TaleDefs/Tales_SinglePawn.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/RecipeDefs/">
+    <File Path="../1.6/Defs/RecipeDefs/Recipes_Production.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/ThingDefs_Buildings/">
+    <File Path="../1.6/Defs/ThingDefs_Buildings/Buildings_Joy.xml" />
+    <File Path="../1.6/Defs/ThingDefs_Buildings/Buildings_Misc.xml" />
+    <File Path="../1.6/Defs/ThingDefs_Buildings/Buildings_Production.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/ThoughtDefs/">
+    <File Path="../1.6/Defs/ThoughtDefs/Thoughts_Memory_Music.xml" />
+  </Folder>
+  <Folder Name="/XML/Languages/English/Keyed/">
+    <File Path="../Languages/English/Keyed/settings.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/ThingCategoryDefs/">
+    <File Path="../1.6/Defs/ThingCategoryDefs/ThingCategories.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/RulePackDefs/">
+    <File Path="../1.6/Defs/RulePackDefs/RulePacks_Art_DescriptionsMusicalInstruments.xml" />
+    <File Path="../1.6/Defs/RulePackDefs/RulePacks_Namers_MusicalInstruments.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Patches/">
+    <File Path="../1.6/Patches/CompMusicSpotPatch.xml" />
+    <File Path="../1.6/Patches/Guy_StarWarsAnimalCollection.xml" />
+    <File Path="../1.6/Patches/Mlie_Westerado.xml" />
+    <File Path="../1.6/Patches/TraderKindsPatch.xml" />
+  </Folder>
+  <Folder Name="/XML/1.6/Defs/MusicDefs/">
+    <File Path="../1.6/Defs/MusicDefs/MusicDef.xml" />
+  </Folder>
 </Solution>
