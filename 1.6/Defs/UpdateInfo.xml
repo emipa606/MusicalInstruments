@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<TabulaRasa.UpdateDef Abstract="true" Name="MusicalInstruments_UpdateInfoBase">
+		<linkUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2274558815</linkUrl>
+		<banner>UpdateInfo/MusicalInstruments</banner>
+	</TabulaRasa.UpdateDef>
+	<TabulaRasa.UpdateDef ParentName="MusicalInstruments_UpdateInfoBase" MayRequire="neronix17.toolbox">
+		<defName>MusicalInstruments_1_6_5</defName>
+		<date>2026/11/17</date>
+		<content>This mod has been re-released for the new version of the game. This version will remain but will not be updated further.</content>
+	</TabulaRasa.UpdateDef>
+</Defs>
+

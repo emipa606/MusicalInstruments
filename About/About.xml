@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>Musical Instruments (Continued)</name>
+  <name>[1.6] Musical Instruments (Continued)</name>
   <packageId>Mlie.MusicalInstruments</packageId>
   <author>Dog Problems</author>
   <url>https://github.com/emipa606/MusicalInstruments</url>
@@ -28,18 +28,16 @@
 Update of Dog Problems mod
 https://steamcommunity.com/sharedfiles/filedetails/?id=1549446374
 
-- Refactored code
-- Removed redundant Harmony.dll
-- Fixed the musical workbench, thanks мєкση for the help!
-- Added burn unwanted instrument recipe
-- [strike]To have the instruments play actual music use [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3134829573]this[/url] mod by Pos 5[/strike] Now included in the mod
+[b]The release of RimWorld 1.7 added a system where assets like textures and sounds can be cached to improve performance[/b].
+To avoid doubling the size of the mod, it was re-released with only this cache included, you can find the new version of this mod [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3841609604]here[/url].
+This version will not receive any further updates.
 
 [img]https://img.litet.net/logos/Notice.png[/img]
 
 [table]
     [tr]
         [td][url=https://discord.gg/h5TY6DA][img]https://img.litet.net/logos/Discord.png[/img][/url][/td]
-        [td][url=https://github.com/emipa606/MusicalInstruments][img]https://img.litet.net/logos/Github.png[/img][/url][/td]
+        [td][url=https://github.com/emipa606/MusicalInstruments/tree/assetbundles][img]https://img.litet.net/logos/Github.png[/img][/url][/td]
     [/tr]
     [tr]
         [td][img]https://img.litet.net/logos/SafeToAdd.png[/img][/td]
@@ -89,6 +87,6 @@ a: Just post a comment describing the problem, and I'll try to fix it. The more 
 [*] Use [url=https://github.com/RimSort/RimSort/releases/latest]RimSort[/url] to sort your mods
 [/list] 
 
-[url=https://steamcommunity.com/sharedfiles/filedetails/changelog/2274558815][img]https://img.shields.io/github/v/release/emipa606/MusicalInstruments?label=latest%20version&amp;style=plastic&amp;color=9f1111&amp;labelColor=black[/img][/url] | tags: recreation, instruments</description>
-  <modVersion IgnoreIfNoMatchingField="True">1.6.5</modVersion>
+[url=https://steamcommunity.com/sharedfiles/filedetails/changelog/2274558815][img]https://img.shields.io/github/v/release/emipa606/MusicalInstruments?label=latest%20version&amp;style=plastic&amp;color=9f1111&amp;labelColor=black[/img][/url] | instruments, recreation</description>
+  <modVersion IgnoreIfNoMatchingField="True">1.6.6</modVersion>
 </ModMetaData>
