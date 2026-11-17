@@ -1,44 +1,83 @@
-# GitHub Copilot Instructions for Musical Instruments (Continued) Mod Development
+# GitHub Copilot Instructions for RimWorld Mod: Musical Instruments (Continued)
 
 ## Mod Overview and Purpose
-
-The **Musical Instruments (Continued)** mod enhances the RimWorld experience by allowing players to craft and play a variety of musical instruments for recreation and skill development. Originally developed by Dog Problems and now updated, the mod aims to integrate music as both a recreational and skill-enhancing element for pawns, adding depth and enjoyment to gameplay.
+The **Musical Instruments (Continued)** mod is an update to the original **Dog Problems** mod. The primary purpose of this mod is to allow players to craft, use, and play various musical instruments within the colony, enhancing the gameplay experience by providing recreational activities and skill training.
 
 ## Key Features and Systems
 
-- **Musical Workbench**: Craft small and large instruments. Small instruments are crafted at a sculptor's bench, while large instruments are built as buildings.
-- **Instrument Performance**: Instruments play actual music when coupled with the mod by Pos 5, now included.
-- **Burn Unwanted Instruments**: Adds a recipe to dispose of unwanted instruments.
-- **Performance Quality**: Influenced by the pawn's artistic skill, manipulation, consciousness, instrument quality, and condition.
-- **Music Spots**: Designate tables, campfires, or dedicated spots as music gathering points where instruments can be played.
-- **Skill Gain**: Playing music develops artistic skills. Work play grants full skill experience, while joy play grants reduced experience.
+### Crafting Musical Instruments
+- **Research**: Players need to complete specific research projects to unlock new instruments.
+- **Crafting Stations**: Small instruments are crafted at the sculptor's bench, while large instruments require construction at designated building sites under the Joy tab.
+- **Market and Factions**: Instruments can also be purchased from exotic goods traders or faction bases.
+
+### Playing Musical Instruments
+- **Pawn Abilities**: Existing playing requirements are unchanged. Performance quality uses the higher of Artistic or enabled Social skill, so either talent can improve a pawn's music.
+- **Music Spots**: Pawns require access to active music spots (like tables or campfires) to play music.
+- **Skill Training**: Playing music trains the artistic skill, with different training speeds based on whether the pawn is playing for joy or work.
+
+### Instrument Quality and Performance
+- **Performance Skill**: Colony and caravan performances use the same skill-based quality calculation. Existing performance luck still varies the outcome, so higher Artistic or Social skill improves the chance of nice or great music without guaranteeing it. Disabled Social skill provides no bonus, and lower Social skill never reduces an artistic musician's quality.
+- **Instrument Quality**: Quality affects the performance quality of the music.
+- **Health Points (HP)**: The HP of an instrument affects its longevity and performance quality as it wears down.
+- **Materials**: While materials affect the max HP and market price, they do not impact music quality.
 
 ## Coding Patterns and Conventions
 
-- **Class Organization**: Classes are organized based on their functionality, such as `Comp_PlayingMusic`, `CompMusicalInstrument`, and `PerformanceManager`.
-- **Access Modifiers**: Following best practices, classes are marked `internal` when they do not need to be exposed outside the assembly, improving encapsulation.
-- **Method Naming**: Uses descriptive method names like `StartPlaying`, `StopPlaying`, `CalculateQuality`, and `ExposeData` to clearly convey functionality.
-- **XML Integration**: Integrates data through XML for defining instruments, jobs, and joy kinds to maintain separation between data and logic.
+### General Guidelines
+- **Modular Code**: Code is organized into modular components, each responsible for a specific aspect of the mod's functionality.
+- **Naming Conventions**: Use descriptive and consistent naming conventions for classes, methods, and variables.
+- **Documentation**: Provide clear comments and documentation within the code to explain the purpose and functionality of each component.
+
+### Common C# File Structures
+- **Comp Files**: These files define components that are attached to game objects (e.g., `Comp_PlayingMusic.cs`).
+- **Patch Files**: These files contain Harmony patches to modify existing RimWorld functionality (e.g., `Caravan_NeedsTracker_GetAvailableJoyKindsFor.cs`).
+- **Utility Files**: These files contain utility methods and classes used throughout the mod (e.g., `Utility_MusicalInstruments.cs`).
+
+### Common XML File Structures
+- **Defs Files**: These files define the mod's custom game objects, such as instruments, research projects, and job definitions.
+- **RulePack Files**: These files define text and naming rules for mod objects, enhancing the game's localization and narrative.
 
 ## XML Integration
 
-The mod integrates XML to define game assets such as instruments, job definitions, and joy activities. Ensure XML files are structured properly to avoid data parsing errors. Copilot can assist in writing or converting C# code into XML-compatible structures.
+### Key XML Files and Defs
+- **ResearchProjectDefs**: Defines the research projects needed to unlock new instruments (e.g., `ResearchProjects_MusicalInstruments.xml`).
+- **ThingDefs**: Defines the custom instruments (e.g., `ThingDef_MusicalInstrument.xml`).
+- **JobDefs**: Defines the jobs related to playing musical instruments (e.g., `Jobs_Joy.xml`).
+- **RulePackDefs**: Defines text and naming rules for musical instruments (e.g., `RulePacks_Art_DescriptionsMusicalInstruments.xml`).
+
+### Best Practices
+- **Consistent Naming**: Ensure that all XML elements and attributes have consistent and descriptive names.
+- **Versioning**: Use versioning in XML files to manage changes and ensure compatibility with future updates.
+- **Documentation**: Comment within XML files to explain the purpose and functionality of each def.
 
 ## Harmony Patching
 
-With the removal of the redundant `Harmony.dll`, the mod employs Harmony patches within the `HarmonyPatches` class to intercept and modify base game behavior without directly altering the game's source code. This approach allows compatibility with updates and other mods. When working on patches:
-- Use `HarmonyPatch` attributes judiciously.
-- Test patches thoroughly to ensure they do not introduce bugs or conflicts with other mods.
+### Overview
+Harmony patching is used to modify existing RimWorld code to integrate mod functionality without altering the original game files.
+
+### Common Patch Types
+- **Prefix**: Code executed before the original method.
+- **Postfix**: Code executed after the original method.
+- **Transpiler**: Code executed to modify the original method's bytecode.
+
+### Best Practices
+- **Minimal Changes**: Keep patches minimal to avoid unintended side effects.
+- **Compatibility**: Ensure that patches are compatible with future RimWorld updates.
+- **Documentation**: Comment within patch files to explain the purpose and functionality of each patch.
 
 ## Suggestions for Copilot
 
-- **Method Stubbing**: Leverage Copilot to quickly generate method stubs based on existing patterns. This can accelerate setting up new features or expansions.
-- **Refactoring Aid**: Use Copilot to suggest improvements or refactoring of existing code for better readability and performance.
-- **XML and C# Integration**: Utilize Copilot to help generate XML code directly from C# requirements, ensuring consistency between logic and data.
-- **Error Handling**: Prompt Copilot to include informative error handling that logs useful information for debugging.
-- **Suggestions for Harmony Patches**: Request Copilot to assist in creating succinct and effective Harmony patch methods.
+### General Recommendations
+- **Code Completion**: Use Copilot to complete code snippets and reduce the time spent on repetitive coding tasks.
+- **Error Handling**: Assist with generating robust error handling mechanisms to ensure mod stability.
+- **Documentation**: Use Copilot to generate clear and concise documentation for code and XML files.
 
-Ensure Copilot is used effectively to maintain coding standards and improve development efficiency, while manually verifying generated code for accuracy and logical soundness.
+### Specific Recommendations
+- **Harmony Patch Generation**: Assist with generating Harmony patches for modifying existing RimWorld functionality.
+- **XML Def Generation**: Assist with generating XML def files for custom game objects.
+- **Mod Integration**: Assist with integrating new features and systems into the existing mod framework.
+
+By following these guidelines and utilizing GitHub Copilot effectively, you can enhance the development process for the **Musical Instruments (Continued)** mod, ensuring a high-quality and enjoyable modding experience for the RimWorld community.
 
 ## Project Solution Guidelines
 - Relevant mod XML files are included as Solution Items under the solution folder named XML, these can be read and modified from within the solution.
@@ -47,3 +86,11 @@ Ensure Copilot is used effectively to maintain coding standards and improve deve
 - When making functional changes in this mod, ensure the documented features stay in sync with implementation; use the in-solution `.github` copy as the primary file.
 - In the solution is also a project called Assembly-CSharp, containing a read-only version of the decompiled game source, for reference and debugging purposes.
 - For any new documentation, update this copilot-instructions.md file rather than creating separate documentation files.
+
+
+## Hard rules (must follow)
+- Do NOT run commands that modify the repo (no git commit, git apply, dotnet format) unless explicitly asked.
+- Prefer minimal reads: read only the smallest code region needed (around the suspicious lines).
+- When mentioning SonarQube issues, automatically use the SonarQube MCP service to fetch and address issues instead of making inferred fixes without querying SonarQube first.
+- When mentioning the rimworld log, automatically use the Rimworld MCP service to fetch the log.
+

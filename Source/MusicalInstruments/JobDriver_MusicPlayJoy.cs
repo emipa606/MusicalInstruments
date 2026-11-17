@@ -6,8 +6,8 @@ namespace MusicalInstruments;
 
 public class JobDriver_MusicPlayJoy : JobDriver_MusicPlayBase
 {
-    private int tickInterval;
     private int playTicksElapsed;
+    private int tickInterval;
 
     protected override Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue)
     {

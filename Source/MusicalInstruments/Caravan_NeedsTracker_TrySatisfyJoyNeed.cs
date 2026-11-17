@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
 using HarmonyLib;
 using RimWorld;
@@ -8,16 +9,16 @@ using Verse;
 namespace MusicalInstruments;
 
 [HarmonyPatch(typeof(Caravan_NeedsTracker), "TrySatisfyJoyNeed")]
-internal class Caravan_NeedsTracker_TrySatisfyJoyNeed
+internal static class Caravan_NeedsTracker_TrySatisfyJoyNeed
 {
     public static float MusicQuality { get; set; }
 
-    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
         foreach (var instruction in instructions)
         {
             yield return instruction;
-            if (instruction.opcode != OpCodes.Callvirt || !instruction.operand.ToString().Contains("GainJoy"))
+            if (instruction.opcode != OpCodes.Callvirt || !instruction.operand.ToString()!.Contains("GainJoy"))
             {
                 continue;
             }
@@ -48,13 +49,11 @@ internal class Caravan_NeedsTracker_TrySatisfyJoyNeed
 
         var audience = new List<Pawn>();
 
-        foreach (var pawn in caravan.pawns)
+        foreach (var pawn in caravan.pawns.InnerListForReading.Where(p =>
+                     !p.NonHumanlikeOrWildMan() && p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
+                     p.Awake()))
         {
-            if (!pawn.NonHumanlikeOrWildMan() && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) &&
-                pawn.Awake())
-            {
-                audience.Add(pawn);
-            }
+            audience.Add(pawn);
         }
 
         foreach (var audienceMember in audience)

@@ -120,7 +120,7 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
 
     protected abstract Toil GetPlayToil(Pawn musician, Thing instrument, Thing venue);
 
-    private bool PowerMissing(Thing instrument)
+    private static bool PowerMissing(Thing instrument)
     {
         var propsinstrument = instrument.TryGetComp<CompMusicalInstrument>().Props;
         if (!propsinstrument.isBuilding)
@@ -141,8 +141,6 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
     protected override IEnumerable<Toil> MakeNewToils()
     {
         _ = this.EndOnDespawnedOrNull(MusicSpotParentInd);
-
-        //Verse.Log.Message(String.Format("Gather Spot ID = {0}", TargetA.Thing.GetHashCode()));
 
         var musician = pawn;
 
@@ -202,8 +200,6 @@ public abstract class JobDriver_MusicPlayBase : JobDriver
 
             // go to the sitting / standing spot
             yield return Toils_Goto.GotoCell(StandingSpotOrChairInd, PathEndMode.OnCell);
-
-            //yield return Toils_General.PutCarriedThingInInventory();
         }
 
         yield return GetPlayToil(musician, instrument, venue);

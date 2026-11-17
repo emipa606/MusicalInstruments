@@ -1,15 +1,12 @@
-# [Musical Instruments (Continued)](https://steamcommunity.com/sharedfiles/filedetails/?id=2274558815)
+# [Musical Instruments (Continued)]()
 
 ![Image](https://img.litet.net/logos/Info.png)
 
 Update of Dog Problems mod
 https://steamcommunity.com/sharedfiles/filedetails/?id=1549446374
 
-- Refactored code
-- Removed redundant Harmony.dll
-- Fixed the musical workbench, thanks мєкση for the help!
-- Added burn unwanted instrument recipe
-- ~~To have the instruments play actual music use [this](https://steamcommunity.com/sharedfiles/filedetails/?id=3134829573) mod by Pos 5~~ Now included in the mod
+**The release of RimWorld 1.7 added a system where assets like textures and sounds can be cached to improve performance**.
+To avoid doubling the size of the mod, it was re-released with only this cache included, you can find the previous version of this mod [here](https://steamcommunity.com/sharedfiles/filedetails/?id=2274558815).
 
 ![Image](https://img.litet.net/logos/Notice.png)
 	
@@ -57,6 +54,4 @@ a: Just post a comment describing the problem, and I'll try to fix it. The more 
 -  If you have the solution for a problem, please post it to the GitHub repository.
 -  Use [RimSort](https://github.com/RimSort/RimSort/releases/latest) to sort your mods
 
- 
-
-[![Image](https://img.shields.io/github/v/release/emipa606/MusicalInstruments?label=latest%20version&style=plastic&color=9f1111&labelColor=black)](https://steamcommunity.com/sharedfiles/filedetails/changelog/2274558815) | tags: recreation, instruments
+  | instruments, recreation

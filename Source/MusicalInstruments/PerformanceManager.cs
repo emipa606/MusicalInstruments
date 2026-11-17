@@ -58,15 +58,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
             return musician.carryTracker.CarriedThing;
         }
 
-        foreach (var inventoryThing in musician.inventory.innerContainer)
-        {
-            if (IsInstrument(inventoryThing))
-            {
-                return inventoryThing;
-            }
-        }
-
-        return null;
+        return musician.inventory.innerContainer.FirstOrDefault(IsInstrument);
     }
 
     public static bool IsPotentialCaravanMusician(Pawn pawn, out float quality)
@@ -114,13 +106,15 @@ public class PerformanceManager(Map map) : MapComponent(map)
 
     public static ThoughtDef GetThoughtDef(float quality)
     {
-        return quality < 0f
-            ? ThoughtDef.Named("BadMusic")
-            : quality >= 2f
-                ? ThoughtDef.Named("GreatMusic")
-                : quality >= .5f
-                    ? ThoughtDef.Named("NiceMusic")
-                    : null;
+        switch (quality)
+        {
+            case < 0f:
+                return ThoughtDef.Named("BadMusic");
+            case >= 2f:
+                return ThoughtDef.Named("GreatMusic");
+            default:
+                return quality >= .5f ? ThoughtDef.Named("NiceMusic") : null;
+        }
     }
 
     public override void ExposeData()
@@ -352,11 +346,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
     {
         var key = GetVenueKey(venue);
 
-        return !performances.TryGetValue(key, out var performance)
-            ?
-            //Verse.Log.Error(String.Format("Gather spot #{0} has no performance.", key));
-            0f
-            : performance.Quality;
+        return !performances.TryGetValue(key, out var performance) ? 0f : performance.Quality;
     }
 
     public override void MapComponentTick()
@@ -395,7 +385,7 @@ public class PerformanceManager(Map map) : MapComponent(map)
                 continue;
             }
 
-            pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+            pawn.jobs?.EndCurrentJob(JobCondition.InterruptForced);
         }
     }
 

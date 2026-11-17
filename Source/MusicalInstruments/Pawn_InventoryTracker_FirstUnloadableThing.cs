@@ -7,11 +7,11 @@ using Verse;
 namespace MusicalInstruments;
 
 [HarmonyPatch(typeof(Pawn_InventoryTracker), nameof(Pawn_InventoryTracker.FirstUnloadableThing), MethodType.Getter)]
-internal class Pawn_InventoryTracker_FirstUnloadableThing
+internal static class Pawn_InventoryTracker_FirstUnloadableThing
 {
     private static readonly List<ThingDefCount> tmpDrugsToKeep = [];
 
-    private static bool Prefix(Pawn_InventoryTracker __instance, ref ThingCount __result)
+    public static bool Prefix(Pawn_InventoryTracker __instance, ref ThingCount __result)
     {
         if (__instance.innerContainer.Count == 0)
         {

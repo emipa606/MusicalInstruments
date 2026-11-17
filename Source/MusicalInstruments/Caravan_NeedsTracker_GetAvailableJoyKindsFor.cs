@@ -7,11 +7,11 @@ using Verse;
 namespace MusicalInstruments;
 
 [HarmonyPatch(typeof(Caravan_NeedsTracker), "GetAvailableJoyKindsFor", typeof(Pawn), typeof(List<JoyKindDef>))]
-internal class Caravan_NeedsTracker_GetAvailableJoyKindsFor
+internal static class Caravan_NeedsTracker_GetAvailableJoyKindsFor
 {
-    private static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
+    public static void Postfix(Pawn p, List<JoyKindDef> outJoyKinds, ref Caravan ___caravan)
     {
-        if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) || !p.Awake())
+        if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) || !p.Awake() || p.needs?.joy == null)
         {
             return;
         }

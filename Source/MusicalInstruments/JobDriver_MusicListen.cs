@@ -42,8 +42,6 @@ internal class JobDriver_MusicListen : JobDriver
 
         this.EndOnDespawnedOrNull(MusicSpotParentInd);
 
-        //Verse.Log.Message(String.Format("Gather Spot ID = {0}", MusicSpotParent.GetHashCode()));
-
         if (HasChairOrBed)
         {
             this.EndOnDespawnedOrNull(ChairOrSpotOrBedInd);

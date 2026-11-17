@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using Verse;
@@ -93,6 +94,8 @@ public class Performance : IExposable
         }
 
         var artSkill = musician.skills.GetSkill(SkillDefOf.Artistic).Level;
+        var socialSkill = musician.skills.GetSkill(SkillDefOf.Social);
+        var performanceSkill = socialSkill.TotallyDisabled ? artSkill : Math.Max(artSkill, socialSkill.Level);
         int luckActual;
 
         if (luck.HasValue)
@@ -112,7 +115,7 @@ public class Performance : IExposable
         var easiness = instrumentComp.Props.easiness;
         var expressiveness = instrumentComp.Props.expressiveness;
 
-        var quality = (easiness + (expressiveness * ((artSkill + luckActual + (isInspired ? 0 : -3)) / 5.0f))) *
+        var quality = (easiness + (expressiveness * ((performanceSkill + luckActual + (isInspired ? 0 : -3)) / 5.0f))) *
                       (((float)instrumentQuality / 3.0f) + 0.1f) * instrumentCondition;
 
         return quality - 0.3f;

@@ -5,9 +5,9 @@ using Verse;
 namespace MusicalInstruments;
 
 [HarmonyPatch(typeof(JoyUtility), nameof(JoyUtility.JoyKindsOnMapString), typeof(Map))]
-internal class JoyUtility_JoyKindsOnMapString
+internal static class JoyUtility_JoyKindsOnMapString
 {
-    private static void Postfix(ref string __result, Map map)
+    public static void Postfix(ref string __result, Map map)
     {
         var pm = map.GetComponent<PerformanceManager>();
 

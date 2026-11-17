@@ -92,7 +92,7 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         return true;
     }
 
-    public override Job JobOnThing(Pawn pawn, Thing thing, bool forced = false)
+    public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) ||
             !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Hearing) ||
@@ -109,7 +109,7 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
             return null;
         }
 
-        var compMusicSpot = thing.TryGetComp<CompMusicSpot>();
+        var compMusicSpot = t.TryGetComp<CompMusicSpot>();
 
         if (compMusicSpot == null)
         {
@@ -129,25 +129,25 @@ public class WorkGiver_MusicPlay : WorkGiver_Scanner
         var job = new Job(JobDefOf_MusicPlayWork.MusicPlayWork, compMusicSpot.parent);
 
 
-        var musicSpotComp = thing.TryGetComp<CompMusicSpot>();
-        var instrumentComp = thing.TryGetComp<CompMusicalInstrument>();
-        var powerComp = thing.TryGetComp<CompPowerTrader>();
+        var musicSpotComp = t.TryGetComp<CompMusicSpot>();
+        var instrumentComp = t.TryGetComp<CompMusicalInstrument>();
+        var powerComp = t.TryGetComp<CompPowerTrader>();
 
         LocalTargetInfo chairOrSpot;
 
         if (forced &&
             instrumentComp != null &&
             instrumentComp.Props.isBuilding &&
-            pawn.CanReserveAndReach(thing, PathEndMode.Touch, Danger.None) &&
+            pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.None) &&
             (powerComp == null || powerComp.PowerOn))
         {
-            if (!PerformanceManager.TryFindStandingSpotOrChair(musicSpotComp, pawn, thing, out chairOrSpot))
+            if (!PerformanceManager.TryFindStandingSpotOrChair(musicSpotComp, pawn, t, out chairOrSpot))
             {
                 return null;
             }
 
             job.targetB = chairOrSpot;
-            job.targetC = thing;
+            job.targetC = t;
         }
         else if (pm.TryFindInstrumentToPlay(compMusicSpot.parent, pawn, out var instrument, true))
         {

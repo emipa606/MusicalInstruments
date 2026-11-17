@@ -5,9 +5,9 @@ using Verse;
 namespace MusicalInstruments;
 
 [HarmonyPatch(typeof(PawnGenerator), "GenerateGearFor", typeof(Pawn), typeof(PawnGenerationRequest))]
-internal class PawnGenerator_GenerateGearFor
+internal static class PawnGenerator_GenerateGearFor
 {
-    private static void Postfix(Pawn pawn, PawnGenerationRequest request)
+    public static void Postfix(Pawn pawn, PawnGenerationRequest request)
     {
         if (Current.ProgramState != ProgramState.Playing)
         {
